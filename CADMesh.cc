@@ -48,11 +48,11 @@ G4VSolid* CADMesh::LoadMesh(char * file, char * type, G4ThreeVector iso) {
         file_type.toUpper();
 
         if (file_type == "STL") {
-            ImporterSTL<G4CADTriMesh>::Open(m, file_name);
+            ImporterSTL<CADTriMesh>::Open(m, file_name);
         } else if (file_type == "PLY") {
-            ImporterPLY<G4CADTriMesh>::Open(m, file_name);
+            ImporterPLY<CADTriMesh>::Open(m, file_name);
         } else if (file_type == "OFF") {
-            ImporterOFF<G4CADTriMesh>::Open(m, file_name);
+            ImporterOFF<CADTriMesh>::Open(m, file_name);
         } else {
             G4cerr << "CADMesh/LoadSTL: "
                    << "No G4TessellatedSoild to return. Specify valid mesh type (STL, PLY, OFF), not: "

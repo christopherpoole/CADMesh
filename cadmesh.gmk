@@ -1,0 +1,12 @@
+cadmesh/CADMesh.a: CADMesh.o plylib.o
+        cd cadmesh/; ar -rc CADMesh.a CADMesh.o vcglib/wrap/ply/plylib.o
+
+CADMesh.o:
+        cd cadmesh/; g++ -g -O2 -Ivcglib -I$(G4INCLUDE) -I$(CLHEP_INCLUDE_DIR) -c CADMesh.cc
+
+plylib.o:
+        cd cadmesh/vcglib/wrap/ply/; g++ -g -fPIC -O2 -c plylib.cpp
+
+clean_cadmesh:
+        rm cadmesh/CADMesh.a cadmesh/CADMesh.o cadmesh/vcglib/wrap/ply/plylib.o
+

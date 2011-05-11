@@ -92,7 +92,7 @@ G4VSolid* CADMesh::BuildSolid() {
     G4ThreeVector point_2 = G4ThreeVector();
     G4ThreeVector point_3 = G4ThreeVector();
 
-    CADMesh::FaceIterator face_iterator;
+    CADTriMesh::FaceIterator face_iterator;
 
     for(face_iterator=m.face.begin(); face_iterator!=m.face.end(); ++face_iterator)
     {

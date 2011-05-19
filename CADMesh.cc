@@ -40,7 +40,7 @@ CADMesh::~CADMesh()
 {
 }
 
-G4VSolid* CADMesh::LoadMesh(char * file, char * type, G4ThreeVector iso) {
+G4VSolid* CADMesh::LoadMesh(char * file, char * type) {
     if (!has_mesh) {
         file_name = file;
 

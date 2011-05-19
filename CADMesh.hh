@@ -44,7 +44,7 @@ public:
     ~CADMesh();
 
 public:
-    G4VSolid* LoadMesh(char * fn, char * type, G4ThreeVector iso);
+    G4VSolid* LoadMesh(char * fn, char * type);
     G4TessellatedSolid* GetSolid() { return volume_solid; };
 
     G4String MeshName(){ return name; };

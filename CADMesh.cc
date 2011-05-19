@@ -40,7 +40,9 @@ CADMesh::~CADMesh()
 {
 }
 
-G4VSolid* CADMesh::LoadMesh(char * file, char * type) {
+G4VSolid* CADMesh::LoadMesh(char * file, char * type, double unit) {
+    unit = unit;
+    
     if (!has_mesh) {
         file_name = file;
 
@@ -97,17 +99,17 @@ G4VSolid* CADMesh::BuildSolid() {
     for(face_iterator=m.face.begin(); face_iterator!=m.face.end(); ++face_iterator)
     {
         point_1 = G4ThreeVector(
-                (*face_iterator).V(0)->P()[0] * mm,
-                (*face_iterator).V(0)->P()[1] * mm,
-                (*face_iterator).V(0)->P()[2] * mm);
+                (*face_iterator).V(0)->P()[0] * unit,
+                (*face_iterator).V(0)->P()[1] * unit,
+                (*face_iterator).V(0)->P()[2] * unit);
         point_2 = G4ThreeVector(
-                (*face_iterator).V(1)->P()[0] * mm,
-                (*face_iterator).V(1)->P()[1] * mm,
-                (*face_iterator).V(1)->P()[2] * mm);
+                (*face_iterator).V(1)->P()[0] * unit,
+                (*face_iterator).V(1)->P()[1] * unit,
+                (*face_iterator).V(1)->P()[2] * unit);
         point_3 = G4ThreeVector(
-                (*face_iterator).V(2)->P()[0] * mm,
-                (*face_iterator).V(2)->P()[1] * mm,
-                (*face_iterator).V(2)->P()[2] * mm);
+                (*face_iterator).V(2)->P()[0] * unit,
+                (*face_iterator).V(2)->P()[1] * unit,
+                (*face_iterator).V(2)->P()[2] * unit);
 
         G4TriangularFacet *facet = new G4TriangularFacet(point_1, point_2, point_3, ABSOLUTE);
         volume_solid->AddFacet((G4VFacet*) facet);

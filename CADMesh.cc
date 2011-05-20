@@ -33,15 +33,15 @@ CADMesh::CADMesh()
 {
     has_mesh = false;
     has_solid = false;
-
+    unit = mm; //default to millimeters
     verbose = 0;
 }
 CADMesh::~CADMesh()
 {
 }
 
-G4VSolid* CADMesh::LoadMesh(char * file, char * type, double unit) {
-    unit = unit;
+G4VSolid* CADMesh::LoadMesh(char * file, char * type, double units) {
+    unit = units;
     
     if (!has_mesh) {
         file_name = file;

@@ -22,7 +22,6 @@
 /vis/scene/add/trajectories
 /vis/scene/endOfEventAction accumulate
 
-/gps/pos/type Plane
 /gps/direction 0 0 1
 /gps/pos/centre 0. 0. 40. cm
 /gps/ang/type cos

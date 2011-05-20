@@ -1,12 +1,23 @@
-cadmesh/CADMesh.a: CADMesh.o plylib.o
-	cd cadmesh/; ar -rc CADMesh.a CADMesh.o vcglib/wrap/ply/plylib.o
+####################################################
+# GEANT4 VCGLIB/CAD INTERFACE
+#
+# File:      cadmesh.gmk
+#
+# Author:    Christopher M Poole,
+# Email:     mail@christopherpoole.net
+#
+# Date:      7th March, 2011
+####################################################
+
+cd $(CADMESH_INSTALL)/CADMesh.a: CADMesh.o plylib.o
+	cd $(CADMESH_INSTALL); ar -rc CADMesh.a src/CADMesh.o vcglib/wrap/ply/plylib.o
 
 CADMesh.o:
-	cd cadmesh/; g++ -g -O2 -Ivcglib -I$(G4INCLUDE) -I$(CLHEP_INCLUDE_DIR) -c CADMesh.cc
+	cd $(CADMESH_INSTALL)/src/; g++ -g -O2 -I../include/ -I../vcglib -I$(G4INCLUDE) -I$(CLHEP_INCLUDE_DIR) -c CADMesh.cc
 
 plylib.o:
-	cd cadmesh/vcglib/wrap/ply/; g++ -g -fPIC -O2 -c plylib.cpp
+	cd $(CADMESH_INSTALL)/vcglib/wrap/ply/; g++ -g -fPIC -O2 -c plylib.cpp
 
 clean_cadmesh:
-	rm cadmesh/CADMesh.a cadmesh/CADMesh.o cadmesh/vcglib/wrap/ply/plylib.o
+	rm $(CADMESH_INSTALL)/CADMesh.a $(CADMESH_INSTALL)/src/CADMesh.o $(CADMESH_INSTALL)/vcglib/wrap/ply/plylib.o
 

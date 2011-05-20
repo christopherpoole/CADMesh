@@ -1,0 +1,32 @@
+####################################################
+# GEANT4 VCGLIB/CAD INTERFACE - basic example
+#
+# File:      vis.mac
+#
+# Author:    Christopher M Poole,
+# Email:     mail@christopherpoole.net
+#
+# Date:      20th March, 2011
+####################################################
+
+/control/verbose 0
+/run/verbose 1
+/vis/verbose 0
+
+/vis/open OGLIX 300x300-500-500
+/vis/drawVolume
+/vis/scene/add/axes      0 0 0 300 mm
+
+/vis/viewer/set/viewpointThetaPhi 60 30
+
+/vis/scene/add/trajectories
+/vis/scene/endOfEventAction accumulate
+
+/gps/pos/type Plane
+/gps/direction 0 0 1
+/gps/pos/centre 0. 0. 40. cm
+/gps/ang/type cos
+/gps/ang/maxtheta 15. deg
+
+/run/beamOn 20
+

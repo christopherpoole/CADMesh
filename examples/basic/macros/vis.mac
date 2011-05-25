@@ -27,5 +27,8 @@
 /gps/ang/type cos
 /gps/ang/maxtheta 15. deg
 
-/run/beamOn 20
+/gps/particle gamma
+/gps/energy 100. keV
+
+/run/beamOn 100
 

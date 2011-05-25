@@ -14,10 +14,10 @@
 
 // GEANT4 //
 #include "globals.hh"
-#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 
 
-class PhysicsList: public G4VUserPhysicsList
+class PhysicsList: public G4VModularPhysicsList
 {
     public:
         PhysicsList();

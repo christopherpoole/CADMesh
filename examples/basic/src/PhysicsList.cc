@@ -13,31 +13,32 @@
 #include "PhysicsList.hh"
 
 // GEANT4 //
-#include "G4ParticleTypes.hh"
+#include "G4EmStandardPhysics.hh"
 
 
 PhysicsList::PhysicsList()
-{;}
+{
+    RegisterPhysics(new G4EmStandardPhysics());
+}
 
 PhysicsList::~PhysicsList()
 {;}
 
 void PhysicsList::ConstructParticle()
 {
-    G4Geantino::GeantinoDefinition();
+    G4VModularPhysicsList::ConstructParticle();
 }
 
 void PhysicsList::ConstructProcess()
 {
-    AddTransportation();
+    G4VModularPhysicsList::ConstructProcess();
 }
+
 
 void PhysicsList::SetCuts()
 {
- 
-  G4int temp = GetVerboseLevel();                                                
-  SetVerboseLevel(0);                                                           
-  SetCutsWithDefault();   
-  SetVerboseLevel(temp);  
+    SetCutValue(defaultCutValue, "gamma");
+    SetCutValue(defaultCutValue, "e-");
+    SetCutValue(defaultCutValue, "e+");
 }
 

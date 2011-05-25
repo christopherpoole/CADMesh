@@ -40,9 +40,10 @@ CADMesh::~CADMesh()
 {
 }
 
-G4VSolid* CADMesh::LoadMesh(char * file, char * type, double units, G4ThreeVector offset) {
+G4VSolid* CADMesh::LoadMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse) {
     unit = units;
     coord_offset = offset;
+    vert_reverse = reverse;
     
     if (!has_mesh) {
         file_name = file;
@@ -111,8 +112,13 @@ G4VSolid* CADMesh::BuildSolid() {
                 (*face_iterator).V(2)->P()[0] * unit + coord_offset.x(),
                 (*face_iterator).V(2)->P()[1] * unit + coord_offset.y(),
                 (*face_iterator).V(2)->P()[2] * unit + coord_offset.z());
-
-        G4TriangularFacet *facet = new G4TriangularFacet(point_1, point_2, point_3, ABSOLUTE);
+                
+        G4TriangularFacet * facet;
+        if (vert_reverse == false) {
+            facet = new G4TriangularFacet(point_1, point_2, point_3, ABSOLUTE);
+        } else {
+            facet = new G4TriangularFacet(point_2, point_1, point_3, ABSOLUTE);
+        }
         volume_solid->AddFacet((G4VFacet*) facet);
     }
 

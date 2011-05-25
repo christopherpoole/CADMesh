@@ -42,7 +42,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                        "world_physical", 0, false, 0);
 
     offset = G4ThreeVector(10*cm, 0, 0);
-    cad_solid = mesh.LoadMesh("../../models/cone.ply", "PLY", mm, offset);
+    cad_solid = mesh.LoadMesh("../../models/cone.ply", "PLY", mm, offset, false);
     cad_logical = new G4LogicalVolume(cad_solid, water, "cad_logical", 0, 0, 0);
     cad_physical = new G4PVPlacement(0, G4ThreeVector(), cad_logical,
                                      "cad_physical", world_logical, false, 0);

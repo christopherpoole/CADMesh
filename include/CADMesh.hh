@@ -44,7 +44,7 @@ public:
     ~CADMesh();
 
 public:
-    G4VSolid* LoadMesh(char * fn, char * type, double units, G4ThreeVector offset);
+    G4VSolid* LoadMesh(char * fn, char * type, double units, G4ThreeVector offset, G4bool reverse);
     G4TessellatedSolid* GetSolid() { return volume_solid; };
 
     G4String MeshName(){ return name; };
@@ -68,7 +68,8 @@ private:
     G4String name;
     G4double unit;
     G4ThreeVector coord_offset;
-
+    G4bool vert_reverse;
+    
     char * file_name;
 };
 

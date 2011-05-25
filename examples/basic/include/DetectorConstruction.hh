@@ -37,6 +37,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* world_logical;
     G4VPhysicalVolume* world_physical;
     
+    G4ThreeVector offset;
     CADMesh mesh;
     G4VSolid * cad_solid;
     G4LogicalVolume * cad_logical;

@@ -9,15 +9,17 @@
 # Date:      7th March, 2011
 ####################################################
 
-cd $(CADMESH_INSTALL)/CADMesh.a: CADMesh.o plylib.o
+G4INCLUDE_EXEC := $(shell [ -r $(G4INCLUDE)/globals.hh ] && echo 1)
+
+$(CADMESH_INSTALL)/CADMesh.a: $(CADMESH_INSTALL)/src/CADMesh.o $(CADMESH_INSTALL)/vcglib/wrap/ply/plylib.o
 	cd $(CADMESH_INSTALL); ar -rc CADMesh.a src/CADMesh.o vcglib/wrap/ply/plylib.o
 
-CADMesh.o:
-	cd $(CADMESH_INSTALL)/src/; g++ -g -O2 -I../include/ -I../vcglib -I$(G4INCLUDE) -I$(CLHEP_INCLUDE_DIR) -c CADMesh.cc
+$(CADMESH_INSTALL)/src/CADMesh.o: $(CADMESH_INSTALL)/src/CADMesh.cc
+	cd $(CADMESH_INSTALL)/src/; g++ -g -O2 -I../include/ -I../vcglib $(INCFLAGS) -I$(CLHEP_INCLUDE_DIR) -c CADMesh.cc
 
-plylib.o:
+$(CADMESH_INSTALL)/vcglib/wrap/ply/plylib.o: $(CADMESH_INSTALL)/vcglib/wrap/ply/plylib.cpp
 	cd $(CADMESH_INSTALL)/vcglib/wrap/ply/; g++ -g -fPIC -O2 -c plylib.cpp
 
 clean_cadmesh:
 	rm $(CADMESH_INSTALL)/CADMesh.a $(CADMESH_INSTALL)/src/CADMesh.o $(CADMESH_INSTALL)/vcglib/wrap/ply/plylib.o
-
+	

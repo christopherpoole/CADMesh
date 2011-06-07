@@ -16,6 +16,7 @@
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4TessellatedSolid.hh"
+#include "G4AssemblyVolume.hh"
 
 // VCGLIB //
 #include "vcg/simplex/vertex/base.h"
@@ -25,6 +26,8 @@
 
 #include "vcg/complex/complex.h"
 
+// TETGEN //
+#include "tetgen.h"
 
 class CADVertex;
 class CADFace;
@@ -45,7 +48,9 @@ public:
     ~CADMesh();
 
 public:
-    G4VSolid* LoadMesh();
+    G4VSolid* TessellatedMesh();
+    G4AssemblyVolume * TetrahedralMesh();
+
     G4TessellatedSolid* GetSolid() { return volume_solid; };
 
     G4String MeshName(){ return _file_name; };

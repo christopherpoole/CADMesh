@@ -63,7 +63,7 @@ CADMesh::~CADMesh()
 {
 }
 
-G4VSolid* CADMesh::LoadMesh() {
+G4VSolid* CADMesh::TessellatedMesh() {
 
     if (!has_mesh) {
         if (_file_type == "STL") {
@@ -136,3 +136,7 @@ G4VSolid* CADMesh::LoadMesh() {
     return volume_solid;
 }
 
+G4AssemblyVolume * CADMesh::TetrahedralMesh()
+{
+
+}

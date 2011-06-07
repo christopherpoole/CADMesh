@@ -40,22 +40,19 @@ class CADMesh
 {
 // METHODS //
 public:
-    CADMesh();
+    CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
     ~CADMesh();
 
 public:
-    G4VSolid* LoadMesh(char * fn, char * type, double units, G4ThreeVector offset, G4bool reverse);
+    G4VSolid* LoadMesh();
     G4TessellatedSolid* GetSolid() { return volume_solid; };
 
-    G4String MeshName(){ return name; };
+    G4String MeshName(){ return _file_name; };
 
     int MeshVertexNumber(){ return m.VertexNumber(); };
     float MeshVolume(){ return m.Volume(); };
 
     void SetVerbose(int v){ verbose = v; };
-
-private:
-    G4VSolid* BuildSolid();
 
 // VARS //
 private:
@@ -65,12 +62,14 @@ private:
     G4int verbose;
     G4bool has_mesh;
     G4bool has_solid;
-    G4String name;
-    G4double unit;
-    G4ThreeVector coord_offset;
-    G4bool vert_reverse;
+
+    G4String _name;
+    G4double _units;
+    G4ThreeVector _offset;
+    G4bool _reverse;
     
-    char * file_name;
+    char * _file_name;
+    G4String _file_type;
 };
 
 #endif // CADMesh_HH

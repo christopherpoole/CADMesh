@@ -29,38 +29,38 @@
 
 using namespace vcg::tri::io;
 
-CADMesh::CADMesh()
+CADMesh::CADMesh(char * file_name, char * file_type, double units, G4ThreeVector offset, G4bool reverse)
 {
+    _units = units;
+    _offset = offset;
+    _reverse = reverse;
+
+    _file_name = file_name;
+    _file_type = file_type;
+    _file_type.toUpper();
+
     has_mesh = false;
     has_solid = false;
-    unit = mm; //default to millimeters
     verbose = 0;
 }
+
 CADMesh::~CADMesh()
 {
 }
 
-G4VSolid* CADMesh::LoadMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse) {
-    unit = units;
-    coord_offset = offset;
-    vert_reverse = reverse;
-    
+G4VSolid* CADMesh::LoadMesh() {
+
     if (!has_mesh) {
-        file_name = file;
-
-        G4String file_type = type;
-        file_type.toUpper();
-
-        if (file_type == "STL") {
-            ImporterSTL<CADTriMesh>::Open(m, file_name);
-        } else if (file_type == "PLY") {
-            ImporterPLY<CADTriMesh>::Open(m, file_name);
-        } else if (file_type == "OFF") {
-            ImporterOFF<CADTriMesh>::Open(m, file_name);
+        if (_file_type == "STL") {
+            ImporterSTL<CADTriMesh>::Open(m, _file_name);
+        } else if (_file_type == "PLY") {
+            ImporterPLY<CADTriMesh>::Open(m, _file_name);
+        } else if (_file_type == "OFF") {
+            ImporterOFF<CADTriMesh>::Open(m, _file_name);
         } else {
             G4cerr << "CADMesh/LoadSTL: "
                    << "No G4TessellatedSoild to return. Specify valid mesh type (STL, PLY, OFF), not: "
-                   << file_type
+                   << _file_type
                    << G4endl;
             has_mesh = false;
 
@@ -71,18 +71,12 @@ G4VSolid* CADMesh::LoadMesh(char * file, char * type, double units, G4ThreeVecto
     } else {
         G4cerr << "CADMesh/LoadSTL: "
                << "Mesh already loaded from "
-               << file_name
+               << _file_name
                << ", not loading. Use CADMesh/GetSolid to get the currently loaded mesh as a G4TessellatedSolid"
                << G4endl;
         return 0;
     }
 
-    name = file_name;
-    return BuildSolid();
-}
-
-
-G4VSolid* CADMesh::BuildSolid() {
     if (!has_mesh) {
         G4cerr << "CADMesh/BuildSolid: "
                << "Load a mesh of type STL, PLY or OFF first."
@@ -90,7 +84,7 @@ G4VSolid* CADMesh::BuildSolid() {
         return 0;
     }
 
-    volume_solid = new G4TessellatedSolid(name);
+    volume_solid = new G4TessellatedSolid(_file_name);
 
     G4ThreeVector point_1 = G4ThreeVector();
     G4ThreeVector point_2 = G4ThreeVector();
@@ -101,20 +95,20 @@ G4VSolid* CADMesh::BuildSolid() {
     for(face_iterator=m.face.begin(); face_iterator!=m.face.end(); ++face_iterator)
     {
         point_1 = G4ThreeVector(
-                (*face_iterator).V(0)->P()[0] * unit + coord_offset.x(),
-                (*face_iterator).V(0)->P()[1] * unit + coord_offset.y(),
-                (*face_iterator).V(0)->P()[2] * unit + coord_offset.z());
+                (*face_iterator).V(0)->P()[0] * _units + _offset.x(),
+                (*face_iterator).V(0)->P()[1] * _units + _offset.y(),
+                (*face_iterator).V(0)->P()[2] * _units + _offset.z());
         point_2 = G4ThreeVector(
-                (*face_iterator).V(1)->P()[0] * unit + coord_offset.x(),
-                (*face_iterator).V(1)->P()[1] * unit + coord_offset.y(),
-                (*face_iterator).V(1)->P()[2] * unit + coord_offset.z());
+                (*face_iterator).V(1)->P()[0] * _units + _offset.x(),
+                (*face_iterator).V(1)->P()[1] * _units + _offset.y(),
+                (*face_iterator).V(1)->P()[2] * _units + _offset.z());
         point_3 = G4ThreeVector(
-                (*face_iterator).V(2)->P()[0] * unit + coord_offset.x(),
-                (*face_iterator).V(2)->P()[1] * unit + coord_offset.y(),
-                (*face_iterator).V(2)->P()[2] * unit + coord_offset.z());
+                (*face_iterator).V(2)->P()[0] * _units + _offset.x(),
+                (*face_iterator).V(2)->P()[1] * _units + _offset.y(),
+                (*face_iterator).V(2)->P()[2] * _units + _offset.z());
                 
         G4TriangularFacet * facet;
-        if (vert_reverse == false) {
+        if (_reverse == false) {
             facet = new G4TriangularFacet(point_1, point_2, point_3, ABSOLUTE);
         } else {
             facet = new G4TriangularFacet(point_2, point_1, point_3, ABSOLUTE);

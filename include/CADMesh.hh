@@ -45,6 +45,7 @@ class CADMesh
 public:
     CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type);
+    CADMesh(char * file, char * type, G4Material * material);
     ~CADMesh();
 
 public:
@@ -60,10 +61,16 @@ public:
 
     void SetVerbose(int v){ verbose = v; };
 
+private:
+    G4ThreeVector GetTetPoint(G4int offset);
+
 // VARS //
 private:
     CADTriMesh m;
+    tetgenio in, out;
+
     G4TessellatedSolid * volume_solid;
+    G4AssemblyVolume * assembly;
 
     G4int verbose;
     G4bool has_mesh;
@@ -74,6 +81,8 @@ private:
     G4ThreeVector _offset;
     G4bool _reverse;
     
+    G4Material * _material;
+
     char * _file_name;
     G4String _file_type;
 };

@@ -41,6 +41,7 @@ class CADMesh
 // METHODS //
 public:
     CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
+    CADMesh(char * file, char * type);
     ~CADMesh();
 
 public:

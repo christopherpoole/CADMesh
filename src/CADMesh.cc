@@ -44,6 +44,21 @@ CADMesh::CADMesh(char * file_name, char * file_type, double units, G4ThreeVector
     verbose = 0;
 }
 
+CADMesh::CADMesh(char * file_name, char * file_type)
+{
+    _units = mm;
+    _offset = G4ThreeVector();
+    _reverse = false;
+
+    _file_name = file_name;
+    _file_type = file_type;
+    _file_type.toUpper();
+
+    has_mesh = false;
+    has_solid = false;
+    verbose = 0;
+}
+
 CADMesh::~CADMesh()
 {
 }

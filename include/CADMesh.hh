@@ -52,7 +52,8 @@ public:
     G4VSolid* TessellatedMesh();
     G4AssemblyVolume * TetrahedralMesh();
 
-    G4TessellatedSolid* GetSolid() { return volume_solid; };
+    G4TessellatedSolid * GetSolid() { return volume_solid; };
+    G4AssemblyVolume * GetAssembly() { return assembly; };
 
     G4String MeshName(){ return _file_name; };
 

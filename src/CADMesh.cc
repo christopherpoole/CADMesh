@@ -163,13 +163,17 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
 {
     // USAGE: assembly->MakeImprint(world_logical, assembly_transform_3d, 0); //
 
+    G4bool do_tet = true;
     if (_file_type == "STL") {
         G4bool state = in.load_stl(_file_name);
     } else if (_file_type == "PLY") {
         G4bool state = in.load_ply(_file_name);
+    } else if (_file_type == "OFF") {
+        G4bool state = in.load_tetmesh(_file_name);
+        do_tet = false;
     }
 
-    tetrahedralize("Y", &in, &out);
+    if (do_tet) tetrahedralize("Yp", &in, &out);
 
     assembly = new G4AssemblyVolume();
     G4RotationMatrix * element_rotation = new G4RotationMatrix();

@@ -86,8 +86,8 @@ CADMesh::~CADMesh()
 {
 }
 
-G4VSolid* CADMesh::TessellatedMesh() {
-
+G4VSolid* CADMesh::TessellatedMesh()
+{
     if (!has_mesh) {
         if (_file_type == "STL") {
             ImporterSTL<CADTriMesh>::Open(m, _file_name);
@@ -133,17 +133,17 @@ G4VSolid* CADMesh::TessellatedMesh() {
     for(face_iterator=m.face.begin(); face_iterator!=m.face.end(); ++face_iterator)
     {
         point_1 = G4ThreeVector(
-                (*face_iterator).V(0)->P()[0] * _units + _offset.x(),
-                (*face_iterator).V(0)->P()[1] * _units + _offset.y(),
-                (*face_iterator).V(0)->P()[2] * _units + _offset.z());
+                (*face_iterator).V(0)->P()[0] * _units - _offset.x(),
+                (*face_iterator).V(0)->P()[1] * _units - _offset.y(),
+                (*face_iterator).V(0)->P()[2] * _units - _offset.z());
         point_2 = G4ThreeVector(
-                (*face_iterator).V(1)->P()[0] * _units + _offset.x(),
-                (*face_iterator).V(1)->P()[1] * _units + _offset.y(),
-                (*face_iterator).V(1)->P()[2] * _units + _offset.z());
+                (*face_iterator).V(1)->P()[0] * _units - _offset.x(),
+                (*face_iterator).V(1)->P()[1] * _units - _offset.y(),
+                (*face_iterator).V(1)->P()[2] * _units - _offset.z());
         point_3 = G4ThreeVector(
-                (*face_iterator).V(2)->P()[0] * _units + _offset.x(),
-                (*face_iterator).V(2)->P()[1] * _units + _offset.y(),
-                (*face_iterator).V(2)->P()[2] * _units + _offset.z());
+                (*face_iterator).V(2)->P()[0] * _units - _offset.x(),
+                (*face_iterator).V(2)->P()[1] * _units - _offset.y(),
+                (*face_iterator).V(2)->P()[2] * _units - _offset.z());
                 
         G4TriangularFacet * facet;
         if (_reverse == false) {

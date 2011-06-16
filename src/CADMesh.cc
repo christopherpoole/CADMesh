@@ -173,7 +173,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
         do_tet = false;
     }
 
-    if (do_tet) tetrahedralize("Yp", &in, &out);
+    if (do_tet) tetrahedralize((char *)"Yp", &in, &out);
 
     assembly = new G4AssemblyVolume();
     G4RotationMatrix * element_rotation = new G4RotationMatrix();

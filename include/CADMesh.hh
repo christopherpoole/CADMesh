@@ -55,12 +55,12 @@ public:
     G4TessellatedSolid * GetSolid() { return volume_solid; };
     G4AssemblyVolume * GetAssembly() { return assembly; };
 
-    G4String MeshName(){ return _file_name; };
+    G4String MeshName(){ return file_name_; };
 
     int MeshVertexNumber(){ return m.VertexNumber(); };
     float MeshVolume(){ return m.Volume(); };
 
-    void SetVerbose(int v){ verbose = v; };
+    void SetVerbose(int v){ verbose_ = v; };
 
 private:
     G4ThreeVector GetTetPoint(G4int offset);
@@ -73,19 +73,19 @@ private:
     G4TessellatedSolid * volume_solid;
     G4AssemblyVolume * assembly;
 
-    G4int verbose;
-    G4bool has_mesh;
-    G4bool has_solid;
+    G4int verbose_;
+    G4bool has_mesh_;
+    G4bool has_solid_;
 
-    G4String _name;
-    G4double _units;
-    G4ThreeVector _offset;
-    G4bool _reverse;
+    G4String name_;
+    G4double units_;
+    G4ThreeVector offset_;
+    G4bool reverse_;
     
-    G4Material * _material;
+    G4Material * material_;
 
-    char * _file_name;
-    G4String _file_type;
+    char * file_name_;
+    G4String file_type_;
 };
 
 #endif // CADMesh_HH

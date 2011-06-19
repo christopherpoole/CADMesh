@@ -49,6 +49,12 @@ public:
     CADMesh(char * file, char * type, G4Material * material);
     ~CADMesh();
 
+// INLINE //
+public:
+    inline int get_input_point_count() { in.numberofpoints; };
+    inline int get_output_point_count() { out.numberofpoints; };
+    inline int get_tetrahedron_count() { out.numberoftetrahedra; };
+
 public:
     G4VSolid* TessellatedMesh();
     G4AssemblyVolume * TetrahedralMesh();

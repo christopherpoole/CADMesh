@@ -198,8 +198,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     if (do_tet)
     {
         G4String config = G4String("Yp");
-        if (quality_ > 0) config = config + G4UIcommand::ConvertToString(quality_);
-
+        if (quality_ > 0) config = config + G4String("q") + G4UIcommand::ConvertToString(quality_);
         tetrahedralize((char *) config.c_str(), &in, &out);
     }
 

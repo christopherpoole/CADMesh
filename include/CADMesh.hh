@@ -51,9 +51,9 @@ public:
 
 // INLINE //
 public:
-    inline int get_input_point_count() { in.numberofpoints; };
-    inline int get_output_point_count() { out.numberofpoints; };
-    inline int get_tetrahedron_count() { out.numberoftetrahedra; };
+    inline int get_input_point_count() { return in.numberofpoints; };
+    inline int get_output_point_count() { return out.numberofpoints; };
+    inline int get_tetrahedron_count() { return out.numberoftetrahedra; };
 
 public:
     G4VSolid* TessellatedMesh();

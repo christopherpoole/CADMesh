@@ -14,6 +14,7 @@
 
 // GEANT4 //
 #include "G4String.hh"
+#include "G4UIcommand.hh"
 #include "G4ThreeVector.hh"
 #include "G4LogicalVolume.hh"
 #include "G4TessellatedSolid.hh"
@@ -42,6 +43,25 @@ CADMesh::CADMesh(char * file_name, char * file_type, double units, G4ThreeVector
     file_type_.toUpper();
 
     material_ = NULL;
+    quality_ = 0;
+
+    has_mesh_ = false;
+    has_solid_ = false;
+    verbose_ = 0;
+}
+
+CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material, double quality)
+{
+    units_ = mm;
+    offset_ = G4ThreeVector();
+    reverse_ = false;
+
+    file_name_ = file_name;
+    file_type_ = file_type;
+    file_type_.toUpper();
+
+    material_ = material;
+    quality_ = quality;
 
     has_mesh_ = false;
     has_solid_ = false;
@@ -59,6 +79,7 @@ CADMesh::CADMesh(char * file_name, char * file_type)
     file_type_.toUpper();
 
     material_ = NULL;
+    quality_ = 0;
 
     has_mesh_ = false;
     has_solid_ = false;
@@ -76,6 +97,7 @@ CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
     file_type_.toUpper();
 
     material_ = material;
+    quality_ = 0;
 
     has_mesh_ = false;
     has_solid_ = false;
@@ -173,7 +195,13 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
         do_tet = false;
     }
 
-    if (do_tet) tetrahedralize((char *)"Yp", &in, &out);
+    if (do_tet)
+    {
+        G4String config = G4String("Yp");
+        if (quality_ > 0) config = config + G4UIcommand::ConvertToString(quality_);
+
+        tetrahedralize((char *) config.c_str(), &in, &out);
+    }
 
     assembly = new G4AssemblyVolume();
     G4RotationMatrix * element_rotation = new G4RotationMatrix();
@@ -181,15 +209,15 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     G4Transform3D assembly_transform = G4Translate3D();
 
     for (int i=0; i<out.numberoftetrahedra; i++) {
-        int offset = i * 4; //out.numberofcorners;
+        int offset = i * 4; /* For a tetrahedron, out.numberofcorners == 4 */
 
         G4ThreeVector p1 = GetTetPoint(offset);
         G4ThreeVector p2 = GetTetPoint(offset + 1);
         G4ThreeVector p3 = GetTetPoint(offset + 2);
         G4ThreeVector p4 = GetTetPoint(offset + 3);
 
-        G4VSolid * tet_solid = new G4Tet("tet_solid_", p1, p2, p3, p4, 0);
-        G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material_, "tet_logical_", 0, 0, 0);
+        G4VSolid * tet_solid = new G4Tet(G4String("tet_solid_") + G4UIcommand::ConvertToString(i), p1, p2, p3, p4, 0);
+        G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material_, G4String("tet_logical_") + G4UIcommand::ConvertToString(i), 0, 0, 0);
         assembly->AddPlacedVolume(tet_logical, element_position, element_rotation);
     }
 

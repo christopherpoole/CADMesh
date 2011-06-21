@@ -21,10 +21,11 @@ src/CADMesh.o: src/CADMesh.cc
 	cd @vcglib_dir@/wrap/ply/; g++ -g -fPIC -c plylib.cpp
 
 install:
-	cp libcadmesh.so @prefix@/libcadmesh.so
+	cp libcadmesh.so @prefix@/lib/libcadmesh.so
+	cp include/CADMesh.hh @prefix@/include/CADMesh.hh
 
 remove:
-	rm @prefix@/libcadmesh.so
+	rm @prefix@/lib/libcadmesh.so @prefix@/include/CADMesh.hh
 
 clean:
 	rm libcadmesh.so src/CADMesh.o @vcglib_dir@/wrap/ply/plylib.o

@@ -13,10 +13,8 @@ name := cadmesh_example
 G4TARGET := $(name)
 G4EXLIB := true
 
-CADMESH_INSTALL = ../..
-CPPFLAGS += -I$(CADMESH_INSTALL)/include
-CPPFLAGS += -I$(CADMESH_INSTALL)/vcglib
-EXTRALIBS := -L$(CADMESH_INSTALL) -lcadmesh
+CPPFLAGS += -I/home/chris/Software/vcglib
+EXTRALIBS := -lcadmesh
 
 .PHONY: all
 all: lib bin

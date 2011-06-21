@@ -27,7 +27,9 @@
 #include "vcg/complex/complex.h"
 
 // TETGEN //
+#ifndef NODEF
 #include "tetgen.h"
+#endif
 
 class CADVertex;
 class CADFace;
@@ -49,21 +51,21 @@ public:
     CADMesh(char * file, char * type, G4Material * material);
     ~CADMesh();
 
-// INLINE //
+#ifndef NOTET
 public:
-    inline int get_input_point_count() { return in.numberofpoints; };
-    inline int get_output_point_count() { return out.numberofpoints; };
-    inline int get_tetrahedron_count() { return out.numberoftetrahedra; };
+    G4AssemblyVolume * TetrahedralMesh();
+    G4AssemblyVolume * GetAssembly() { return assembly; };
+
+    int get_input_point_count() { return in.numberofpoints; };
+    int get_output_point_count() { return out.numberofpoints; };
+    int get_tetrahedron_count() { return out.numberoftetrahedra; };
+#endif
 
 public:
     G4VSolid* TessellatedMesh();
-    G4AssemblyVolume * TetrahedralMesh();
-
     G4TessellatedSolid * GetSolid() { return volume_solid; };
-    G4AssemblyVolume * GetAssembly() { return assembly; };
 
     G4String MeshName(){ return file_name_; };
-
     int MeshVertexNumber(){ return m.VertexNumber(); };
     float MeshVolume(){ return m.Volume(); };
 
@@ -75,11 +77,13 @@ private:
 // VARS //
 private:
     CADTriMesh m;
+
+#ifndef NOTET
     tetgenio in, out;
+    G4AssemblyVolume * assembly;
+#endif
 
     G4TessellatedSolid * volume_solid;
-    G4AssemblyVolume * assembly;
-
     G4int verbose_;
     G4bool has_mesh_;
     G4bool has_solid_;

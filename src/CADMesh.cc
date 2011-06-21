@@ -181,6 +181,7 @@ G4VSolid* CADMesh::TessellatedMesh()
     return volume_solid;
 }
 
+#ifndef NOTET
 G4AssemblyVolume * CADMesh::TetrahedralMesh()
 {
     // USAGE: assembly->MakeImprint(world_logical, assembly_transform_3d, 0); //
@@ -229,3 +230,4 @@ G4ThreeVector CADMesh::GetTetPoint(G4int offset)
                          out.pointlist[out.tetrahedronlist[offset]*3+1],
                          out.pointlist[out.tetrahedronlist[offset]*3+2]);
 }
+#endif

@@ -9,16 +9,18 @@
 # Date:      7th April, 2011
 ####################################################
 
+$CC = g++
+
 G4INCLUDE_EXEC := $(shell [ -r $(G4INCLUDE)/globals.hh ] && echo 1)
 
-libcadmesh.so: src/CADMesh.o @vcglib_dir@/wrap/ply/plylib.o
-	g++ -shared -o libcadmesh.so src/CADMesh.o @vcglib_dir@/wrap/ply/plylib.o @tetgen_lib@ 
+libcadmesh.so: src/CADMesh.o @vcglib_dir@@plylib_object@
+	$(CC) -shared -o libcadmesh.so src/CADMesh.o @vcglib_dir@@plylib_object@ @tetgen_lib@
 
 src/CADMesh.o: src/CADMesh.cc
-	g++ -g -fPIC -Iinclude/ -I@vcglib_dir@ -I$(G4INCLUDE) -I$(CLHEP_INCLUDE_DIR) -c src/CADMesh.cc -o src/CADMesh.o @disable_tetgen@
+	$(CC) -g -fPIC -Iinclude/ @include_flag@@vcglib_dir@ -I$(G4INCLUDE) -I$(CLHEP_INCLUDE_DIR) -c src/CADMesh.cc -o src/CADMesh.o @disable_vcglib@ @disable_tetgen@
 
 @vcglib_dir@/wrap/ply/plylib.o: @vcglib_dir@/wrap/ply/plylib.cpp
-	cd @vcglib_dir@/wrap/ply/; g++ -g -fPIC -c plylib.cpp
+	$(CC) -g -fPIC -c @vcglib_dir@/wrap/ply/plylib.cpp -o @vcglib_dir@/wrap/ply/plylib.o
 
 install:
 	cp libcadmesh.so @prefix@/lib/libcadmesh.so

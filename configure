@@ -595,6 +595,7 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+debug
 disable_tetgen
 tetgen_lib
 disable_vcglib
@@ -654,6 +655,7 @@ ac_user_opts='
 enable_option_checking
 enable_vcglib
 enable_tetgen
+enable_debug
 with_vcglib
 with_tetgen
 '
@@ -1279,6 +1281,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-vcglib        disable compilation against VCGLIB
   --disable-tetgen        disable compilation against TETGEN
+  --enable-debug          enable debugging in cadmesh
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1968,7 +1971,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-# Options to disable VCGLIB or TETGEN
+# Options to disable VCGLIB or TETGEN or enable DEBUG
 # Check whether --enable-vcglib was given.
 if test "${enable_vcglib+set}" = set; then :
   enableval=$enable_vcglib;
@@ -1979,6 +1982,11 @@ if test "${enable_tetgen+set}" = set; then :
   enableval=$enable_tetgen;
 fi
 
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then :
+  enableval=$enable_debug;
+fi
+
 
 if test "$enable_vcglib" == no
 then
@@ -1987,6 +1995,8 @@ then
         as_fn_error "Both VCGLIB and TETGEN cannot be disabled!" "$LINENO" 5
     fi
 fi
+
+
 
 # Specify packages to include
 
@@ -3240,6 +3250,16 @@ else
     disable_tetgen=''
 
 fi
+
+if test "$enable_debug" == yes
+then
+    debug=-DDEBUG=1
+
+else
+    debug=''
+
+fi
+
 
 ac_config_files="$ac_config_files Makefile"
 

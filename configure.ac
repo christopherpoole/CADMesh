@@ -11,9 +11,10 @@
 
 AC_INIT([cadmesh], [1.0], [http://code.google.com/p/cadmesh/])
 
-# Options to disable VCGLIB or TETGEN 
+# Options to disable VCGLIB or TETGEN or enable DEBUG
 AC_ARG_ENABLE(vcglib, [  --disable-vcglib        disable compilation against VCGLIB])
 AC_ARG_ENABLE(tetgen, [  --disable-tetgen        disable compilation against TETGEN])
+AC_ARG_ENABLE(debug,  [  --enable-debug          enable debugging in cadmesh])
 
 if test "$enable_vcglib" == no
 then
@@ -22,6 +23,8 @@ then
         AC_MSG_ERROR([Both VCGLIB and TETGEN cannot be disabled!])
     fi
 fi
+
+
 
 # Specify packages to include
 AC_ARG_WITH(vcglib, [  --with-vcglib=dir         specify VCGLIB source directory])
@@ -80,6 +83,14 @@ else
     AC_SUBST(tetgen_lib, -ltet)
     AC_SUBST(disable_tetgen, '')
 fi
+
+if test "$enable_debug" == yes
+then
+    AC_SUBST(debug, -DDEBUG=1)
+else
+    AC_SUBST(debug, '')
+fi
+
 
 AC_OUTPUT(Makefile)
 

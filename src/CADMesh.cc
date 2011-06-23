@@ -219,7 +219,15 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
         G4VSolid * tet_solid = new G4Tet(G4String("tet_solid_") + G4UIcommand::ConvertToString(i), p1, p2, p3, p4, 0);
         G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material_, G4String("tet_logical_") + G4UIcommand::ConvertToString(i), 0, 0, 0);
         assembly->AddPlacedVolume(tet_logical, element_position, element_rotation);
+
+#ifdef DEBUG
+        if (i%1000 == 0) G4cout << "Tetrahedrons added: " << i << G4endl;
+#endif
     }
+
+#ifdef DEBUG
+        G4cout << "Loading of " << out.numberoftetrahedra << "tetrahedrons complete." << G4endl;
+#endif
 
     return assembly;
 }

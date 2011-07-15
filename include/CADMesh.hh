@@ -33,6 +33,7 @@
 #include "tetgen.h"
 #endif
 
+#ifndef NOVCGLIB
 class CADVertex;
 class CADFace;
 
@@ -41,7 +42,7 @@ class CADUsedTypes: public vcg::UsedTypes< vcg::Use<CADVertex>::AsVertexType, vc
 class CADVertex : public vcg::Vertex<CADUsedTypes, vcg::vertex::Coord3d, vcg::vertex::Normal3f> {};
 class CADFace : public vcg::Face<CADUsedTypes, vcg::face::VertexRef> {};
 class CADTriMesh : public vcg::tri::TriMesh< std::vector<CADVertex>, std::vector<CADFace> > {};
-
+#endif
 
 class CADMesh
 {

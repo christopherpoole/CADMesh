@@ -31,7 +31,9 @@
 #include "wrap/ply/plylib.h"
 #endif
 
+#ifndef NOVCGLIB
 using namespace vcg::tri::io;
+#endif
 
 CADMesh::CADMesh(char * file_name, char * file_type, double units, G4ThreeVector offset, G4bool reverse)
 {

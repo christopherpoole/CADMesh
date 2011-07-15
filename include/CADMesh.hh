@@ -18,6 +18,7 @@
 #include "G4TessellatedSolid.hh"
 #include "G4AssemblyVolume.hh"
 
+#ifndef NOVCGLIB
 // VCGLIB //
 #include "vcg/simplex/vertex/base.h"
 #include "vcg/simplex/vertex/component.h"
@@ -25,6 +26,7 @@
 #include "vcg/simplex/face/component.h"
 
 #include "vcg/complex/complex.h"
+#endif
 
 // TETGEN //
 #ifndef NODEF
@@ -61,6 +63,7 @@ public:
     int get_tetrahedron_count() { return out.numberoftetrahedra; };
 #endif
 
+#ifndef NOVCGLIB
 public:
     G4VSolid* TessellatedMesh();
     G4TessellatedSolid * GetSolid() { return volume_solid; };
@@ -70,13 +73,17 @@ public:
     float MeshVolume(){ return m.Volume(); };
 
     void SetVerbose(int v){ verbose_ = v; };
+#endif
 
 private:
     G4ThreeVector GetTetPoint(G4int offset);
 
+
 // VARS //
 private:
+#ifndef NOVCGLIB
     CADTriMesh m;
+#endif
 
 #ifndef NOTET
     tetgenio in, out;

@@ -21,6 +21,7 @@
 #include "G4TriangularFacet.hh"
 #include "G4Tet.hh"
 
+#ifndef NOVCGLIB
 // VCGLIB //
 #include "wrap/io_trimesh/import.h"
 #include "wrap/io_trimesh/import_ply.h"
@@ -28,7 +29,7 @@
 #include "wrap/io_trimesh/import_off.h"
 
 #include "wrap/ply/plylib.h"
-
+#endif
 
 using namespace vcg::tri::io;
 
@@ -108,6 +109,7 @@ CADMesh::~CADMesh()
 {
 }
 
+#ifndef NOVCGLIB
 G4VSolid* CADMesh::TessellatedMesh()
 {
     if (!has_mesh_) {
@@ -180,6 +182,7 @@ G4VSolid* CADMesh::TessellatedMesh()
 
     return volume_solid;
 }
+#endif
 
 #ifndef NOTET
 G4AssemblyVolume * CADMesh::TetrahedralMesh()

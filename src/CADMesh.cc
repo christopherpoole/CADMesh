@@ -20,6 +20,7 @@
 #include "G4TessellatedSolid.hh"
 #include "G4TriangularFacet.hh"
 #include "G4Tet.hh"
+#include "G4ThreeVector.hh"
 
 #ifndef NOVCGLIB
 // VCGLIB //
@@ -101,6 +102,24 @@ CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
 
     material_ = material;
     quality_ = 0;
+
+    has_mesh_ = false;
+    has_solid_ = false;
+    verbose_ = 0;
+}
+
+CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material, double quality, G4ThreeVector offset)
+{
+    units_ = mm;
+    offset_ = offset;
+    reverse_ = false;
+
+    file_name_ = file_name;
+    file_type_ = file_type;
+    file_type_.toUpper();
+
+    material_ = material;
+    quality_ = quality;
 
     has_mesh_ = false;
     has_solid_ = false;
@@ -197,7 +216,8 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     } else if (file_type_ == "PLY") {
         G4bool state = in.load_ply(file_name_);
     } else if (file_type_ == "TET") {
-        G4bool state = in.load_tetmesh(file_name_);
+        G4bool state = out.load_tetmesh(file_name_);
+        do_tet = false;
     } else if (file_type_ == "OFF") {
         G4bool state = out.load_off(file_name_);
         do_tet = false;
@@ -207,8 +227,15 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     {
         G4String config = G4String("Yp");
         if (quality_ > 0) config = config + G4String("q") + G4UIcommand::ConvertToString(quality_);
+#ifdef DEBUG
+        G4cout << "Tetrahedralisation configuration: " << config << G4endl;
+#endif
         tetrahedralize((char *) config.c_str(), &in, &out);
     }
+
+#ifdef DEBUG
+    G4cout << "Tetrahedra available: " << out.numberoftetrahedra << G4endl;
+#endif
 
     assembly = new G4AssemblyVolume();
     G4RotationMatrix * element_rotation = new G4RotationMatrix();
@@ -216,15 +243,17 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     G4Transform3D assembly_transform = G4Translate3D();
 
     for (int i=0; i<out.numberoftetrahedra; i++) {
-        int offset = i * 4; /* For a tetrahedron, out.numberofcorners == 4 */
+        int index_offset = i * 4; /* For a tetrahedron, out.numberofcorners == 4 */
 
-        G4ThreeVector p1 = GetTetPoint(offset);
-        G4ThreeVector p2 = GetTetPoint(offset + 1);
-        G4ThreeVector p3 = GetTetPoint(offset + 2);
-        G4ThreeVector p4 = GetTetPoint(offset + 3);
+        G4ThreeVector p1 = GetTetPoint(index_offset);
+        G4ThreeVector p2 = GetTetPoint(index_offset + 1);
+        G4ThreeVector p3 = GetTetPoint(index_offset + 2);
+        G4ThreeVector p4 = GetTetPoint(index_offset + 3);
 
-        G4VSolid * tet_solid = new G4Tet(G4String("tet_solid_") + G4UIcommand::ConvertToString(i), p1, p2, p3, p4, 0);
-        G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material_, G4String("tet_logical_") + G4UIcommand::ConvertToString(i), 0, 0, 0);
+        G4String tet_name = file_name_ + G4String("_tet_") + G4UIcommand::ConvertToString(i);
+
+        G4VSolid * tet_solid = new G4Tet(tet_name + G4String("_solid"), p1, p2, p3, p4, 0);
+        G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material_, tet_name + G4String("_logical"), 0, 0, 0);
         assembly->AddPlacedVolume(tet_logical, element_position, element_rotation);
 
 #ifdef DEBUG
@@ -233,16 +262,16 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     }
 
 #ifdef DEBUG
-        G4cout << "Loading of " << out.numberoftetrahedra << "tetrahedrons complete." << G4endl;
+        G4cout << "Loading of " << out.numberoftetrahedra << "tetrahedra complete." << G4endl;
 #endif
 
     return assembly;
 }
 
-G4ThreeVector CADMesh::GetTetPoint(G4int offset)
+G4ThreeVector CADMesh::GetTetPoint(G4int index_offset)
 {
-    return G4ThreeVector(out.pointlist[out.tetrahedronlist[offset]*3],
-                         out.pointlist[out.tetrahedronlist[offset]*3+1],
-                         out.pointlist[out.tetrahedronlist[offset]*3+2]);
+    return G4ThreeVector(out.pointlist[out.tetrahedronlist[index_offset]*3] - offset_.x(),
+                         out.pointlist[out.tetrahedronlist[index_offset]*3+1] - offset_.y(),
+                         out.pointlist[out.tetrahedronlist[index_offset]*3+2] - offset_.z());
 }
 #endif

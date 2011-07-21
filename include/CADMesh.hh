@@ -50,6 +50,7 @@ class CADMesh
 public:
     CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, G4Material * material, double quality);
+    CADMesh(char * file, char * type, G4Material * material, double quality, G4ThreeVector offset);
     CADMesh(char * file, char * type);
     CADMesh(char * file, char * type, G4Material * material);
     ~CADMesh();
@@ -77,7 +78,7 @@ public:
 #endif
 
 private:
-    G4ThreeVector GetTetPoint(G4int offset);
+    G4ThreeVector GetTetPoint(G4int index_offset);
 
 
 // VARS //

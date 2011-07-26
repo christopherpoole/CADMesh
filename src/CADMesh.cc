@@ -21,6 +21,7 @@
 #include "G4TriangularFacet.hh"
 #include "G4Tet.hh"
 #include "G4ThreeVector.hh"
+#include "G4Material.hh"
 
 #ifndef NOVCGLIB
 // VCGLIB //
@@ -262,7 +263,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     }
 
 #ifdef DEBUG
-        G4cout << "Loading of " << out.numberoftetrahedra << "tetrahedra complete." << G4endl;
+    G4cout << "Loading of " << out.numberoftetrahedra << " tetrahedra complete with material: " << material_->GetName() << G4endl;
 #endif
 
     return assembly;

@@ -45,7 +45,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                        "world_physical", 0, false, 0);
 
     offset = G4ThreeVector(10*cm, 0, 0);
-    CADMesh * mesh = new CADMesh("../../models/sphere_large.ply", "PLY", mm, offset, false);
+    CADMesh * mesh = new CADMesh("../../models/cone.ply", "PLY", mm, offset, false);
 
     cad_solid = mesh->TessellatedMesh();
     cad_logical = new G4LogicalVolume(cad_solid, water, "cad_logical", 0, 0, 0);

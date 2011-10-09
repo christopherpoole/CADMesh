@@ -29,7 +29,7 @@
 #endif
 
 // TETGEN //
-#ifndef NODEF
+#ifndef NOTET
 #include "tetgen.h"
 #endif
 

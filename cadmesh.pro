@@ -11,4 +11,4 @@ HEADERS += include/CADMesh.hh \
 INCLUDEPATH += /opt/cern/geant4.9.3.p01/include/geant4
 INCLUDEPATH += /opt/cern/geant4.9.4.p01/include/geant4
 
-INCLUDEPATH += vcglib
+INCLUDEPATH += /tmp/vcglib

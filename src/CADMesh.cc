@@ -142,7 +142,7 @@ G4VSolid* CADMesh::TessellatedMesh()
         } else if (file_type_ == "OFF") {
             ImporterOFF<CADTriMesh>::Open(m, file_name_);
         } else {
-            G4cerr << "CADMesh/LoadSTL: "
+            G4cerr << "CADMesh/TessellatedMesh: "
                    << "No G4TessellatedSoild to return. Specify valid mesh type (STL, PLY, OFF), not: "
                    << file_type_
                    << G4endl;
@@ -153,7 +153,7 @@ G4VSolid* CADMesh::TessellatedMesh()
         has_mesh_ = true;
 
     } else {
-        G4cerr << "CADMesh/LoadSTL: "
+        G4cerr << "CADMesh/TessellatedMesh: "
                << "Mesh already loaded from "
                << file_name_
                << ", not loading. Use CADMesh/GetSolid to get the currently loaded mesh as a G4TessellatedSolid"
@@ -162,7 +162,7 @@ G4VSolid* CADMesh::TessellatedMesh()
     }
 
     if (!has_mesh_) {
-        G4cerr << "CADMesh/BuildSolid: "
+        G4cerr << "CADMesh/TessellatedMesh: "
                << "Load a mesh of type STL, PLY or OFF first."
                << G4endl;
         return 0;
@@ -201,6 +201,13 @@ G4VSolid* CADMesh::TessellatedMesh()
     }
 
     volume_solid->SetSolidClosed(true);
+
+    if (volume_solid->GetNumberOfFacets() == 0) {
+    G4cerr << "CADMesh/TessellatedMesh: "
+               << "Load a mesh has 0 faces, " << file_name_ << " may not exist."
+               << G4endl;
+        return 0;
+    }
 
     return volume_solid;
 }

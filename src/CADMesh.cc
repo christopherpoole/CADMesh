@@ -179,17 +179,17 @@ G4VSolid* CADMesh::TessellatedMesh()
     for(face_iterator=m.face.begin(); face_iterator!=m.face.end(); ++face_iterator)
     {
         point_1 = G4ThreeVector(
-                (*face_iterator).V(0)->P()[0] * units_ - offset_.x(),
-                (*face_iterator).V(0)->P()[1] * units_ - offset_.y(),
-                (*face_iterator).V(0)->P()[2] * units_ - offset_.z());
+                (*face_iterator).V(0)->P()[0] * units_ + offset_.x(),
+                (*face_iterator).V(0)->P()[1] * units_ + offset_.y(),
+                (*face_iterator).V(0)->P()[2] * units_ + offset_.z());
         point_2 = G4ThreeVector(
-                (*face_iterator).V(1)->P()[0] * units_ - offset_.x(),
-                (*face_iterator).V(1)->P()[1] * units_ - offset_.y(),
-                (*face_iterator).V(1)->P()[2] * units_ - offset_.z());
+                (*face_iterator).V(1)->P()[0] * units_ + offset_.x(),
+                (*face_iterator).V(1)->P()[1] * units_ + offset_.y(),
+                (*face_iterator).V(1)->P()[2] * units_ + offset_.z());
         point_3 = G4ThreeVector(
-                (*face_iterator).V(2)->P()[0] * units_ - offset_.x(),
-                (*face_iterator).V(2)->P()[1] * units_ - offset_.y(),
-                (*face_iterator).V(2)->P()[2] * units_ - offset_.z());
+                (*face_iterator).V(2)->P()[0] * units_ + offset_.x(),
+                (*face_iterator).V(2)->P()[1] * units_ + offset_.y(),
+                (*face_iterator).V(2)->P()[2] * units_ + offset_.z());
                 
         G4TriangularFacet * facet;
         if (reverse_ == false) {

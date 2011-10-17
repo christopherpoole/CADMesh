@@ -11,13 +11,17 @@
 
 $CC = g++
 
-G4INCLUDE_EXEC := $(shell [ -r $(G4INCLUDE)/globals.hh ] && echo 1)
+.PHONY: all
+all: libcadmesh.so
+
+include $(G4INSTALL)/config/binmake.gmk
+
 
 libcadmesh.so: src/CADMesh.o @vcglib_dir@@plylib_object@
 	$(CC) -shared -o libcadmesh.so src/CADMesh.o @vcglib_dir@@plylib_object@ @tetgen_lib@
 
 src/CADMesh.o: src/CADMesh.cc
-	$(CC) -g -fPIC -Iinclude/ @include_flag@@vcglib_dir@ -I$(G4INCLUDE) -I$(CLHEP_INCLUDE_DIR) -c src/CADMesh.cc -o src/CADMesh.o @disable_vcglib@ @disable_tetgen@ @debug@
+	$(CC) -g -fPIC -Iinclude/ @include_flag@@vcglib_dir@ $(INCFLAGS) -I$(CLHEP_INCLUDE_DIR) -c src/CADMesh.cc -o src/CADMesh.o @disable_vcglib@ @disable_tetgen@ @debug@
 
 @vcglib_dir@/wrap/ply/plylib.o: @vcglib_dir@/wrap/ply/plylib.cpp
 	$(CC) -g -fPIC -c @vcglib_dir@/wrap/ply/plylib.cpp -o @vcglib_dir@/wrap/ply/plylib.o
@@ -29,6 +33,6 @@ install:
 remove:
 	rm @prefix@/lib/libcadmesh.so @prefix@/include/CADMesh.hh
 
-clean:
-	rm libcadmesh.so src/CADMesh.o @vcglib_dir@/wrap/ply/plylib.o
+#clean:
+#	rm libcadmesh.so src/CADMesh.o @vcglib_dir@/wrap/ply/plylib.o
 	

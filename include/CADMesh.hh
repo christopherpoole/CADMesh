@@ -34,6 +34,7 @@
 #endif
 
 #ifndef NOVCGLIB
+
 class CADVertex;
 class CADFace;
 

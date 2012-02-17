@@ -17,9 +17,10 @@
 // GEANT4 //
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
-#include "G4UIterminal.hh"
-#include "G4UItcsh.hh"
+//#include "G4UIterminal.hh"
+//#include "G4UItcsh.hh"
 #include "G4VisExecutive.hh"
+#include "G4UIExecutive.hh"
 
 int main(int argc,char** argv)
 {
@@ -36,31 +37,16 @@ int main(int argc,char** argv)
 
     run_manager->Initialize();
     
-    G4UImanager * ui_manager = G4UImanager::GetUIpointer();
-    G4VisManager* vis_manager = NULL;
-    
-    if (argc==1)
-    {
-        vis_manager = new G4VisExecutive;
-        vis_manager->Initialize();
-        
-        G4UIsession * session = 0;
-        session = new G4UIterminal(new G4UItcsh);
-        ui_manager->ApplyCommand("/control/execute macros/vis.mac");
-        session->SessionStart();
-        
-        delete session;
-    }
-    else
-    {
-        G4String command = "/control/execute ";
-        G4String macro_file = argv[1];
-        ui_manager->ApplyCommand(command + macro_file);
-    }
-    
-    delete vis_manager;
-    delete run_manager;
 
+    G4VisManager* vis_manager = new G4VisExecutive;
+    vis_manager->Initialize();
+
+    G4UImanager * ui_manager = G4UImanager::GetUIpointer();
+    G4UIExecutive* ui = new G4UIExecutive(argc, argv);
+    ui_manager->ApplyCommand("/control/execute macros/vis.mac"); 
+    ui->SessionStart();
+    delete ui; 
+    
     return 0;
 }
 

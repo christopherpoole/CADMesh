@@ -13,7 +13,8 @@
 /run/verbose 1
 /vis/verbose 0
 
-/vis/open OGLIX 300x300-500-500
+#/vis/open OGL 300x300-500-500
+/vis/open OGL 300x300-0+0
 /vis/drawVolume
 /vis/scene/add/axes      0 0 0 300 mm
 

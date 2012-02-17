@@ -23,9 +23,13 @@
 #include "G4ThreeVector.hh"
 #include "G4Material.hh"
 
+#include "GL/gl.h"
+#include "GL/glu.h"
+
 #ifndef NOVCGLIB
 // VCGLIB //
 #include "wrap/io_trimesh/import.h"
+#include "wrap/io_trimesh/import_dae.h"
 #include "wrap/io_trimesh/import_ply.h"
 #include "wrap/io_trimesh/import_stl.h"
 #include "wrap/io_trimesh/import_off.h"
@@ -140,10 +144,13 @@ G4VSolid* CADMesh::TessellatedMesh()
         } else if (file_type_ == "PLY") {
             ImporterPLY<CADTriMesh>::Open(m, file_name_);
         } else if (file_type_ == "OFF") {
-            ImporterOFF<CADTriMesh>::Open(m, file_name_);
+           ImporterOFF<CADTriMesh>::Open(m, file_name_);
+        } else if (file_type_ == "COLLADA") {
+            InfoDAE info = InfoDAE();
+            ImporterDAE<CADTriMesh>::Open(m, file_name_, info, 0);
         } else {
             G4cerr << "CADMesh/TessellatedMesh: "
-                   << "No G4TessellatedSoild to return. Specify valid mesh type (STL, PLY, OFF), not: "
+                   << "No G4TessellatedSoild to return. Specify valid mesh type (STL, PLY, OFF, COLLADA), not: "
                    << file_type_
                    << G4endl;
             has_mesh_ = false;

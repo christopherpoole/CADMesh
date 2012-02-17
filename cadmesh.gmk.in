@@ -1,0 +1,15 @@
+####################################################
+# GEANT4 VCGLIB/CAD INTERFACE
+#
+# File:      cadmesh.gmk
+#
+# Author:    Christopher M Poole,
+# Email:     mail@christopherpoole.net
+#
+# Date:      18th February, 2012
+####################################################
+
+CPPFLAGS += @vcglib_incflag@@vcglib_dir@ @qt_incflag@@qt_dir@ @qt_incflag@@qt_dir@@qt_subdir@ 
+CPPFLAGS += @disable_vcglib@ @disable_tetgen@ @disable_collada@ @debug@
+EXTRALIBS += -lcadmesh @qtxml_lib@
+	

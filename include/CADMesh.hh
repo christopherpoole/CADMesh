@@ -73,7 +73,7 @@ public:
 
     G4String MeshName(){ return file_name_; };
     int MeshVertexNumber(){ return m.VertexNumber(); };
-    float MeshVolume(){ return m.Volume(); };
+    //float MeshVolume(){ return m.Volume(); };
 
     void SetVerbose(int v){ verbose_ = v; };
 #endif

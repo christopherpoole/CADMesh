@@ -17,6 +17,7 @@
 #include "G4ThreeVector.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4AssemblyVolume.hh"
+#include "G4Material.hh"
 
 #ifndef NOVCGLIB
 // VCGLIB //

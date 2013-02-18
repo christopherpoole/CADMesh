@@ -11,7 +11,7 @@ set(${WITH_TETGEN} OFF)
 
 # CADMesh
 #include_directories(${VCGLIB_DIR})
-
+find_package(cadmesh)
 add_definitions(-DNOVCGLIB -DNOTET)
 
 # User code

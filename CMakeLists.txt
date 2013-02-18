@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(cadmesh)
 
+include(FindPkgConfig)
+
 # GEANT4
 option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
 if(WITH_GEANT4_UIVIS)
@@ -45,6 +47,7 @@ IF(${WITH_VCGLIB} MATCHES "ON")
     include_directories(${VCGLIB_DIR})
     set(VCGLIB_SRC ${VCGLIB_DIR}/wrap/ply/plylib.cpp)
     set(WITH_ASSIMP OFF)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOASSIMP")
     #    set(VCGLIB_TARGET plylib)
 ENDIF()
 IF(${WITH_VCGLIB} MATCHES "OFF")
@@ -68,6 +71,8 @@ IF(${WITH_ASSIMP} MATCHES "ON")
 ENDIF()
 
 
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cadmesh-config.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" @ONLY IMMEDIATE)
+#install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "${LIB_INSTALL_DIR}/cmake/cadmesh-${CADMESH_VERSION_MAJOR}.${CADMESH_VERSION_MINOR}" COMPONENT ${LIBASSIMP-DEV_COMPONENT})
 
 install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
 install(TARGETS cadmesh DESTINATION lib)

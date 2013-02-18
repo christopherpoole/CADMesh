@@ -48,7 +48,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     // Load CAD file as tessellated solid //
     offset = G4ThreeVector(-30*cm, 0, 0);
-    CADMesh * mesh = new CADMesh("../../models/cone.stl", "STL", mm, offset, false);
+    CADMesh * mesh = new CADMesh("../../models/cone.ply", "PLY", mm, offset, false);
 
     cad_solid = mesh->TessellatedMesh();
     cad_logical = new G4LogicalVolume(cad_solid, water, "cad_logical", 0, 0, 0);

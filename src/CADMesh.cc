@@ -140,7 +140,9 @@ G4VSolid* CADMesh::TessellatedMesh()
 {
     if (!has_mesh) {
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(file_name, 0);
+        const aiScene* scene = importer.ReadFile(file_name, aiProcess_Triangulate |
+                                                            aiProcess_JoinIdenticalVertices |
+                                                            aiProcess_CalcTangentSpace);
         m = scene->mMeshes[0];
 
         has_mesh = true;
@@ -166,20 +168,26 @@ G4VSolid* CADMesh::TessellatedMesh()
     G4ThreeVector point_2 = G4ThreeVector();
     G4ThreeVector point_3 = G4ThreeVector();
 
-    for(unsigned int face=0; face < m->mNumFaces; ++face)
+    for(unsigned int i=1; i < m->mNumFaces; i++)
     {
+        aiFace* face = &m->mFaces[i];
+        G4cout << face->mNumIndices << G4endl;
+        G4cout << " " << face->mIndices[0] << G4endl;
+        G4cout << " " << face->mIndices[1] << G4endl;
+        G4cout << " " << face->mIndices[2] << G4endl;
+
         point_1 = G4ThreeVector(
-                m->mVertices[m->mFaces[face].mIndices[0]][0],
-                m->mVertices[m->mFaces[face].mIndices[0]][1],
-                m->mVertices[m->mFaces[face].mIndices[0]][2]);
+                m->mVertices[face->mIndices[0]].x,
+                m->mVertices[face->mIndices[0]].y,
+                m->mVertices[face->mIndices[0]].z);
         point_2 = G4ThreeVector(
-                m->mVertices[m->mFaces[face].mIndices[1]][0],
-                m->mVertices[m->mFaces[face].mIndices[1]][1],
-                m->mVertices[m->mFaces[face].mIndices[1]][2]);
+                m->mVertices[face->mIndices[1]].x,
+                m->mVertices[face->mIndices[1]].y,
+                m->mVertices[face->mIndices[1]].z);
         point_3 = G4ThreeVector(
-                m->mVertices[m->mFaces[face].mIndices[2]][0],
-                m->mVertices[m->mFaces[face].mIndices[2]][1],
-                m->mVertices[m->mFaces[face].mIndices[2]][2]);
+                m->mVertices[face->mIndices[2]].x,
+                m->mVertices[face->mIndices[2]].y,
+                m->mVertices[face->mIndices[2]].z);
         
         G4TriangularFacet * facet;
         if (reverse == false) {

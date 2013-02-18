@@ -38,6 +38,27 @@
 using namespace vcg::tri::io;
 #endif
 
+#ifndef NOASSIMP
+CADMesh::CADMesh(char * file_name, double units,
+        G4ThreeVector offset, G4bool reverse)
+{
+    this->units = units;
+    this->offset = offset;
+    this->reverse = reverse;
+
+    this->file_name = file_name;
+    this->file_type = "ASSIMP";
+    this->file_type.toUpper();
+
+    this->material = NULL;
+    this->quality = 0;
+
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
+}
+#endif
+
 CADMesh::CADMesh(char * file_name, char * file_type, double units,
         G4ThreeVector offset, G4bool reverse)
 {
@@ -138,56 +159,35 @@ CADMesh::~CADMesh()
 #ifndef NOASSIMP
 G4VSolid* CADMesh::TessellatedMesh()
 {
-    if (!has_mesh) {
-        Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(file_name, aiProcess_Triangulate |
-                                                            aiProcess_JoinIdenticalVertices |
-                                                            aiProcess_CalcTangentSpace);
-        m = scene->mMeshes[0];
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(file_name,
+            aiProcess_Triangulate           |
+            aiProcess_JoinIdenticalVertices |
+            aiProcess_CalcTangentSpace);
 
-        has_mesh = true;
-    } else {
-        G4cerr << "CADMesh/TessellatedMesh: "
-               << "Mesh already loaded from "
-               << file_name
-               << ", not loading. Use CADMesh/GetSolid to get the currently loaded mesh as a G4TessellatedSolid"
-               << G4endl;
-        return 0;
-    }
-
-    if (!has_mesh) {
-        G4cerr << "CADMesh/TessellatedMesh: "
-               << "Load a mesh of type STL, PLY or OFF first."
-               << G4endl;
-        return 0;
-    }
+    m = scene->mMeshes[0];
 
     volume_solid = new G4TessellatedSolid(file_name);
 
-    G4ThreeVector point_1 = G4ThreeVector();
-    G4ThreeVector point_2 = G4ThreeVector();
-    G4ThreeVector point_3 = G4ThreeVector();
+    G4ThreeVector point_1;
+    G4ThreeVector point_2;
+    G4ThreeVector point_3;
 
-    for(unsigned int i=1; i < m->mNumFaces; i++)
+    for(unsigned int i=0; i < m->mNumFaces; i++)
     {
-        aiFace* face = &m->mFaces[i];
-        G4cout << face->mNumIndices << G4endl;
-        G4cout << " " << face->mIndices[0] << G4endl;
-        G4cout << " " << face->mIndices[1] << G4endl;
-        G4cout << " " << face->mIndices[2] << G4endl;
+        const aiFace& face = m->mFaces[i];
 
-        point_1 = G4ThreeVector(
-                m->mVertices[face->mIndices[0]].x,
-                m->mVertices[face->mIndices[0]].y,
-                m->mVertices[face->mIndices[0]].z);
-        point_2 = G4ThreeVector(
-                m->mVertices[face->mIndices[1]].x,
-                m->mVertices[face->mIndices[1]].y,
-                m->mVertices[face->mIndices[1]].z);
-        point_3 = G4ThreeVector(
-                m->mVertices[face->mIndices[2]].x,
-                m->mVertices[face->mIndices[2]].y,
-                m->mVertices[face->mIndices[2]].z);
+        point_1.setX(m->mVertices[face.mIndices[0]].x);
+        point_1.setY(m->mVertices[face.mIndices[0]].y);
+        point_1.setZ(m->mVertices[face.mIndices[0]].z);
+
+        point_2.setX(m->mVertices[face.mIndices[1]].x);
+        point_2.setY(m->mVertices[face.mIndices[1]].y);
+        point_2.setZ(m->mVertices[face.mIndices[1]].z);
+
+        point_3.setX(m->mVertices[face.mIndices[2]].x);
+        point_3.setY(m->mVertices[face.mIndices[2]].y);
+        point_3.setZ(m->mVertices[face.mIndices[2]].z);
         
         G4TriangularFacet * facet;
         if (reverse == false) {
@@ -201,7 +201,7 @@ G4VSolid* CADMesh::TessellatedMesh()
     volume_solid->SetSolidClosed(true);
 
     if (volume_solid->GetNumberOfFacets() == 0) {
-    G4cerr << "CADMesh/TessellatedMesh: "
+        G4cerr << "CADMesh/TessellatedMesh: "
                << "Load a mesh has 0 faces, " << file_name << " may not exist."
                << G4endl;
         return 0;

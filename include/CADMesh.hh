@@ -52,6 +52,9 @@ class CADTriMesh : public vcg::tri::TriMesh< std::vector<CADVertex>, std::vector
 
 class CADMesh {
   public:
+#ifndef NOASSIMP
+    CADMesh(char * file, double units, G4ThreeVector offset, G4bool reverse);
+#endif
     CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, G4Material * material, double quality);
     CADMesh(char * file, char * type, G4Material * material, double quality, G4ThreeVector offset);

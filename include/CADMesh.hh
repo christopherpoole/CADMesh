@@ -80,6 +80,7 @@ class CADMesh {
     };
 
   private:
+    G4ThreeVector GetTetPoint(G4int index_offset);
     tetgenio in, out;
     G4AssemblyVolume * assembly;
 #endif
@@ -105,12 +106,32 @@ class CADMesh {
     };
 
   private:
-    G4ThreeVector GetTetPoint(G4int index_offset);
+    G4TessellatedSolid * volume_solid;
     CADTriMesh m;
 #endif
 
+#ifndef NOASSIMP
+  public:
+    G4VSolid* TessellatedMesh();
+
+    G4TessellatedSolid * GetSolid() {
+        return volume_solid;
+    };
+
+    G4String MeshName() {
+        return file_name;
+    };
+
+    void SetVerbose(int verbose) {
+        this->verbose = verbose;
+    };
+
   private:
     G4TessellatedSolid * volume_solid;
+    aiMesh* m;
+#endif
+
+  private:
     G4int verbose;
     G4bool has_mesh;
     G4bool has_solid;

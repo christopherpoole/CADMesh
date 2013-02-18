@@ -135,6 +135,74 @@ CADMesh::~CADMesh()
 {
 }
 
+#ifndef NOASSIMP
+G4VSolid* CADMesh::TessellatedMesh()
+{
+    if (!has_mesh) {
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFile(file_name, 0);
+        m = scene->mMeshes[0];
+
+        has_mesh = true;
+    } else {
+        G4cerr << "CADMesh/TessellatedMesh: "
+               << "Mesh already loaded from "
+               << file_name
+               << ", not loading. Use CADMesh/GetSolid to get the currently loaded mesh as a G4TessellatedSolid"
+               << G4endl;
+        return 0;
+    }
+
+    if (!has_mesh) {
+        G4cerr << "CADMesh/TessellatedMesh: "
+               << "Load a mesh of type STL, PLY or OFF first."
+               << G4endl;
+        return 0;
+    }
+
+    volume_solid = new G4TessellatedSolid(file_name);
+
+    G4ThreeVector point_1 = G4ThreeVector();
+    G4ThreeVector point_2 = G4ThreeVector();
+    G4ThreeVector point_3 = G4ThreeVector();
+
+    for(unsigned int face=0; face < m->mNumFaces; ++face)
+    {
+        point_1 = G4ThreeVector(
+                m->mVertices[m->mFaces[face].mIndices[0]][0],
+                m->mVertices[m->mFaces[face].mIndices[0]][1],
+                m->mVertices[m->mFaces[face].mIndices[0]][2]);
+        point_2 = G4ThreeVector(
+                m->mVertices[m->mFaces[face].mIndices[1]][0],
+                m->mVertices[m->mFaces[face].mIndices[1]][1],
+                m->mVertices[m->mFaces[face].mIndices[1]][2]);
+        point_3 = G4ThreeVector(
+                m->mVertices[m->mFaces[face].mIndices[2]][0],
+                m->mVertices[m->mFaces[face].mIndices[2]][1],
+                m->mVertices[m->mFaces[face].mIndices[2]][2]);
+        
+        G4TriangularFacet * facet;
+        if (reverse == false) {
+            facet = new G4TriangularFacet(point_1, point_2, point_3, ABSOLUTE);
+        } else {
+            facet = new G4TriangularFacet(point_2, point_1, point_3, ABSOLUTE);
+        }
+        volume_solid->AddFacet((G4VFacet*) facet);
+    }
+
+    volume_solid->SetSolidClosed(true);
+
+    if (volume_solid->GetNumberOfFacets() == 0) {
+    G4cerr << "CADMesh/TessellatedMesh: "
+               << "Load a mesh has 0 faces, " << file_name << " may not exist."
+               << G4endl;
+        return 0;
+    }
+
+    return volume_solid;
+}
+#endif
+
 #ifndef NOVCGLIB
 G4VSolid* CADMesh::TessellatedMesh()
 {

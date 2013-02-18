@@ -19,22 +19,18 @@
 #include "G4AssemblyVolume.hh"
 #include "G4Material.hh"
 
-#ifndef NOVCGLIB
-// VCGLIB //
-#include "vcg/simplex/vertex/base.h"
-#include "vcg/simplex/vertex/component.h"
-#include "vcg/simplex/face/base.h"
-#include "vcg/simplex/face/component.h"
-
-#include "vcg/complex/complex.h"
-#endif
-
 // TETGEN //
 #ifndef NOTET
 #include "tetgen.h"
 #endif
 
+// VCGLIB //
 #ifndef NOVCGLIB
+#include "vcg/simplex/vertex/base.h"
+#include "vcg/simplex/vertex/component.h"
+#include "vcg/simplex/face/base.h"
+#include "vcg/simplex/face/component.h"
+#include "vcg/complex/complex.h"
 
 class CADVertex;
 class CADFace;
@@ -46,10 +42,8 @@ class CADFace : public vcg::Face<CADUsedTypes, vcg::face::VertexRef> {};
 class CADTriMesh : public vcg::tri::TriMesh< std::vector<CADVertex>, std::vector<CADFace> > {};
 #endif
 
-class CADMesh
-{
-// METHODS //
-public:
+class CADMesh {
+  public:
     CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, G4Material * material, double quality);
     CADMesh(char * file, char * type, G4Material * material, double quality, G4ThreeVector offset);
@@ -58,58 +52,72 @@ public:
     ~CADMesh();
 
 #ifndef NOTET
-public:
+  public:
     G4AssemblyVolume * TetrahedralMesh();
-    G4AssemblyVolume * GetAssembly() { return assembly; };
 
-    int get_input_point_count() { return in.numberofpoints; };
-    int get_output_point_count() { return out.numberofpoints; };
-    int get_tetrahedron_count() { return out.numberoftetrahedra; };
-#endif
+    G4AssemblyVolume * GetAssembly() {
+        return assembly;
+    };
 
-#ifndef NOVCGLIB
-public:
-    G4VSolid* TessellatedMesh();
-    G4TessellatedSolid * GetSolid() { return volume_solid; };
+    int get_input_point_count() {
+        return in.numberofpoints;
+    };
 
-    G4String MeshName(){ return file_name_; };
-    int MeshVertexNumber(){ return m.VertexNumber(); };
-    //float MeshVolume(){ return m.Volume(); };
+    int get_output_point_count() {
+        return out.numberofpoints;
+    };
 
-    void SetVerbose(int v){ verbose_ = v; };
-#endif
+    int get_tetrahedron_count() {
+        return out.numberoftetrahedra;
+    };
 
-private:
-    G4ThreeVector GetTetPoint(G4int index_offset);
-
-
-// VARS //
-private:
-#ifndef NOVCGLIB
-    CADTriMesh m;
-#endif
-
-#ifndef NOTET
+  private:
     tetgenio in, out;
     G4AssemblyVolume * assembly;
 #endif
 
-    G4TessellatedSolid * volume_solid;
-    G4int verbose_;
-    G4bool has_mesh_;
-    G4bool has_solid_;
+#ifndef NOVCGLIB
+  public:
+    G4VSolid* TessellatedMesh();
 
-    G4String name_;
-    G4double units_;
-    G4ThreeVector offset_;
-    G4bool reverse_;
+    G4TessellatedSolid * GetSolid() {
+        return volume_solid;
+    };
 
-    G4double quality_;
+    G4String MeshName() {
+        return file_name;
+    };
+
+    int MeshVertexNumber() {
+        return m.VertexNumber();
+    };
     
-    G4Material * material_;
+    void SetVerbose(int verbose) {
+        this->verbose = verbose;
+    };
 
-    char * file_name_;
-    G4String file_type_;
+  private:
+    G4ThreeVector GetTetPoint(G4int index_offset);
+    CADTriMesh m;
+#endif
+
+  private:
+    G4TessellatedSolid * volume_solid;
+    G4int verbose;
+    G4bool has_mesh;
+    G4bool has_solid;
+
+    G4String name;
+    G4double units;
+    G4ThreeVector offset;
+    G4bool reverse;
+
+    G4double quality;
+    
+    G4Material * material;
+
+    char * file_name;
+    G4String file_type;
 };
 
 #endif // CADMesh_HH

@@ -33,102 +33,102 @@
 #include "wrap/io_trimesh/import_ply.h"
 #include "wrap/io_trimesh/import_stl.h"
 #include "wrap/io_trimesh/import_off.h"
-
 #include "wrap/ply/plylib.h"
-#endif
 
-#ifndef NOVCGLIB
 using namespace vcg::tri::io;
 #endif
 
-CADMesh::CADMesh(char * file_name, char * file_type, double units, G4ThreeVector offset, G4bool reverse)
+CADMesh::CADMesh(char * file_name, char * file_type, double units,
+        G4ThreeVector offset, G4bool reverse)
 {
-    units_ = units;
-    offset_ = offset;
-    reverse_ = reverse;
+    this->units = units;
+    this->offset = offset;
+    this->reverse = reverse;
 
-    file_name_ = file_name;
-    file_type_ = file_type;
-    file_type_.toUpper();
+    this->file_name = file_name;
+    this->file_type = file_type;
+    this->file_type.toUpper();
 
-    material_ = NULL;
-    quality_ = 0;
+    this->material = NULL;
+    this->quality = 0;
 
-    has_mesh_ = false;
-    has_solid_ = false;
-    verbose_ = 0;
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
 }
 
-CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material, double quality)
+CADMesh::CADMesh(char * file_name, char * file_type,
+        G4Material * material, double quality)
 {
-    units_ = mm;
-    offset_ = G4ThreeVector();
-    reverse_ = false;
+    this->units = mm;
+    this->offset = G4ThreeVector();
+    this->reverse = false;
 
-    file_name_ = file_name;
-    file_type_ = file_type;
-    file_type_.toUpper();
+    this->file_name = file_name;
+    this->file_type = file_type;
+    this->file_type.toUpper();
 
-    material_ = material;
-    quality_ = quality;
+    this->material = material;
+    this->quality = quality;
 
-    has_mesh_ = false;
-    has_solid_ = false;
-    verbose_ = 0;
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
 }
 
 CADMesh::CADMesh(char * file_name, char * file_type)
 {
-    units_ = mm;
-    offset_ = G4ThreeVector();
-    reverse_ = false;
+    this->units = mm;
+    this->offset = G4ThreeVector();
+    this->reverse = false;
 
-    file_name_ = file_name;
-    file_type_ = file_type;
-    file_type_.toUpper();
+    this->file_name = file_name;
+    this->file_type = file_type;
+    this->file_type.toUpper();
 
-    material_ = NULL;
-    quality_ = 0;
+    this->material = NULL;
+    this->quality = 0;
 
-    has_mesh_ = false;
-    has_solid_ = false;
-    verbose_ = 0;
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
 }
 
 CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
 {
-    units_ = mm;
-    offset_ = G4ThreeVector();
-    reverse_ = false;
+    this->units = mm;
+    this->offset = G4ThreeVector();
+    this->reverse = false;
 
-    file_name_ = file_name;
-    file_type_ = file_type;
-    file_type_.toUpper();
+    this->file_name = file_name;
+    this->file_type = file_type;
+    this->file_type.toUpper();
 
-    material_ = material;
-    quality_ = 0;
+    this->material = material;
+    this->quality = 0;
 
-    has_mesh_ = false;
-    has_solid_ = false;
-    verbose_ = 0;
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
 }
 
-CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material, double quality, G4ThreeVector offset)
+CADMesh::CADMesh(char * file_name, char * file_type,
+        G4Material * material, double quality, G4ThreeVector offset)
 {
-    units_ = mm;
-    offset_ = offset;
-    reverse_ = false;
+    this->units = mm;
+    this->offset = offset;
+    this->reverse = false;
 
-    file_name_ = file_name;
-    file_type_ = file_type;
-    file_type_.toUpper();
+    this->file_name = file_name;
+    this->file_type = file_type;
+    this->file_type.toUpper();
 
-    material_ = material;
-    quality_ = quality;
+    this->material = material;
+    this->quality = quality;
 
-    has_mesh_ = false;
-    has_solid_ = false;
-    verbose_ = 0;
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
 }
 
 CADMesh::~CADMesh()
@@ -138,44 +138,44 @@ CADMesh::~CADMesh()
 #ifndef NOVCGLIB
 G4VSolid* CADMesh::TessellatedMesh()
 {
-    if (!has_mesh_) {
-        if (file_type_ == "STL") {
-            ImporterSTL<CADTriMesh>::Open(m, file_name_);
-        } else if (file_type_ == "PLY") {
-            ImporterPLY<CADTriMesh>::Open(m, file_name_);
-        } else if (file_type_ == "OFF") {
-           ImporterOFF<CADTriMesh>::Open(m, file_name_);
-        } else if (file_type_ == "COLLADA") {
+    if (!has_mesh) {
+        if (file_type == "STL") {
+            ImporterSTL<CADTriMesh>::Open(m, file_name);
+        } else if (file_type == "PLY") {
+            ImporterPLY<CADTriMesh>::Open(m, file_name);
+        } else if (file_type == "OFF") {
+           ImporterOFF<CADTriMesh>::Open(m, file_name);
+        } else if (file_type == "COLLADA") {
             InfoDAE info = InfoDAE();
-            ImporterDAE<CADTriMesh>::Open(m, file_name_, info, 0);
+            ImporterDAE<CADTriMesh>::Open(m, file_name, info, 0);
         } else {
             G4cerr << "CADMesh/TessellatedMesh: "
                    << "No G4TessellatedSoild to return. Specify valid mesh type (STL, PLY, OFF, COLLADA), not: "
-                   << file_type_
+                   << file_type
                    << G4endl;
-            has_mesh_ = false;
+            has_mesh = false;
 
             return 0;
         }
-        has_mesh_ = true;
+        has_mesh = true;
 
     } else {
         G4cerr << "CADMesh/TessellatedMesh: "
                << "Mesh already loaded from "
-               << file_name_
+               << file_name
                << ", not loading. Use CADMesh/GetSolid to get the currently loaded mesh as a G4TessellatedSolid"
                << G4endl;
         return 0;
     }
 
-    if (!has_mesh_) {
+    if (!has_mesh) {
         G4cerr << "CADMesh/TessellatedMesh: "
                << "Load a mesh of type STL, PLY or OFF first."
                << G4endl;
         return 0;
     }
 
-    volume_solid = new G4TessellatedSolid(file_name_);
+    volume_solid = new G4TessellatedSolid(file_name);
 
     G4ThreeVector point_1 = G4ThreeVector();
     G4ThreeVector point_2 = G4ThreeVector();
@@ -186,20 +186,20 @@ G4VSolid* CADMesh::TessellatedMesh()
     for(face_iterator=m.face.begin(); face_iterator!=m.face.end(); ++face_iterator)
     {
         point_1 = G4ThreeVector(
-                (*face_iterator).V(0)->P()[0] * units_ + offset_.x(),
-                (*face_iterator).V(0)->P()[1] * units_ + offset_.y(),
-                (*face_iterator).V(0)->P()[2] * units_ + offset_.z());
+                (*face_iterator).V(0)->P()[0] * units + offset.x(),
+                (*face_iterator).V(0)->P()[1] * units + offset.y(),
+                (*face_iterator).V(0)->P()[2] * units + offset.z());
         point_2 = G4ThreeVector(
-                (*face_iterator).V(1)->P()[0] * units_ + offset_.x(),
-                (*face_iterator).V(1)->P()[1] * units_ + offset_.y(),
-                (*face_iterator).V(1)->P()[2] * units_ + offset_.z());
+                (*face_iterator).V(1)->P()[0] * units + offset.x(),
+                (*face_iterator).V(1)->P()[1] * units + offset.y(),
+                (*face_iterator).V(1)->P()[2] * units + offset.z());
         point_3 = G4ThreeVector(
-                (*face_iterator).V(2)->P()[0] * units_ + offset_.x(),
-                (*face_iterator).V(2)->P()[1] * units_ + offset_.y(),
-                (*face_iterator).V(2)->P()[2] * units_ + offset_.z());
+                (*face_iterator).V(2)->P()[0] * units + offset.x(),
+                (*face_iterator).V(2)->P()[1] * units + offset.y(),
+                (*face_iterator).V(2)->P()[2] * units + offset.z());
                 
         G4TriangularFacet * facet;
-        if (reverse_ == false) {
+        if (reverse == false) {
             facet = new G4TriangularFacet(point_1, point_2, point_3, ABSOLUTE);
         } else {
             facet = new G4TriangularFacet(point_2, point_1, point_3, ABSOLUTE);
@@ -211,7 +211,7 @@ G4VSolid* CADMesh::TessellatedMesh()
 
     if (volume_solid->GetNumberOfFacets() == 0) {
     G4cerr << "CADMesh/TessellatedMesh: "
-               << "Load a mesh has 0 faces, " << file_name_ << " may not exist."
+               << "Load a mesh has 0 faces, " << file_name << " may not exist."
                << G4endl;
         return 0;
     }
@@ -226,22 +226,22 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     // USAGE: assembly->MakeImprint(world_logical, assembly_transform_3d, 0); //
 
     G4bool do_tet = true;
-    if (file_type_ == "STL") {
-        G4bool state = in.load_stl(file_name_);
-    } else if (file_type_ == "PLY") {
-        G4bool state = in.load_ply(file_name_);
-    } else if (file_type_ == "TET") {
-        G4bool state = out.load_tetmesh(file_name_);
+    if (file_type == "STL") {
+        G4bool state = in.load_stl(file_name);
+    } else if (file_type == "PLY") {
+        G4bool state = in.load_ply(file_name);
+    } else if (file_type == "TET") {
+        G4bool state = out.load_tetmesh(file_name);
         do_tet = false;
-    } else if (file_type_ == "OFF") {
-        G4bool state = out.load_off(file_name_);
+    } else if (file_type == "OFF") {
+        G4bool state = out.load_off(file_name);
         do_tet = false;
     }
 
     if (do_tet)
     {
         G4String config = G4String("Yp");
-        if (quality_ > 0) config = config + G4String("q") + G4UIcommand::ConvertToString(quality_);
+        if (quality > 0) config = config + G4String("q") + G4UIcommand::ConvertToString(quality);
 #ifdef DEBUG
         G4cout << "Tetrahedralisation configuration: " << config << G4endl;
 #endif
@@ -265,10 +265,10 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
         G4ThreeVector p3 = GetTetPoint(index_offset + 2);
         G4ThreeVector p4 = GetTetPoint(index_offset + 3);
 
-        G4String tet_name = file_name_ + G4String("_tet_") + G4UIcommand::ConvertToString(i);
+        G4String tet_name = file_name + G4String("_tet_") + G4UIcommand::ConvertToString(i);
 
         G4VSolid * tet_solid = new G4Tet(tet_name + G4String("_solid"), p1, p2, p3, p4, 0);
-        G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material_, tet_name + G4String("_logical"), 0, 0, 0);
+        G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material, tet_name + G4String("_logical"), 0, 0, 0);
         assembly->AddPlacedVolume(tet_logical, element_position, element_rotation);
 
 #ifdef DEBUG
@@ -277,7 +277,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     }
 
 #ifdef DEBUG
-    G4cout << "Loading of " << out.numberoftetrahedra << " tetrahedra complete with material: " << material_->GetName() << G4endl;
+    G4cout << "Loading of " << out.numberoftetrahedra << " tetrahedra complete with material: " << material->GetName() << G4endl;
 #endif
 
     return assembly;
@@ -285,8 +285,8 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
 
 G4ThreeVector CADMesh::GetTetPoint(G4int index_offset)
 {
-    return G4ThreeVector(out.pointlist[out.tetrahedronlist[index_offset]*3] - offset_.x(),
-                         out.pointlist[out.tetrahedronlist[index_offset]*3+1] - offset_.y(),
-                         out.pointlist[out.tetrahedronlist[index_offset]*3+2] - offset_.z());
+    return G4ThreeVector(out.pointlist[out.tetrahedronlist[index_offset]*3] - offset.x(),
+            out.pointlist[out.tetrahedronlist[index_offset]*3+1] - offset.y(),
+            out.pointlist[out.tetrahedronlist[index_offset]*3+2] - offset.z());
 }
 #endif

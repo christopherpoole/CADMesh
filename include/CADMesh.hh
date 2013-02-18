@@ -24,6 +24,13 @@
 #include "tetgen.h"
 #endif
 
+// Open Asset Importer Library //
+#ifndef NOASSIMP
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+#endif
+
 // VCGLIB //
 #ifndef NOVCGLIB
 #include "vcg/simplex/vertex/base.h"
@@ -41,6 +48,7 @@ class CADVertex : public vcg::Vertex<CADUsedTypes, vcg::vertex::Coord3d, vcg::ve
 class CADFace : public vcg::Face<CADUsedTypes, vcg::face::VertexRef> {};
 class CADTriMesh : public vcg::tri::TriMesh< std::vector<CADVertex>, std::vector<CADFace> > {};
 #endif
+
 
 class CADMesh {
   public:

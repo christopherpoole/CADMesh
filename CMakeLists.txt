@@ -34,6 +34,9 @@ IF(${WITH_TETGEN} MATCHES "OFF")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOTET")
 ENDIF()
 
+# Choose between VCGLIB or ASSIMP
+option(WITH_ASSIMP "WITH_ASSIMP" ON)
+
 # VCGLIB
 set(VCGLIB_SRC)
 set(VCGLIB_TARGET)
@@ -41,10 +44,16 @@ option(WITH_VCGLIB "WITH_VCGLIB" ON)
 IF(${WITH_VCGLIB} MATCHES "ON")
     include_directories(${VCGLIB_DIR})
     set(VCGLIB_SRC ${VCGLIB_DIR}/wrap/ply/plylib.cpp)
-#    set(VCGLIB_TARGET plylib)
+    set(WITH_ASSIMP OFF)
+    #    set(VCGLIB_TARGET plylib)
 ENDIF()
 IF(${WITH_VCGLIB} MATCHES "OFF")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOVCGLIB")
+ENDIF()
+
+# Open Asset Importer Library
+IF(${WITH_ASSIMP} MATCHES "ON")
+    find_package(assimp)
 ENDIF()
 
 # CADMesh
@@ -53,6 +62,12 @@ include_directories(include/)
 link_directories(${TETGEN_DIR} ${VCGLIB_DIR})
 add_library(cadmesh "SHARED" ${PROJECT_SOURCE_DIR}/src/CADMesh.cc ${VCGLIB_SRC}) 
 target_link_libraries(cadmesh ${TETGEN_TARGET} ${VCGLIB_TARGET} QtXml)
+
+IF(${WITH_ASSIMP} MATCHES "ON")
+    target_link_libraries(cadmesh assimp)
+ENDIF()
+
+
 
 install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
 install(TARGETS cadmesh DESTINATION lib)

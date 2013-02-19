@@ -27,7 +27,7 @@ ENDIF()
 
 # Tetgen
 set(TETGEN_TARGET)
-option(WITH_TETGEN "WITH_TETGEN" ON)
+option(WITH_TETGEN "WITH_TETGEN" OFF)
 IF(${WITH_TETGEN} MATCHES "ON")
     include_directories(${TETGEN_DIR})
     set(TETGEN_TARGET tet)
@@ -36,13 +36,13 @@ IF(${WITH_TETGEN} MATCHES "OFF")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOTET")
 ENDIF()
 
-# Choose between VCGLIB or ASSIMP
+# Choose between VCGLIB or ASSIMP (default)
 option(WITH_ASSIMP "WITH_ASSIMP" ON)
+option(WITH_VCGLIB "WITH_VCGLIB" OFF)
 
 # VCGLIB
 set(VCGLIB_SRC)
 set(VCGLIB_TARGET)
-option(WITH_VCGLIB "WITH_VCGLIB" ON)
 IF(${WITH_VCGLIB} MATCHES "ON")
     include_directories(${VCGLIB_DIR})
     set(VCGLIB_SRC ${VCGLIB_DIR}/wrap/ply/plylib.cpp)

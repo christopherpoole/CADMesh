@@ -2,6 +2,7 @@
 Importing predefined CAD models into [GEANT4](http://www.geant4.org/geant4/) is not always possible or requires intermediate file format conversion to Geometry Description Markup Language (GDML) using commercial or third party software.
 CADMesh is a direct CAD model import interface for GEANT4 optionally leveraging [VCGLIB](http://vcg.sourceforge.net/index.php/Main_Page), and [ASSIMP](http://assimp.sourceforge.net/) by default.
 Currently it supports the import of triangular facet surface meshes defined in formats such as STL and PLY. A G4TessellatedSolid is returned and can be included in a standard user detector constructor.
+You can find the project page and a Mercurial repository [here](http://code.google.com/p/cadmesh/).
 
 ![Screen Shot](https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png)
 
@@ -75,7 +76,7 @@ The following shows basic default usage for cadmesh in a UserDetectorConstructio
 # Dependencies
 A working installation of the folowing libraries or packages is required:
  * GEANT4
- * ASSIMP (default, optional with VCGLIB)
+ * [ASSIMP](http://assimp.sourceforge.net/) (default, optional with VCGLIB)
  * VCGLIB (optional)
  * TETGEN (optional)
  * QT and OpenGL (for COLLADA support using VCGLIB)
@@ -86,13 +87,11 @@ For installation of v0.5 and below see the wikipage [OldInstallation](http://cod
 Download the latest release of CADMesh from the [Downloads](http://code.google.com/p/cadmesh/downloads/list) section, and extract the archive, or checkout the development branch from the repository.
 Additionally, download VCGLIB (you can find more information about acquiring VCGLIB [here](http://vcg.sourceforge.net/index.php/Tutorial#Getting_VCG_Lib)) and download tetgen from [here](http://tetgen.berlios.de/) (on ubuntu you can `sudo apt-get install libtet1.4.2-dev`).
 
-    # Checkout VCGLIB
-    svn co https://vcg.svn.sourceforge.net/svnroot/vcg/trunk/vcglib vcglib -r 4041
+    # Checkout VCGLIB (optional)
+    # svn co https://vcg.svn.sourceforge.net/svnroot/vcg/trunk/vcglib vcglib -r 4041
 
     # CADMesh latest dev branch
-    hg clone https://code.google.com/p/cadmesh/ 
-    # OR with source from downloads section
-    tar xvjf cadmesh-VERSION.tar.bz2
+    git clone https://github.com/christopherpoole/CADMesh.git
 
     cd cadmesh/
     mkdir build
@@ -113,7 +112,7 @@ Additionally, download VCGLIB (you can find more information about acquiring VCG
     sudo make install
 
 
-Here is a basic example usage. The CMakeLists.txt file illustrates how to link against CADMesh. The VCGLIB_DIR variable can be hard - coded if you wish.
+Here is a basic example usage. The CMakeLists.txt file illustrates how to link against CADMesh.
 
     # Run example (Linux with g++)
     cd examples/basic

@@ -7,9 +7,7 @@ include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # CADMesh
-#include_directories(${VCGLIB_DIR})
 find_package(cadmesh)
-#add_definitions(-DNOVCGLIB -DNOTET)
 
 # User code
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)

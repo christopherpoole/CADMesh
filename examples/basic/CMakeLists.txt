@@ -6,9 +6,6 @@ find_package(Geant4 REQUIRED ui_all vis_all)
 include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-set(${WITH_VCGLIB} OFF)
-set(${WITH_TETGEN} OFF)
-
 # CADMesh
 #include_directories(${VCGLIB_DIR})
 find_package(cadmesh)

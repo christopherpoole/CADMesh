@@ -1,6 +1,6 @@
 # Introduction
 Importing predefined CAD models into [GEANT4](http://www.geant4.org/geant4/) is not always possible or requires intermediate file format conversion to Geometry Description Markup Language (GDML) using commercial or third party software.
-CADMesh is a direct CAD model import interface for GEANT4 leveraging [VCGLIB](http://vcg.sourceforge.net/index.php/Main_Page).
+CADMesh is a direct CAD model import interface for GEANT4 optionally leveraging [VCGLIB](http://vcg.sourceforge.net/index.php/Main_Page), and [ASSIMP](http://assimp.sourceforge.net/) by default.
 Currently it supports the import of triangular facet surface meshes defined in formats such as STL and PLY. A G4TessellatedSolid is returned and can be included in a standard user detector constructor.
 
 Additional functionality is included for the fast navigation of tessellated solids by automatically creating equivalent tetrahedral meshes thereby making smart voxelisation available for the solid.
@@ -31,7 +31,7 @@ The fast tessellated solid navigation technique included in CADMesh is described
     }
 
 #Example Usage
-The following shows basic usage for cadmesh in a UserDetectorConstruction:
+The following shows basic default usage for cadmesh in a UserDetectorConstruction:
 
     // User Detector Constructor
     #include "CADMesh.hh"
@@ -42,7 +42,7 @@ The following shows basic usage for cadmesh in a UserDetectorConstruction:
     G4VPhysicalVolume * cad_physical;
     ...
     offset = G4ThreeVector(-30*cm, 0, 0);
-    CADMesh * mesh = new CADMesh("../../models/cone.ply", "PLY", mm, offset, false);
+    CADMesh * mesh = new CADMesh("../../models/cone.ply", mm, offset, false);
 
     cad_solid = mesh->TessellatedMesh();
     cad_logical = new G4LogicalVolume(cad_solid, water, "cad_logical", 0, 0, 0);
@@ -50,25 +50,33 @@ The following shows basic usage for cadmesh in a UserDetectorConstruction:
                                          "cad_physical", world_logical, false, 0);
     ...
 
-    # GNUMakefile
-    name := example
-    G4TARGET := $(name)
-    G4EXLIB := true
+    # CMakeLists.txt
+    cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+    project(cadmesh_example)
 
-    include cadmesh.gmk
+    # GEANT4 core
+    find_package(Geant4 REQUIRED ui_all vis_all)
+    include(${Geant4_USE_FILE})
+    include_directories(${PROJECT_SOURCE_DIR}/include)
 
-    .PHONY: all 
-    all: lib bin 
+    # CADMesh
+    find_package(cadmesh)
 
-    include $(G4INSTALL)/config/binmake.gmk
+    # User code
+    file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+    file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
+    add_executable(cadmesh_example cadmesh_example.cc ${sources} ${headers})
+    target_link_libraries(cadmesh_example ${Geant4_LIBRARIES})
+    target_link_libraries(cadmesh_example ${cadmesh_LIBRARIES})
 
 # Dependencies
 A working installation of the folowing libraries or packages is required:
  * GEANT4
- * VCGLIB
- * TETGEN
- * QT & OpenGL (for COLLADA support)
+ * ASSIMP (default, optional with VCGLIB)
+ * VCGLIB (optional)
+ * TETGEN (optional)
+ * QT and OpenGL (for COLLADA support using VCGLIB)
 
 # Installation
 For installation of v0.5 and below see the wikipage [OldInstallation](http://code.google.com/p/cadmesh/wiki/OldInstallation). For the old gmake installation method see [GMakeInstallation](http://code.google.com/p/cadmesh/wiki/GMakeInstallation). Now we use cmake!
@@ -88,11 +96,11 @@ Additionally, download VCGLIB (you can find more information about acquiring VCG
     mkdir build
     cd build
 
-    # Default
-    cmake .. -DVCGLIB_DIR="/path/to/vcglib"
+    # Default (using ASSIMP)
+    cmake .. 
 
-    # For CAD/VCGLIB only 
-    cmake .. -DVCGLIB_DIR="/path/to/vcglib" -WITH_TETGEN="OFF"
+    # For CAD using VCGLIB
+    cmake .. -DWITH_VCGLIB="ON" -DVCGLIB_DIR="/path/to/vcglib"
 
     # FOR TET only
     cmake .. -DWITH_VCGLIB="OFF"
@@ -110,7 +118,7 @@ Here is a basic example usage. The CMakeLists.txt file illustrates how to link a
     mkdir build
     cd build
 
-    cmake .. -DVCGLIB_DIR="/path/to/vcglib"
+    cmake .. 
     make
     cd ..
 

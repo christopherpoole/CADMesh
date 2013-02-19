@@ -1,0 +1,25 @@
+
+set(cadmesh_LIBRARIES cadmesh)
+
+# Open Asset Importer Library
+IF(@WITH_ASSIMP@ MATCHES "ON")
+    find_package(assimp)
+    set(cadmesh_LIBRARIES ${cadmesh_LIBRARIES} assimp)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOVCGLIB")
+ENDIF()
+
+IF(@WITH_VCGLIB@ MATCHES "ON")
+    include_directories(@VCGLIB_DIR@)
+    set(VCGLIB_SRC @VCGLIB_DIR@/wrap/ply/plylib.cpp)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOASSIMP")
+    #    set(VCGLIB_TARGET plylib)
+ENDIF()
+
+IF(@WITH_TETGEN@ MATCHES "ON")
+    set(cadmesh_LIBRARIES ${cadmesh_LIBRARIES} tet)
+    include_directories(${TETGEN_DIR})
+ENDIF()
+IF(@WITH_TETGEN@ MATCHES "OFF")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOTET")
+ENDIF()
+

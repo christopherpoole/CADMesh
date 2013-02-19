@@ -12,13 +12,13 @@ set(${WITH_TETGEN} OFF)
 # CADMesh
 #include_directories(${VCGLIB_DIR})
 find_package(cadmesh)
-add_definitions(-DNOVCGLIB -DNOTET)
+#add_definitions(-DNOVCGLIB -DNOTET)
 
 # User code
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 add_executable(cadmesh_example cadmesh_example.cc ${sources} ${headers})
-target_link_libraries(cadmesh_example ${Geant4_LIBRARIES} cadmesh)
-target_link_libraries(cadmesh_example assimp)
+target_link_libraries(cadmesh_example ${Geant4_LIBRARIES})
+target_link_libraries(cadmesh_example ${cadmesh_LIBRARIES})
 

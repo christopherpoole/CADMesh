@@ -70,9 +70,11 @@ IF(${WITH_ASSIMP} MATCHES "ON")
     target_link_libraries(cadmesh assimp)
 ENDIF()
 
+set (CADMESH_VERSION_MAJOR 0)
+set (CADMESH_VERSION_MINOR 9)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cadmesh-config.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" @ONLY IMMEDIATE)
-#install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "${LIB_INSTALL_DIR}/cmake/cadmesh-${CADMESH_VERSION_MAJOR}.${CADMESH_VERSION_MINOR}" COMPONENT ${LIBASSIMP-DEV_COMPONENT})
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_VERSION_MAJOR}.${CADMESH_VERSION_MINOR}")
 
 install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
 install(TARGETS cadmesh DESTINATION lib)

@@ -177,17 +177,17 @@ G4VSolid* CADMesh::TessellatedMesh()
     {
         const aiFace& face = m->mFaces[i];
 
-        point_1.setX(m->mVertices[face.mIndices[0]].x);
-        point_1.setY(m->mVertices[face.mIndices[0]].y);
-        point_1.setZ(m->mVertices[face.mIndices[0]].z);
+        point_1.setX(m->mVertices[face.mIndices[0]].x * units + offset.x());
+        point_1.setY(m->mVertices[face.mIndices[0]].y * units + offset.y());
+        point_1.setZ(m->mVertices[face.mIndices[0]].z * units + offset.z());
 
-        point_2.setX(m->mVertices[face.mIndices[1]].x);
-        point_2.setY(m->mVertices[face.mIndices[1]].y);
-        point_2.setZ(m->mVertices[face.mIndices[1]].z);
+        point_2.setX(m->mVertices[face.mIndices[1]].x * units + offset.x());
+        point_2.setY(m->mVertices[face.mIndices[1]].y * units + offset.y());
+        point_2.setZ(m->mVertices[face.mIndices[1]].z * units + offset.z());
 
-        point_3.setX(m->mVertices[face.mIndices[2]].x);
-        point_3.setY(m->mVertices[face.mIndices[2]].y);
-        point_3.setZ(m->mVertices[face.mIndices[2]].z);
+        point_3.setX(m->mVertices[face.mIndices[2]].x * units + offset.x());
+        point_3.setY(m->mVertices[face.mIndices[2]].y * units + offset.y());
+        point_3.setZ(m->mVertices[face.mIndices[2]].z * units + offset.z());
         
         G4TriangularFacet * facet;
         if (reverse == false) {

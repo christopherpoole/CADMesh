@@ -3,6 +3,8 @@ Importing predefined CAD models into [GEANT4](http://www.geant4.org/geant4/) is 
 CADMesh is a direct CAD model import interface for GEANT4 optionally leveraging [VCGLIB](http://vcg.sourceforge.net/index.php/Main_Page), and [ASSIMP](http://assimp.sourceforge.net/) by default.
 Currently it supports the import of triangular facet surface meshes defined in formats such as STL and PLY. A G4TessellatedSolid is returned and can be included in a standard user detector constructor.
 
+![Screen Shot](https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png)
+
 Additional functionality is included for the fast navigation of tessellated solids by automatically creating equivalent tetrahedral meshes thereby making smart voxelisation available for the solid.
 
 # Citing CADMesh

@@ -16,9 +16,12 @@
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4TessellatedSolid.hh"
+#include "G4TriangularFacet.hh"
+#include "G4Tet.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Material.hh"
 
+#include "G4LogicalVolume.hh"
 // TETGEN //
 #ifndef NOTET
 #include "tetgen.h"

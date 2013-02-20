@@ -13,16 +13,9 @@
 #include "CADMesh.hh"
 
 // GEANT4 //
-#include "G4String.hh"
 #include "G4UIcommand.hh"
-#include "G4ThreeVector.hh"
-#include "G4LogicalVolume.hh"
-#include "G4TessellatedSolid.hh"
-#include "G4TriangularFacet.hh"
-#include "G4Tet.hh"
-#include "G4ThreeVector.hh"
-#include "G4Material.hh"
 
+// OpenGL //
 #include "GL/gl.h"
 #include "GL/glu.h"
 

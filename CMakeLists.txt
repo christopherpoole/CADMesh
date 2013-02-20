@@ -70,6 +70,8 @@ IF(${WITH_ASSIMP} MATCHES "ON")
     target_link_libraries(cadmesh assimp)
 ENDIF()
 
+target_link_libraries(cadmesh ${Geant4_LIBRARIES})
+
 set (CADMESH_VERSION_MAJOR 0)
 set (CADMESH_VERSION_MINOR 9)
 

@@ -99,18 +99,17 @@ Additionally, download VCGLIB (you can find more information about acquiring VCG
 
     # Default (using ASSIMP)
     cmake .. 
+    # OR for fast tessellated solids with tetgen
+    cmake .. -DWITH_TETGEN="ON"
 
     # For CAD using VCGLIB
     cmake .. -DWITH_VCGLIB="ON" -DVCGLIB_DIR="/path/to/vcglib"
 
     # FOR TET only
-    cmake .. -DWITH_VCGLIB="OFF"
-    # OR
-    cmake .. -DWITH_VCGLIB="OFF" -DTETGEN_DIR="/path/to/tetgen"
+    cmake .. -DWITH_ASSIMP="OFF" -DWITHVCGLIB="OFF" -DWITH_TETGEN="ON"
 
     make
     sudo make install
-
 
 Here is a basic example usage. The CMakeLists.txt file illustrates how to link against CADMesh.
 

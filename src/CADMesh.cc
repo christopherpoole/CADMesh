@@ -296,14 +296,14 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
 
     G4bool do_tet = true;
     if (file_type == "STL") {
-        G4bool state = in.load_stl(file_name);
+        in.load_stl(file_name);
     } else if (file_type == "PLY") {
-        G4bool state = in.load_ply(file_name);
+        in.load_ply(file_name);
     } else if (file_type == "TET") {
-        G4bool state = out.load_tetmesh(file_name);
+        out.load_tetmesh(file_name);
         do_tet = false;
     } else if (file_type == "OFF") {
-        G4bool state = out.load_off(file_name);
+        out.load_off(file_name);
         do_tet = false;
     }
 

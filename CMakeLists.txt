@@ -63,7 +63,7 @@ ENDIF()
 include_directories(include/)
 
 link_directories(${TETGEN_DIR} ${VCGLIB_DIR})
-add_library(cadmesh "SHARED" ${PROJECT_SOURCE_DIR}/src/CADMesh.cc ${VCGLIB_SRC}) 
+add_library(cadmesh "STATIC" ${PROJECT_SOURCE_DIR}/src/CADMesh.cc ${VCGLIB_SRC}) 
 target_link_libraries(cadmesh ${TETGEN_TARGET} ${VCGLIB_TARGET})
 
 IF(${WITH_ASSIMP} MATCHES "ON")

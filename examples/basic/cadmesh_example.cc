@@ -43,7 +43,7 @@ int main(int argc,char** argv)
 
     G4UImanager * ui_manager = G4UImanager::GetUIpointer();
     G4UIExecutive* ui = new G4UIExecutive(argc, argv);
-    ui_manager->ApplyCommand("/control/execute macros/vis.mac"); 
+    ui_manager->ApplyCommand("/control/execute vis.mac"); 
     ui->SessionStart();
     delete ui; 
     

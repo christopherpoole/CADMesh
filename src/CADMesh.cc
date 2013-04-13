@@ -15,11 +15,11 @@
 // GEANT4 //
 #include "G4UIcommand.hh"
 
+#ifndef NOVCGLIB
 // OpenGL //
 #include "GL/gl.h"
 #include "GL/glu.h"
 
-#ifndef NOVCGLIB
 // VCGLIB //
 #include "wrap/io_trimesh/import.h"
 #include "wrap/io_trimesh/import_dae.h"

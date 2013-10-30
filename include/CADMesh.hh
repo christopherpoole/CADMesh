@@ -125,7 +125,13 @@ class CADMesh {
     };
  
     G4VSolid* TessellatedMesh(G4String name) {
-        for (G4int index = 0; index < GetNumberOfMeshes(); index++) {
+        Assimp::Importer importer;
+        scene = importer.ReadFile(file_name,
+                aiProcess_Triangulate           |
+                aiProcess_JoinIdenticalVertices |
+                aiProcess_CalcTangentSpace);
+
+        for (G4int index = 0; index < scene->mNumMeshes; index++) {
             aiMesh* mesh = scene->mMeshes[index];
 
             if (strcmp(mesh->mName.C_Str(), name.c_str()))
@@ -146,10 +152,6 @@ class CADMesh {
     void SetVerbose(int verbose) {
         this->verbose = verbose;
     };
-
-    G4int GetNumberOfMeshes() {
-        return scene->mNumMeshes;
-    }
 
   private:
     G4TessellatedSolid * volume_solid;

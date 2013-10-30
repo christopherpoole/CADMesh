@@ -12,10 +12,6 @@ else()
 endif()
 include(${Geant4_USE_FILE})
 
- # QT-Xml
-find_package(Qt4 COMPONENTS QtGui QtCore QtXml REQUIRED)
-include(${QT_USE_FILE})
-
 # X11 if on a Mac
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(OPENGL_INCLUDE_DIR_MAC /usr/X11/include )
@@ -44,6 +40,10 @@ option(WITH_VCGLIB "WITH_VCGLIB" OFF)
 set(VCGLIB_SRC)
 set(VCGLIB_TARGET)
 IF(${WITH_VCGLIB} MATCHES "ON")
+    # QT-Xml
+    find_package(Qt4 COMPONENTS QtGui QtCore QtXml REQUIRED)
+    include(${QT_USE_FILE})
+
     include_directories(${VCGLIB_DIR})
     set(VCGLIB_SRC ${VCGLIB_DIR}/wrap/ply/plylib.cpp)
     set(WITH_ASSIMP OFF)

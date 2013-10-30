@@ -150,15 +150,15 @@ CADMesh::~CADMesh()
 }
 
 #ifndef NOASSIMP
-G4VSolid* CADMesh::TessellatedMesh()
+G4VSolid* CADMesh::TessellatedMesh(G4int index)
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(file_name,
+    scene = importer.ReadFile(file_name,
             aiProcess_Triangulate           |
             aiProcess_JoinIdenticalVertices |
             aiProcess_CalcTangentSpace);
 
-    m = scene->mMeshes[0];
+    m = scene->mMeshes[index];
 
     volume_solid = new G4TessellatedSolid(file_name);
 

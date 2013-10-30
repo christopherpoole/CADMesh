@@ -118,7 +118,22 @@ class CADMesh {
 
 #ifndef NOASSIMP
   public:
-    G4VSolid* TessellatedMesh();
+    G4VSolid* TessellatedMesh(G4int index);
+    
+    G4VSolid* TessellatedMesh() {
+        return TessellatedMesh(0);   
+    };
+ 
+    G4VSolid* TessellatedMesh(G4String name) {
+        for (G4int index = 0; index < GetNumberOfMeshes(); index++) {
+            aiMesh* mesh = scene->mMeshes[index];
+
+            if (strcmp(mesh->mName.C_Str(), name.c_str()))
+                return TessellatedMesh(index);
+        }
+
+        G4cerr << "Mesh " << name << " not found. Cannot be loaded." << G4endl;
+    };
 
     G4TessellatedSolid * GetSolid() {
         return volume_solid;
@@ -132,8 +147,14 @@ class CADMesh {
         this->verbose = verbose;
     };
 
+    G4int GetNumberOfMeshes() {
+        return scene->mNumMeshes;
+    }
+
   private:
     G4TessellatedSolid * volume_solid;
+
+    const aiScene* scene;
     aiMesh* m;
 #endif
 

@@ -20,8 +20,9 @@
 #include "G4Tet.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4Material.hh"
-
 #include "G4LogicalVolume.hh"
+#include "G4SystemOfUnits.hh"
+
 // TETGEN //
 #ifndef NOTET
 #include "tetgen.h"

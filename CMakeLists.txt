@@ -31,7 +31,7 @@ else()
     ExternalProject_Add(
         tetgen
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/tetgen
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/external/tetgen
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
     )
     include_directories(${PROJECT_BINARY_DIR}/external/tetgen/include)
 endif()
@@ -44,7 +44,7 @@ else()
     ExternalProject_Add(
         assimp 
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/assimp
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/external/assimp
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
     )
     include_directories(${PROJECT_BINARY_DIR}/external/assimp/include)
 endif()

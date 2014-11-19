@@ -76,7 +76,7 @@ The following shows basic default usage for cadmesh in a UserDetectorConstructio
 
 # Dependencies
 A working installation of the following libraries or packages is required:
- * GEANT4
+ * [GEANT4](htt:/geant4.org/geant4/)
  * [ASSIMP](http://assimp.sourceforge.net/)
  * [TETGEN](http://tetgen.org/)
 
@@ -96,6 +96,7 @@ Download the latest release of CADMesh from the [Downloads](https://github.com/c
     mkdir build
     cd build
 
+    cmake ..
     sudo make install
 
 Here is a basic example usage. The CMakeLists.txt file illustrates how to link against CADMesh.

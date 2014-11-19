@@ -24,23 +24,17 @@
 #include "G4SystemOfUnits.hh"
 
 // TETGEN //
-#ifndef NOTET
 #include "tetgen.h"
-#endif
 
 // Open Asset Importer Library //
-#ifndef NOASSIMP
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
-#endif
 
 
 class CADMesh {
   public:
-#ifndef NOASSIMP
     CADMesh(char * file, double units, G4ThreeVector offset, G4bool reverse);
-#endif
     CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, G4Material * material, double quality);
     CADMesh(char * file, char * type, G4Material * material, double quality, G4ThreeVector offset);
@@ -48,7 +42,6 @@ class CADMesh {
     CADMesh(char * file, char * type, G4Material * material);
     ~CADMesh();
 
-#ifndef NOTET
   public:
     G4AssemblyVolume * TetrahedralMesh();
 
@@ -72,9 +65,7 @@ class CADMesh {
     G4ThreeVector GetTetPoint(G4int index_offset);
     tetgenio in, out;
     G4AssemblyVolume * assembly;
-#endif
-
-#ifndef NOASSIMP
+  
   public:
     G4VSolid* TessellatedMesh(G4int index);
     
@@ -116,7 +107,6 @@ class CADMesh {
 
     const aiScene* scene;
     aiMesh* m;
-#endif
 
   private:
     G4int verbose;

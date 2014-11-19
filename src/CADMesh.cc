@@ -20,7 +20,6 @@
 #include "GL/glu.h"
 
 
-#ifndef NOASSIMP
 CADMesh::CADMesh(char * file_name, double units,
         G4ThreeVector offset, G4bool reverse)
 {
@@ -39,7 +38,7 @@ CADMesh::CADMesh(char * file_name, double units,
     this->has_solid = false;
     this->verbose = 0;
 }
-#endif
+
 
 CADMesh::CADMesh(char * file_name, char * file_type, double units,
         G4ThreeVector offset, G4bool reverse)
@@ -60,6 +59,7 @@ CADMesh::CADMesh(char * file_name, char * file_type, double units,
     this->verbose = 0;
 }
 
+
 CADMesh::CADMesh(char * file_name, char * file_type,
         G4Material * material, double quality)
 {
@@ -79,6 +79,7 @@ CADMesh::CADMesh(char * file_name, char * file_type,
     this->verbose = 0;
 }
 
+
 CADMesh::CADMesh(char * file_name, char * file_type)
 {
     this->units = mm;
@@ -97,6 +98,7 @@ CADMesh::CADMesh(char * file_name, char * file_type)
     this->verbose = 0;
 }
 
+
 CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
 {
     this->units = mm;
@@ -114,6 +116,7 @@ CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
     this->has_solid = false;
     this->verbose = 0;
 }
+
 
 CADMesh::CADMesh(char * file_name, char * file_type,
         G4Material * material, double quality, G4ThreeVector offset)
@@ -134,11 +137,12 @@ CADMesh::CADMesh(char * file_name, char * file_type,
     this->verbose = 0;
 }
 
+
 CADMesh::~CADMesh()
 {
 }
 
-#ifndef NOASSIMP
+
 G4VSolid* CADMesh::TessellatedMesh(G4int index)
 {
     Assimp::Importer importer;
@@ -191,10 +195,8 @@ G4VSolid* CADMesh::TessellatedMesh(G4int index)
 
     return volume_solid;
 }
-#endif
 
 
-#ifndef NOTET
 G4AssemblyVolume * CADMesh::TetrahedralMesh()
 {
     // USAGE: assembly->MakeImprint(world_logical, assembly_transform_3d, 0); //
@@ -263,4 +265,4 @@ G4ThreeVector CADMesh::GetTetPoint(G4int index_offset)
             out.pointlist[out.tetrahedronlist[index_offset]*3+1] - offset.y(),
             out.pointlist[out.tetrahedronlist[index_offset]*3+2] - offset.z());
 }
-#endif
+

@@ -1,8 +1,9 @@
 # Introduction
 Importing predefined CAD models into [GEANT4](http://www.geant4.org/geant4/) is not always possible or requires intermediate file format conversion to Geometry Description Markup Language (GDML) using commercial or third party software.
-CADMesh is a direct CAD model import interface for GEANT4 optionally leveraging [VCGLIB](http://vcg.sourceforge.net/index.php/Main_Page), and [ASSIMP](http://assimp.sourceforge.net/) by default.
+CADMesh is a direct CAD model import interface for GEANT4 leveraging [ASSIMP](http://assimp.sourceforge.net/) for reading the CAD files.
 Currently it supports the import of triangular facet surface meshes defined in formats such as STL and PLY. A G4TessellatedSolid is returned and can be included in a standard user detector constructor.
-You can find the project page and a Mercurial repository [here](http://code.google.com/p/cadmesh/).
+You can find the project page and a git repository [here](https://github.com/christopherpoole/CADMesh).
+The old [Google Code page for CADMesh](http://code.google.com/p/cadmesh/) is still kept up-to-date, however future developments occur here on GitHub.
 
 ![Screen Shot](https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png)
 
@@ -74,41 +75,27 @@ The following shows basic default usage for cadmesh in a UserDetectorConstructio
     target_link_libraries(cadmesh_example ${cadmesh_LIBRARIES})
 
 # Dependencies
-A working installation of the folowing libraries or packages is required:
+A working installation of the following libraries or packages is required:
  * GEANT4
- * [ASSIMP](http://assimp.sourceforge.net/) (default, optional with VCGLIB)
- * VCGLIB (optional)
- * TETGEN (optional)
- * QT and OpenGL (for COLLADA support using VCGLIB)
+ * [ASSIMP](http://assimp.sourceforge.net/)
+ * [TETGEN](http://tetgen.org/)
+
+They are included in the repository as external projects/submodules.
 
 # Installation
-For installation of v0.5 and below see the wikipage [OldInstallation](http://code.google.com/p/cadmesh/wiki/OldInstallation). For the old gmake installation method see [GMakeInstallation](http://code.google.com/p/cadmesh/wiki/GMakeInstallation). Now we use cmake!
-
-Download the latest release of CADMesh from the [Downloads](http://code.google.com/p/cadmesh/downloads/list) section, and extract the archive, or checkout the development branch from the repository.
-Additionally, download VCGLIB (you can find more information about acquiring VCGLIB [here](http://vcg.sourceforge.net/index.php/Tutorial#Getting_VCG_Lib)) and download tetgen from [here](http://tetgen.berlios.de/) (on ubuntu you can `sudo apt-get install libtet1.4.2-dev`).
-
-    # Checkout VCGLIB (optional)
-    # svn co https://vcg.svn.sourceforge.net/svnroot/vcg/trunk/vcglib vcglib -r 4041
+Download the latest release of CADMesh from the [Downloads](https://github.com/christopherpoole/CADMesh/releases) section, and extract the archive, or checkout the development branch from the repository.
 
     # CADMesh latest dev branch
     git clone https://github.com/christopherpoole/CADMesh.git
-
+    
     cd cadmesh/
+    
+    # Fetch the external dependancies
+    git submodule update --init --recursive
+
     mkdir build
     cd build
 
-    # Default (using ASSIMP)
-    cmake .. 
-    # OR for fast tessellated solids with tetgen
-    cmake .. -DWITH_TETGEN="ON"
-
-    # For CAD using VCGLIB
-    cmake .. -DWITH_VCGLIB="ON" -DVCGLIB_DIR="/path/to/vcglib"
-
-    # FOR TET only
-    cmake .. -DWITH_ASSIMP="OFF" -DWITHVCGLIB="OFF" -DWITH_TETGEN="ON"
-
-    make
     sudo make install
 
 Here is a basic example usage. The CMakeLists.txt file illustrates how to link against CADMesh.

@@ -1,5 +1,5 @@
 /* ************************************************
- * GEANT4 VCGLIB/CAD INTERFACE
+ * GEANT4 CAD INTERFACE
  *
  * File:      CADMesh.hh
  *
@@ -33,24 +33,6 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
-#endif
-
-// VCGLIB //
-#ifndef NOVCGLIB
-#include "vcg/simplex/vertex/base.h"
-#include "vcg/simplex/vertex/component.h"
-#include "vcg/simplex/face/base.h"
-#include "vcg/simplex/face/component.h"
-#include "vcg/complex/complex.h"
-
-class CADVertex;
-class CADFace;
-
-class CADUsedTypes: public vcg::UsedTypes< vcg::Use<CADVertex>::AsVertexType, vcg::Use<CADFace>::AsFaceType>{};
-
-class CADVertex : public vcg::Vertex<CADUsedTypes, vcg::vertex::Coord3d, vcg::vertex::Normal3f> {};
-class CADFace : public vcg::Face<CADUsedTypes, vcg::face::VertexRef> {};
-class CADTriMesh : public vcg::tri::TriMesh< std::vector<CADVertex>, std::vector<CADFace> > {};
 #endif
 
 
@@ -90,31 +72,6 @@ class CADMesh {
     G4ThreeVector GetTetPoint(G4int index_offset);
     tetgenio in, out;
     G4AssemblyVolume * assembly;
-#endif
-
-#ifndef NOVCGLIB
-  public:
-    G4VSolid* TessellatedMesh();
-
-    G4TessellatedSolid * GetSolid() {
-        return volume_solid;
-    };
-
-    G4String MeshName() {
-        return file_name;
-    };
-
-    int MeshVertexNumber() {
-        return m.VertexNumber();
-    };
-    
-    void SetVerbose(int verbose) {
-        this->verbose = verbose;
-    };
-
-  private:
-    G4TessellatedSolid * volume_solid;
-    CADTriMesh m;
 #endif
 
 #ifndef NOASSIMP

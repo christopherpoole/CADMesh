@@ -24,7 +24,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # Tetgen
-option(WITH_TETGEN "WITH_SYS_TETGEN" OFF)
+option(WITH_SYS_TETGEN "WITH_SYS_TETGEN" OFF)
 if(${WITH_SYS_TETGEN} MATCHES "ON")
     find_package(tetgen)
 else()

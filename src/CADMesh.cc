@@ -300,7 +300,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     } else if (file_type == "PLY") {
         in.load_ply(file_name);
     } else if (file_type == "TET") {
-        out.load_tetmesh(file_name);
+        out.load_tetmesh(file_name, NULL);
         do_tet = false;
     } else if (file_type == "OFF") {
         out.load_off(file_name);
@@ -314,7 +314,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
 #ifdef DEBUG
         G4cout << "Tetrahedralisation configuration: " << config << G4endl;
 #endif
-        tetrahedralize((char *) config.c_str(), &in, &out);
+        tetrahedralize((tetgenbehavior *) config.c_str(), &in, &out);
     }
 
 #ifdef DEBUG

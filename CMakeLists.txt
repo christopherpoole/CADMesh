@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(cadmesh)
 
 include(FindPkgConfig)
+include(ExternalProject)
+
 
 # GEANT4
 option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
@@ -13,46 +15,58 @@ endif()
 include(${Geant4_USE_FILE})
 
 # X11 if on a Mac
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(OPENGL_INCLUDE_DIR_MAC /usr/X11/include )
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(OPENGL_INCLUDE_DIR_MAC /var/empty/X11/include )
     include_directories(${OPENGL_INCLUDE_DIR_MAC})
 
-    set(OPENGL_INCLUDE_DIR /usr/include )
+    set(OPENGL_INCLUDE_DIR /var/empty/include )
     include_directories(${OPENGL_INCLUDE_DIR})
-ENDIF()
+endif()
 
 # Tetgen
-set(TETGEN_TARGET)
-option(WITH_TETGEN "WITH_TETGEN" OFF)
-IF(${WITH_TETGEN} MATCHES "ON")
-    include_directories(${TETGEN_DIR})
-    set(TETGEN_TARGET tet)
-ENDIF()
-IF(${WITH_TETGEN} MATCHES "OFF")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOTET")
-ENDIF()
+option(WITH_TETGEN "WITH_SYS_TETGEN" OFF)
+if(${WITH_SYS_TETGEN} MATCHES "ON")
+    find_package(tetgen)
+else()
+    ExternalProject_Add(
+        tetgen
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/tetgen
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/external/tetgen
+    )
+    include_directories(${PROJECT_BINARY_DIR}/external/tetgen/include)
+endif()
 
 # Open Asset Importer Library
-option(WITH_ASSIMP "WITH_ASSIMP" ON)
-IF(${WITH_ASSIMP} MATCHES "ON")
+option(WITH_SYS_ASSIMP "WITH_SYS_ASSIMP" OFF)
+if(${WITH_SYS_ASSIMP} MATCHES "ON")
     find_package(assimp)
-ENDIF()
+else()
+    ExternalProject_Add(
+        assimp 
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/assimp
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/external/assimp
+    )
+    include_directories(${PROJECT_BINARY_DIR}/external/assimp/include)
+endif()
 
 # CADMesh
-include_directories(include/)
+file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
-link_directories(${TETGEN_DIR})
-add_library(cadmesh "SHARED" ${PROJECT_SOURCE_DIR}/src/CADMesh.cc) 
-target_link_libraries(cadmesh ${TETGEN_TARGET})
+add_library(cadmesh "SHARED" ${sources} ${headers}) 
 
-IF(${WITH_ASSIMP} MATCHES "ON")
-    target_link_libraries(cadmesh assimp)
-ENDIF()
+if(${WITH_SYS_TETGEN} MATCHES "OFF")
+    add_dependencies(cadmesh tetgen)
+endif()
+
+if(${WITH_SYS_TETGEN} MATCHES "OFF")
+    add_dependencies(cadmesh assimp)
+endif()
 
 target_link_libraries(cadmesh ${Geant4_LIBRARIES})
-
-set (CADMESH_VERSION_MAJOR 0)
-set (CADMESH_VERSION_MINOR 9)
+target_link_libraries(cadmesh ${Tetgen_LIBRARIES})
+target_link_libraries(cadmesh ${Assimp_LIBRARIES})
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cadmesh-config.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" @ONLY IMMEDIATE)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_VERSION_MAJOR}.${CADMESH_VERSION_MINOR}")

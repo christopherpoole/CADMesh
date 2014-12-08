@@ -90,26 +90,38 @@ Download the latest release of CADMesh from the [Downloads](https://github.com/c
     
     cd cadmesh/
     
-    # Fetch the external dependancies
-    git submodule update --init --recursive
+    # Fetch the external dependancies (optional), running
+    # cmake will result in this happening anyway.
+    # git submodule update --init --recursive
 
     mkdir build
     cd build
 
-    cmake ..
+    cmake .. -DCMAKE_INSTALL_PREFIX:PATH=<optional install location>
     sudo make install
 
-Here is a basic example usage. The CMakeLists.txt file illustrates how to link against CADMesh.
+Here is a basic example usage. The CMakeLists.txt file illustrates how to link against CADMesh (which requires CADMesh to be installed somewhere).
 
     # Run example (Linux with g++)
     cd examples/basic
     mkdir build
     cd build
 
-    cmake .. 
+    cmake .. -Dcadmesh_DIR:PATH=<cadmesh install location> 
     make
     cd ..
 
-    ./build/cadmesh_example
+    ./build/cadmesh_example macros/vis.mac
     Idle> exit
 
+If you get an error such as this:
+
+    ./build/cadmesh_example: error while loading shared libraries: libcadmesh.so: cannot open shared object file: No such file or directory
+
+Make sure the CADMesh library is in your path:
+
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<cadmesh install location>/lib
+
+or on a Mac:
+    
+    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:<cadmesh install location>/lib

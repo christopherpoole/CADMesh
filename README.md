@@ -87,6 +87,8 @@ Download the latest release of CADMesh from the [Downloads](https://github.com/c
 
     # CADMesh latest dev branch
     git clone https://github.com/christopherpoole/CADMesh.git
+
+    # OR download a [release](https://github.com/christopherpoole/CADMesh/releases), and extract the download somewhere.
     
     cd cadmesh/
     

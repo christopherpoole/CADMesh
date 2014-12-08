@@ -80,7 +80,7 @@ class CADMesh {
                 aiProcess_JoinIdenticalVertices |
                 aiProcess_CalcTangentSpace);
 
-        for (G4int index = 0; index < scene->mNumMeshes; index++) {
+        for (unsigned int index = 0; index < scene->mNumMeshes; index++) {
             aiMesh* mesh = scene->mMeshes[index];
 
             if (strcmp(mesh->mName.C_Str(), name.c_str()))

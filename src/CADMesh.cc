@@ -207,7 +207,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     } else if (file_type == "PLY") {
         in.load_ply(file_name);
     } else if (file_type == "TET") {
-        out.load_tetmesh(file_name, NULL);
+        out.load_tetmesh(file_name, 0);
         do_tet = false;
     } else if (file_type == "OFF") {
         out.load_off(file_name);

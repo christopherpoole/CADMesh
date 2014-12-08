@@ -55,7 +55,9 @@ endif()
 # CADMesh
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${CMAKE_INSTALL_PREFIX}/include)
 
 add_library(cadmesh "SHARED" ${sources} ${headers}) 
 

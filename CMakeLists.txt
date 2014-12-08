@@ -29,7 +29,7 @@ if(${WITH_SYS_TETGEN} MATCHES "ON")
     find_package(tetgen)
 else()
     ExternalProject_Add(
-        tetgen
+        tetgen_external
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/tetgen
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
     )
@@ -42,7 +42,7 @@ if(${WITH_SYS_ASSIMP} MATCHES "ON")
     find_package(assimp)
 else()
     ExternalProject_Add(
-        assimp 
+        assimp_external
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/assimp
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
     )
@@ -57,16 +57,16 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 add_library(cadmesh "SHARED" ${sources} ${headers}) 
 
 if(${WITH_SYS_TETGEN} MATCHES "OFF")
-    add_dependencies(cadmesh tetgen)
+    add_dependencies(cadmesh tetgen_external)
 endif()
 
 if(${WITH_SYS_TETGEN} MATCHES "OFF")
-    add_dependencies(cadmesh assimp)
+    add_dependencies(cadmesh assimp_external)
 endif()
 
 target_link_libraries(cadmesh ${Geant4_LIBRARIES})
-target_link_libraries(cadmesh ${Tetgen_LIBRARIES})
-target_link_libraries(cadmesh ${Assimp_LIBRARIES})
+target_link_libraries(cadmesh -L${CMAKE_INSTALL_PREFIX}/lib tet)
+target_link_libraries(cadmesh assimp)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cadmesh-config.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" @ONLY IMMEDIATE)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_VERSION_MAJOR}.${CADMESH_VERSION_MINOR}")

@@ -8,6 +8,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # CADMesh
 find_package(cadmesh)
+include_directories(${CADMESH_INCLUDE_DIRS})
 
 # User code
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)

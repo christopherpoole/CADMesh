@@ -216,12 +216,12 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
 
     if (do_tet)
     {
-        G4String config = G4String("Yp");
-        if (quality > 0) config = config + G4String("q") + G4UIcommand::ConvertToString(quality);
-#ifdef DEBUG
-        G4cout << "Tetrahedralisation configuration: " << config << G4endl;
-#endif
-        tetrahedralize((tetgenbehavior *) config.c_str(), &in, &out);
+        tetgenbehavior* behavior = new tetgenbehavior();
+        behavior->nobisect = 1;
+        behavior->plc = 1;
+        behavior->quality = quality;
+
+        tetrahedralize(behavior, &in, &out);
     }
 
 #ifdef DEBUG

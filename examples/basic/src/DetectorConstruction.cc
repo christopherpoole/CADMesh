@@ -45,7 +45,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     world_logical = new G4LogicalVolume(world_solid, air,"world_logical",0,0,0);
     world_physical = new G4PVPlacement(0, G4ThreeVector(), world_logical,
                                        "world_physical", 0, false, 0);
-
+    
     // Load CAD file as tessellated solid //
     offset = G4ThreeVector(-30*cm, 0, 0);
     CADMesh * mesh = new CADMesh("../../models/cone.ply", "PLY", mm, offset, false);
@@ -54,7 +54,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     cad_logical = new G4LogicalVolume(cad_solid, water, "cad_logical", 0, 0, 0);
     cad_physical = new G4PVPlacement(0, G4ThreeVector(), cad_logical,
                                      "cad_physical", world_logical, false, 0);
-/*
+    
     // Load CAD file as tetrahedral mesh //
     CADMesh * tet_mesh = new CADMesh("../../models/cone.ply", "PLY", water);
     G4AssemblyVolume * cad_assembly = tet_mesh->TetrahedralMesh();
@@ -65,7 +65,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4Transform3D transform = translation*rotation;
 
     cad_assembly->MakeImprint(world_logical, transform, 0, 0);
-*/
+
     return world_physical;
 }
 

@@ -13,6 +13,46 @@
 #include "CADMesh.hh"
 
 
+CADMesh::CADMesh(char * file_name)
+{
+    this->scale = mm;
+    this->offset = G4ThreeVector();
+    this->reverse = false;
+
+    this->file_name = file_name;
+    this->file_type = "ASSIMP";
+    this->file_type.toUpper();
+
+    this->material = NULL;
+    this->quality = 0;
+
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
+}
+
+
+CADMesh::CADMesh(char * file_name, char * file_type)
+{
+    this->scale = mm;
+    this->offset = G4ThreeVector();
+    this->reverse = false;
+
+    this->file_name = file_name;
+    this->file_type = file_type;
+    this->file_type.toUpper();
+
+    this->material = NULL;
+    this->quality = 0;
+
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
+}
+
+
+// TODO: The following constructors will be depricated in a future version.
+
 CADMesh::CADMesh(char * file_name, double scale,
         G4ThreeVector offset, G4bool reverse)
 {
@@ -66,25 +106,6 @@ CADMesh::CADMesh(char * file_name, char * file_type,
 
     this->material = material;
     this->quality = quality;
-
-    this->has_mesh = false;
-    this->has_solid = false;
-    this->verbose = 0;
-}
-
-
-CADMesh::CADMesh(char * file_name, char * file_type)
-{
-    this->scale = mm;
-    this->offset = G4ThreeVector();
-    this->reverse = false;
-
-    this->file_name = file_name;
-    this->file_type = file_type;
-    this->file_type.toUpper();
-
-    this->material = NULL;
-    this->quality = 0;
 
     this->has_mesh = false;
     this->has_solid = false;

@@ -35,10 +35,11 @@
 
 class CADMesh {
   public:
+    CADMesh(char * file);
     CADMesh(char * file, char * type);
     ~CADMesh();
     
-    // The following constructors will be depricated in a future version.
+    // TODO: The following constructors will be depricated in a future version.
     CADMesh(char * file, double scale, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, double scale, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, G4Material * material, double quality);

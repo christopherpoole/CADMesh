@@ -22,6 +22,7 @@
 #include "G4Material.hh"
 #include "G4LogicalVolume.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4UIcommand.hh"
 
 // TETGEN //
 #include "tetgen.h"

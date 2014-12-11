@@ -12,9 +12,6 @@
 // USER //
 #include "CADMesh.hh"
 
-// GEANT4 //
-#include "G4UIcommand.hh"
-
 
 CADMesh::CADMesh(char * file_name, double scale,
         G4ThreeVector offset, G4bool reverse)

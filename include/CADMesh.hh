@@ -43,11 +43,6 @@ class CADMesh {
     ~CADMesh();
 
   public:
-    G4AssemblyVolume * TetrahedralMesh();
-
-    G4AssemblyVolume * GetAssembly() {
-        return assembly;
-    };
 
     int get_input_point_count() {
         return in.numberofpoints;
@@ -70,10 +65,15 @@ class CADMesh {
     G4VSolid* TessellatedMesh(G4int index);
     G4VSolid* TessellatedMesh(G4String name);
 
+    // Load tetrahedral meshes using TETGEN.
+    G4AssemblyVolume * TetrahedralMesh();
+    
+    // Getters and setters for various properties. 
     G4TessellatedSolid * GetSolid() {
         return volume_solid;
     };
 
+    // TODO: This method will be removed in a future version. Use CADMesh::GetFileName instead.
     G4String MeshName() {
         return file_name;
     };
@@ -132,6 +132,10 @@ class CADMesh {
 
     G4double GetQuality() {
         return this->quality;
+    };
+
+    G4AssemblyVolume * GetAssembly() {
+        return assembly;
     };
 
   private:

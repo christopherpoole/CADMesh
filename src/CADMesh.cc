@@ -143,6 +143,12 @@ CADMesh::~CADMesh()
 }
 
 
+G4VSolid* CADMesh::TessellatedMesh()
+{
+    return TessellatedMesh(0);
+}
+
+
 G4VSolid* CADMesh::TessellatedMesh(G4int index)
 {
     Assimp::Importer importer;
@@ -197,20 +203,41 @@ G4VSolid* CADMesh::TessellatedMesh(G4int index)
 }
 
 
+G4VSolid* CADMesh::TessellatedMesh(G4String name)
+{
+    Assimp::Importer importer;
+    scene = importer.ReadFile(file_name,
+            aiProcess_Triangulate           |
+            aiProcess_JoinIdenticalVertices |
+            aiProcess_CalcTangentSpace);
+
+    for (unsigned int index = 0; index < scene->mNumMeshes; index++) {
+        aiMesh* mesh = scene->mMeshes[index];
+
+        if (strcmp(mesh->mName.C_Str(), name.c_str()))
+            return TessellatedMesh(index);
+    }
+
+    G4cerr << "Mesh " << name << " not found. Cannot be loaded." << G4endl;
+}  
+
+
 G4AssemblyVolume * CADMesh::TetrahedralMesh()
 {
     // USAGE: assembly->MakeImprint(world_logical, assembly_transform_3d, 0); //
 
+    char* fn = (char*) file_name.c_str();
+
     G4bool do_tet = true;
     if (file_type == "STL") {
-        in.load_stl(file_name);
+        in.load_stl(fn);
     } else if (file_type == "PLY") {
-        in.load_ply(file_name);
+        in.load_ply(fn);
     } else if (file_type == "TET") {
-        out.load_tetmesh(file_name, 0);
+        out.load_tetmesh(fn, 0);
         do_tet = false;
     } else if (file_type == "OFF") {
-        out.load_off(file_name);
+        out.load_off(fn);
         do_tet = false;
     }
 
@@ -227,6 +254,8 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
 #ifdef DEBUG
     G4cout << "Tetrahedra available: " << out.numberoftetrahedra << G4endl;
 #endif
+
+    G4cout << "UNITS: " << units << G4endl;
 
     assembly = new G4AssemblyVolume();
     G4RotationMatrix * element_rotation = new G4RotationMatrix();
@@ -261,8 +290,8 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
 
 G4ThreeVector CADMesh::GetTetPoint(G4int index_offset)
 {
-    return G4ThreeVector(out.pointlist[out.tetrahedronlist[index_offset]*3] - offset.x(),
-            out.pointlist[out.tetrahedronlist[index_offset]*3+1] - offset.y(),
-            out.pointlist[out.tetrahedronlist[index_offset]*3+2] - offset.z());
+    return G4ThreeVector(out.pointlist[out.tetrahedronlist[index_offset]*3] * units - offset.x(),
+            out.pointlist[out.tetrahedronlist[index_offset]*3+1] * units - offset.y(),
+            out.pointlist[out.tetrahedronlist[index_offset]*3+2] * units - offset.z());
 }
 

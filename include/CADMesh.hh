@@ -63,32 +63,12 @@ class CADMesh {
 
   private:
     G4ThreeVector GetTetPoint(G4int index_offset);
-    tetgenio in, out;
-    G4AssemblyVolume * assembly;
-  
-  public:
-    G4VSolid* TessellatedMesh(G4int index);
-    
-    G4VSolid* TessellatedMesh() {
-        return TessellatedMesh(0);   
-    };
  
-    G4VSolid* TessellatedMesh(G4String name) {
-        Assimp::Importer importer;
-        scene = importer.ReadFile(file_name,
-                aiProcess_Triangulate           |
-                aiProcess_JoinIdenticalVertices |
-                aiProcess_CalcTangentSpace);
-
-        for (unsigned int index = 0; index < scene->mNumMeshes; index++) {
-            aiMesh* mesh = scene->mMeshes[index];
-
-            if (strcmp(mesh->mName.C_Str(), name.c_str()))
-                return TessellatedMesh(index);
-        }
-
-        G4cerr << "Mesh " << name << " not found. Cannot be loaded." << G4endl;
-    };
+  public:
+    // Load tessellated meshes using ASSIMP.
+    G4VSolid* TessellatedMesh();
+    G4VSolid* TessellatedMesh(G4int index);
+    G4VSolid* TessellatedMesh(G4String name);
 
     G4TessellatedSolid * GetSolid() {
         return volume_solid;
@@ -98,17 +78,74 @@ class CADMesh {
         return file_name;
     };
 
-    void SetVerbose(int verbose) {
+    G4String GetFileName() {
+        return this->file_name;
+    };
+
+    G4String GetFileType() {
+        return this->file_type;
+    };
+
+    void SetVerbose(G4int verbose) {
         this->verbose = verbose;
     };
 
+    G4int GetVerbose() {
+        return this->verbose;
+    };
+
+    void SetUnits(G4double units) {
+        this->units = units;
+    };
+
+    G4double GetUnits() {
+        return this->units;
+    };
+
+    void SetOffset(G4ThreeVector offset) {
+        this->offset = offset;
+    };
+    
+    G4ThreeVector GetOffset() {
+        return this-> offset;
+    };
+
+    void SetReverse(G4bool reverse) {
+        this->reverse = reverse;
+    };
+
+    G4bool GetReverse() {
+        return this->reverse;
+    };
+
+    void SetMaterial(G4Material* material) {
+        this->material = material;
+    };
+
+    G4Material* GetMaterial() {
+        return this->material;
+    };
+
+    void SetQuality(G4double quality) {
+        this->quality = quality;
+    };
+
+    G4double GetQuality() {
+        return this->quality;
+    };
+
   private:
+    // For tesselated meshes.
     G4TessellatedSolid * volume_solid;
 
     const aiScene* scene;
     aiMesh* m;
 
-  private:
+    // For tetrahedral meshes.
+    tetgenio in, out;
+    G4AssemblyVolume * assembly;
+
+    // General properties. 
     G4int verbose;
     G4bool has_mesh;
     G4bool has_solid;
@@ -122,7 +159,7 @@ class CADMesh {
     
     G4Material * material;
 
-    char * file_name;
+    G4String file_name;
     G4String file_type;
 };
 

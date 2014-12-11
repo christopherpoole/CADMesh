@@ -20,10 +20,10 @@
 #include "GL/glu.h"
 
 
-CADMesh::CADMesh(char * file_name, double units,
+CADMesh::CADMesh(char * file_name, double scale,
         G4ThreeVector offset, G4bool reverse)
 {
-    this->units = units;
+    this->scale = scale;
     this->offset = offset;
     this->reverse = reverse;
 
@@ -40,10 +40,10 @@ CADMesh::CADMesh(char * file_name, double units,
 }
 
 
-CADMesh::CADMesh(char * file_name, char * file_type, double units,
+CADMesh::CADMesh(char * file_name, char * file_type, double scale,
         G4ThreeVector offset, G4bool reverse)
 {
-    this->units = units;
+    this->scale = scale;
     this->offset = offset;
     this->reverse = reverse;
 
@@ -63,7 +63,7 @@ CADMesh::CADMesh(char * file_name, char * file_type, double units,
 CADMesh::CADMesh(char * file_name, char * file_type,
         G4Material * material, double quality)
 {
-    this->units = mm;
+    this->scale = mm;
     this->offset = G4ThreeVector();
     this->reverse = false;
 
@@ -82,7 +82,7 @@ CADMesh::CADMesh(char * file_name, char * file_type,
 
 CADMesh::CADMesh(char * file_name, char * file_type)
 {
-    this->units = mm;
+    this->scale = mm;
     this->offset = G4ThreeVector();
     this->reverse = false;
 
@@ -101,7 +101,7 @@ CADMesh::CADMesh(char * file_name, char * file_type)
 
 CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
 {
-    this->units = mm;
+    this->scale = mm;
     this->offset = G4ThreeVector();
     this->reverse = false;
 
@@ -121,7 +121,7 @@ CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
 CADMesh::CADMesh(char * file_name, char * file_type,
         G4Material * material, double quality, G4ThreeVector offset)
 {
-    this->units = mm;
+    this->scale = mm;
     this->offset = offset;
     this->reverse = false;
 
@@ -169,17 +169,17 @@ G4VSolid* CADMesh::TessellatedMesh(G4int index)
     {
         const aiFace& face = m->mFaces[i];
 
-        point_1.setX(m->mVertices[face.mIndices[0]].x * units + offset.x());
-        point_1.setY(m->mVertices[face.mIndices[0]].y * units + offset.y());
-        point_1.setZ(m->mVertices[face.mIndices[0]].z * units + offset.z());
+        point_1.setX(m->mVertices[face.mIndices[0]].x * scale + offset.x());
+        point_1.setY(m->mVertices[face.mIndices[0]].y * scale + offset.y());
+        point_1.setZ(m->mVertices[face.mIndices[0]].z * scale + offset.z());
 
-        point_2.setX(m->mVertices[face.mIndices[1]].x * units + offset.x());
-        point_2.setY(m->mVertices[face.mIndices[1]].y * units + offset.y());
-        point_2.setZ(m->mVertices[face.mIndices[1]].z * units + offset.z());
+        point_2.setX(m->mVertices[face.mIndices[1]].x * scale + offset.x());
+        point_2.setY(m->mVertices[face.mIndices[1]].y * scale + offset.y());
+        point_2.setZ(m->mVertices[face.mIndices[1]].z * scale + offset.z());
 
-        point_3.setX(m->mVertices[face.mIndices[2]].x * units + offset.x());
-        point_3.setY(m->mVertices[face.mIndices[2]].y * units + offset.y());
-        point_3.setZ(m->mVertices[face.mIndices[2]].z * units + offset.z());
+        point_3.setX(m->mVertices[face.mIndices[2]].x * scale + offset.x());
+        point_3.setY(m->mVertices[face.mIndices[2]].y * scale + offset.y());
+        point_3.setZ(m->mVertices[face.mIndices[2]].z * scale + offset.z());
         
         G4TriangularFacet * facet;
         if (reverse == false) {
@@ -255,7 +255,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
     G4cout << "Tetrahedra available: " << out.numberoftetrahedra << G4endl;
 #endif
 
-    G4cout << "UNITS: " << units << G4endl;
+    G4cout << "UNITS: " << scale << G4endl;
 
     assembly = new G4AssemblyVolume();
     G4RotationMatrix * element_rotation = new G4RotationMatrix();
@@ -290,8 +290,8 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
 
 G4ThreeVector CADMesh::GetTetPoint(G4int index_offset)
 {
-    return G4ThreeVector(out.pointlist[out.tetrahedronlist[index_offset]*3] * units - offset.x(),
-            out.pointlist[out.tetrahedronlist[index_offset]*3+1] * units - offset.y(),
-            out.pointlist[out.tetrahedronlist[index_offset]*3+2] * units - offset.z());
+    return G4ThreeVector(out.pointlist[out.tetrahedronlist[index_offset]*3] * scale - offset.x(),
+            out.pointlist[out.tetrahedronlist[index_offset]*3+1] * scale - offset.y(),
+            out.pointlist[out.tetrahedronlist[index_offset]*3+2] * scale - offset.z());
 }
 

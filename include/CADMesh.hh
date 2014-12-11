@@ -38,8 +38,8 @@ class CADMesh {
     ~CADMesh();
     
     // The following constructors will be depricated in a future version.
-    CADMesh(char * file, double units, G4ThreeVector offset, G4bool reverse);
-    CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
+    CADMesh(char * file, double scale, G4ThreeVector offset, G4bool reverse);
+    CADMesh(char * file, char * type, double scale, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, G4Material * material, double quality);
     CADMesh(char * file, char * type, G4Material * material, double quality, G4ThreeVector offset);
     CADMesh(char * file, char * type, G4Material * material);
@@ -79,12 +79,12 @@ class CADMesh {
         return this->verbose;
     };
 
-    void SetUnits(G4double units) {
-        this->units = units;
+    void SetScale(G4double scale) {
+        this->scale = scale;
     };
 
-    G4double GetUnits() {
-        return this->units;
+    G4double GetScale() {
+        return this->scale;
     };
 
     void SetOffset(G4ThreeVector offset) {
@@ -152,7 +152,7 @@ class CADMesh {
     G4bool has_solid;
 
     G4String name;
-    G4double units;
+    G4double scale;
     G4ThreeVector offset;
     G4bool reverse;
 

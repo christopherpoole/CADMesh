@@ -15,10 +15,6 @@
 // GEANT4 //
 #include "G4UIcommand.hh"
 
-// OpenGL //
-#include "GL/gl.h"
-#include "GL/glu.h"
-
 
 CADMesh::CADMesh(char * file_name, double scale,
         G4ThreeVector offset, G4bool reverse)

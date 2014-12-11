@@ -42,20 +42,6 @@ class CADMesh {
     CADMesh(char * file, char * type, G4Material * material);
     ~CADMesh();
 
-  public:
-
-    int get_input_point_count() {
-        return in.numberofpoints;
-    };
-
-    int get_output_point_count() {
-        return out.numberofpoints;
-    };
-
-    int get_tetrahedron_count() {
-        return out.numberoftetrahedra;
-    };
-
   private:
     G4ThreeVector GetTetPoint(G4int index_offset);
  
@@ -136,6 +122,14 @@ class CADMesh {
 
     G4AssemblyVolume * GetAssembly() {
         return assembly;
+    };
+
+    tetgenio GetTetgenInput() {
+        return in;
+    };
+
+    tetgenio GetTetgenOutput() {
+        return out;
     };
 
   private:

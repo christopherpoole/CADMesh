@@ -34,17 +34,16 @@
 
 class CADMesh {
   public:
+    CADMesh(char * file, char * type);
+    ~CADMesh();
+    
+    // The following constructors will be depricated in a future version.
     CADMesh(char * file, double units, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, double units, G4ThreeVector offset, G4bool reverse);
     CADMesh(char * file, char * type, G4Material * material, double quality);
     CADMesh(char * file, char * type, G4Material * material, double quality, G4ThreeVector offset);
-    CADMesh(char * file, char * type);
     CADMesh(char * file, char * type, G4Material * material);
-    ~CADMesh();
 
-  private:
-    G4ThreeVector GetTetPoint(G4int index_offset);
- 
   public:
     // Load tessellated meshes using ASSIMP.
     G4VSolid* TessellatedMesh();
@@ -132,6 +131,10 @@ class CADMesh {
         return out;
     };
 
+  private:
+    // Private helper functions.
+    G4ThreeVector GetTetPoint(G4int index_offset);
+ 
   private:
     // For tesselated meshes.
     G4TessellatedSolid * volume_solid;

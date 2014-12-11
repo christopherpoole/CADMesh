@@ -233,6 +233,7 @@ G4VSolid* CADMesh::TessellatedMesh(G4String name)
     }
 
     G4cerr << "Mesh " << name << " not found. Cannot be loaded." << G4endl;
+    return NULL;
 }  
 
 

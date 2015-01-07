@@ -29,6 +29,8 @@ CADMesh::CADMesh(char * file_name)
     this->has_mesh = false;
     this->has_solid = false;
     this->verbose = 0;
+    
+    this->scene = NULL;
 }
 
 
@@ -48,6 +50,8 @@ CADMesh::CADMesh(char * file_name, char * file_type)
     this->has_mesh = false;
     this->has_solid = false;
     this->verbose = 0;
+    
+    this->scene = NULL;
 }
 
 
@@ -70,6 +74,8 @@ CADMesh::CADMesh(char * file_name, double scale,
     this->has_mesh = false;
     this->has_solid = false;
     this->verbose = 0;
+    
+    this->scene = NULL;
 }
 
 
@@ -90,6 +96,8 @@ CADMesh::CADMesh(char * file_name, char * file_type, double scale,
     this->has_mesh = false;
     this->has_solid = false;
     this->verbose = 0;
+    
+    this->scene = NULL;
 }
 
 
@@ -110,6 +118,8 @@ CADMesh::CADMesh(char * file_name, char * file_type,
     this->has_mesh = false;
     this->has_solid = false;
     this->verbose = 0;
+    
+    this->scene = NULL;
 }
 
 
@@ -129,6 +139,8 @@ CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
     this->has_mesh = false;
     this->has_solid = false;
     this->verbose = 0;
+
+    this->scene = NULL;
 }
 
 
@@ -149,6 +161,8 @@ CADMesh::CADMesh(char * file_name, char * file_type,
     this->has_mesh = false;
     this->has_solid = false;
     this->verbose = 0;
+
+    this->scene = NULL;
 }
 
 
@@ -166,10 +180,16 @@ G4VSolid* CADMesh::TessellatedMesh()
 G4VSolid* CADMesh::TessellatedMesh(G4int index)
 {
     Assimp::Importer importer;
+
     scene = importer.ReadFile(file_name,
             aiProcess_Triangulate           |
             aiProcess_JoinIdenticalVertices |
             aiProcess_CalcTangentSpace);
+
+    if (!scene) {
+        G4Exception("CADMesh::TessellatedMesh", "The mesh cannot be loaded.",
+                    FatalException, "The file may not exist.");
+    }
 
     m = scene->mMeshes[index];
 
@@ -207,8 +227,8 @@ G4VSolid* CADMesh::TessellatedMesh(G4int index)
     volume_solid->SetSolidClosed(true);
 
     if (volume_solid->GetNumberOfFacets() == 0) {
-        G4Exception("CADMesh::TessellatedMesh", "Load a mesh has 0 faces.",
-                    FatalException, "The file may not exist.");
+        G4Exception("CADMesh::TessellatedMesh", "Loaded mesh has 0 faces.",
+                    FatalException, "The file may be empty.");
         return 0;
     }
 

@@ -207,9 +207,8 @@ G4VSolid* CADMesh::TessellatedMesh(G4int index)
     volume_solid->SetSolidClosed(true);
 
     if (volume_solid->GetNumberOfFacets() == 0) {
-        G4cerr << "CADMesh/TessellatedMesh: "
-               << "Load a mesh has 0 faces, " << file_name << " may not exist."
-               << G4endl;
+        G4Exception("CADMesh::TessellatedMesh", "Load a mesh has 0 faces.",
+                    FatalException, "The file may not exist.");
         return 0;
     }
 
@@ -232,7 +231,9 @@ G4VSolid* CADMesh::TessellatedMesh(G4String name)
             return TessellatedMesh(index);
     }
 
-    G4cerr << "Mesh " << name << " not found. Cannot be loaded." << G4endl;
+    G4Exception("CADMesh::TessellatedMesh", "Mesh not found.",
+                FatalException, "The mesh may not exist in the file.");
+
     return NULL;
 }  
 
@@ -266,12 +267,6 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
         tetrahedralize(behavior, &in, &out);
     }
 
-#ifdef DEBUG
-    G4cout << "Tetrahedra available: " << out.numberoftetrahedra << G4endl;
-#endif
-
-    G4cout << "UNITS: " << scale << G4endl;
-
     assembly = new G4AssemblyVolume();
     G4RotationMatrix * element_rotation = new G4RotationMatrix();
     G4ThreeVector element_position = G4ThreeVector();
@@ -290,15 +285,7 @@ G4AssemblyVolume * CADMesh::TetrahedralMesh()
         G4VSolid * tet_solid = new G4Tet(tet_name + G4String("_solid"), p1, p2, p3, p4, 0);
         G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material, tet_name + G4String("_logical"), 0, 0, 0);
         assembly->AddPlacedVolume(tet_logical, element_position, element_rotation);
-
-#ifdef DEBUG
-        if (i%1000 == 0) G4cout << "Tetrahedrons added: " << i << G4endl;
-#endif
     }
-
-#ifdef DEBUG
-    G4cout << "Loading of " << out.numberoftetrahedra << " tetrahedra complete with material: " << material->GetName() << G4endl;
-#endif
 
     return assembly;
 }

@@ -57,7 +57,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     offset = G4ThreeVector(-20*cm, 0, 0);
     
     // Note that offset is applied to the points in mesh directly before placement.
-    CADMesh * mesh = new CADMesh("../../models/cone.ply", "PLY");
+    CADMesh * mesh = new CADMesh((char*) "../../models/cone.ply", (char*) "PLY");
     mesh->SetScale(mm);
     mesh->SetOffset(offset);
     mesh->SetReverse(false);
@@ -69,7 +69,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     cad_logical->SetVisAttributes(G4Color(0.5, 0.3, 1, 1));
     
     // Load CAD file as tetrahedral mesh //
-    CADMesh * tet_mesh = new CADMesh("../../models/cone.ply", "PLY");
+    CADMesh * tet_mesh = new CADMesh((char*) "../../models/cone.ply", (char*) "PLY");
     tet_mesh->SetScale(1.5);
     tet_mesh->SetMaterial(water); // We have to do this before making the G4AssemblyVolume.
 

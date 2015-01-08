@@ -12,6 +12,14 @@
 #ifndef CADMesh_HH
 #define CADMesh_HH
 
+// TETGEN //
+#include "tetgen.h"
+
+// Open Asset Importer Library //
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
 // GEANT4 //
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
@@ -24,27 +32,19 @@
 #include "G4SystemOfUnits.hh"
 #include "G4UIcommand.hh"
 
-// TETGEN //
-#include "tetgen.h"
-
-// Open Asset Importer Library //
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
-
 
 class CADMesh {
   public:
-    CADMesh(char * file);
-    CADMesh(char * file, char * type);
+    CADMesh(char * file_);
+    CADMesh(char * file_, char * type_);
     ~CADMesh();
     
     // TODO: The following constructors will be depricated in a future version.
-    CADMesh(char * file, double scale, G4ThreeVector offset, G4bool reverse);
-    CADMesh(char * file, char * type, double scale, G4ThreeVector offset, G4bool reverse);
-    CADMesh(char * file, char * type, G4Material * material, double quality);
-    CADMesh(char * file, char * type, G4Material * material, double quality, G4ThreeVector offset);
-    CADMesh(char * file, char * type, G4Material * material);
+    CADMesh(char * file_, double scale_, G4ThreeVector offset_, G4bool reverse_);
+    CADMesh(char * file_, char * type_, double scale_, G4ThreeVector offset_, G4bool reverse_);
+    CADMesh(char * file_, char * type_, G4Material * material_, double quality_);
+    CADMesh(char * file_, char * type_, G4Material * material_, double quality_, G4ThreeVector offset_);
+    CADMesh(char * file_, char * type_, G4Material * material_);
 
   public:
     // Load tessellated meshes using ASSIMP.
@@ -73,48 +73,48 @@ class CADMesh {
         return this->file_type;
     };
 
-    void SetVerbose(G4int verbose) {
-        this->verbose = verbose;
+    void SetVerbose(G4int verbose_) {
+        this->verbose = verbose_;
     };
 
     G4int GetVerbose() {
         return this->verbose;
     };
 
-    void SetScale(G4double scale) {
-        this->scale = scale;
+    void SetScale(G4double scale_) {
+        this->scale = scale_;
     };
 
     G4double GetScale() {
         return this->scale;
     };
 
-    void SetOffset(G4ThreeVector offset) {
-        this->offset = offset;
+    void SetOffset(G4ThreeVector offset_) {
+        this->offset = offset_;
     };
     
     G4ThreeVector GetOffset() {
         return this-> offset;
     };
 
-    void SetReverse(G4bool reverse) {
-        this->reverse = reverse;
+    void SetReverse(G4bool reverse_) {
+        this->reverse = reverse_;
     };
 
     G4bool GetReverse() {
         return this->reverse;
     };
 
-    void SetMaterial(G4Material* material) {
-        this->material = material;
+    void SetMaterial(G4Material* material_) {
+        this->material = material_;
     };
 
     G4Material* GetMaterial() {
         return this->material;
     };
 
-    void SetQuality(G4double quality) {
-        this->quality = quality;
+    void SetQuality(G4double quality_) {
+        this->quality = quality_;
     };
 
     G4double GetQuality() {

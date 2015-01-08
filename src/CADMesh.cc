@@ -13,13 +13,13 @@
 #include "CADMesh.hh"
 
 
-CADMesh::CADMesh(char * file_name)
+CADMesh::CADMesh(char * file_name_)
 {
     this->scale = mm;
     this->offset = G4ThreeVector();
     this->reverse = false;
 
-    this->file_name = file_name;
+    this->file_name = file_name_;
     this->file_type = "ASSIMP";
     this->file_type.toUpper();
 
@@ -34,14 +34,14 @@ CADMesh::CADMesh(char * file_name)
 }
 
 
-CADMesh::CADMesh(char * file_name, char * file_type)
+CADMesh::CADMesh(char * file_name_, char * file_type_)
 {
     this->scale = mm;
     this->offset = G4ThreeVector();
     this->reverse = false;
 
-    this->file_name = file_name;
-    this->file_type = file_type;
+    this->file_name = file_name_;
+    this->file_type = file_type_;
     this->file_type.toUpper();
 
     this->material = NULL;
@@ -57,14 +57,14 @@ CADMesh::CADMesh(char * file_name, char * file_type)
 
 // TODO: The following constructors will be depricated in a future version.
 
-CADMesh::CADMesh(char * file_name, double scale,
-        G4ThreeVector offset, G4bool reverse)
+CADMesh::CADMesh(char * file_name_, double scale_,
+        G4ThreeVector offset_, G4bool reverse_)
 {
-    this->scale = scale;
-    this->offset = offset;
-    this->reverse = reverse;
+    this->scale = scale_;
+    this->offset = offset_;
+    this->reverse = reverse_;
 
-    this->file_name = file_name;
+    this->file_name = file_name_;
     this->file_type = "ASSIMP";
     this->file_type.toUpper();
 
@@ -79,15 +79,15 @@ CADMesh::CADMesh(char * file_name, double scale,
 }
 
 
-CADMesh::CADMesh(char * file_name, char * file_type, double scale,
-        G4ThreeVector offset, G4bool reverse)
+CADMesh::CADMesh(char * file_name_, char * file_type_, double scale_,
+        G4ThreeVector offset_, G4bool reverse_)
 {
-    this->scale = scale;
-    this->offset = offset;
-    this->reverse = reverse;
+    this->scale = scale_;
+    this->offset = offset_;
+    this->reverse = reverse_;
 
-    this->file_name = file_name;
-    this->file_type = file_type;
+    this->file_name = file_name_;
+    this->file_type = file_type_;
     this->file_type.toUpper();
 
     this->material = NULL;
@@ -101,19 +101,19 @@ CADMesh::CADMesh(char * file_name, char * file_type, double scale,
 }
 
 
-CADMesh::CADMesh(char * file_name, char * file_type,
-        G4Material * material, double quality)
+CADMesh::CADMesh(char * file_name_, char * file_type_,
+        G4Material * material_, double quality_)
 {
     this->scale = mm;
     this->offset = G4ThreeVector();
     this->reverse = false;
 
-    this->file_name = file_name;
-    this->file_type = file_type;
+    this->file_name = file_name_;
+    this->file_type = file_type_;
     this->file_type.toUpper();
 
-    this->material = material;
-    this->quality = quality;
+    this->material = material_;
+    this->quality = quality_;
 
     this->has_mesh = false;
     this->has_solid = false;
@@ -123,17 +123,17 @@ CADMesh::CADMesh(char * file_name, char * file_type,
 }
 
 
-CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
+CADMesh::CADMesh(char * file_name_, char * file_type_, G4Material * material_)
 {
     this->scale = mm;
     this->offset = G4ThreeVector();
     this->reverse = false;
 
-    this->file_name = file_name;
-    this->file_type = file_type;
+    this->file_name = file_name_;
+    this->file_type = file_type_;
     this->file_type.toUpper();
 
-    this->material = material;
+    this->material = material_;
     this->quality = 0;
 
     this->has_mesh = false;
@@ -144,19 +144,19 @@ CADMesh::CADMesh(char * file_name, char * file_type, G4Material * material)
 }
 
 
-CADMesh::CADMesh(char * file_name, char * file_type,
-        G4Material * material, double quality, G4ThreeVector offset)
+CADMesh::CADMesh(char * file_name_, char * file_type_,
+        G4Material * material_, double quality_, G4ThreeVector offset_)
 {
     this->scale = mm;
-    this->offset = offset;
+    this->offset = offset_;
     this->reverse = false;
 
-    this->file_name = file_name;
-    this->file_type = file_type;
+    this->file_name = file_name_;
+    this->file_type = file_type_;
     this->file_type.toUpper();
 
-    this->material = material;
-    this->quality = quality;
+    this->material = material_;
+    this->quality = quality_;
 
     this->has_mesh = false;
     this->has_solid = false;
@@ -236,7 +236,7 @@ G4VSolid* CADMesh::TessellatedMesh(G4int index)
 }
 
 
-G4VSolid* CADMesh::TessellatedMesh(G4String name)
+G4VSolid* CADMesh::TessellatedMesh(G4String name_)
 {
     Assimp::Importer importer;
     scene = importer.ReadFile(file_name,
@@ -247,7 +247,7 @@ G4VSolid* CADMesh::TessellatedMesh(G4String name)
     for (unsigned int index = 0; index < scene->mNumMeshes; index++) {
         aiMesh* mesh = scene->mMeshes[index];
 
-        if (strcmp(mesh->mName.C_Str(), name.c_str()))
+        if (strcmp(mesh->mName.C_Str(), name_.c_str()))
             return TessellatedMesh(index);
     }
 

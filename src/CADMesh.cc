@@ -55,6 +55,27 @@ CADMesh::CADMesh(char * file_name_, char * file_type_)
 }
 
 
+CADMesh::CADMesh(aiScene* scene_)
+{
+    this->scale = mm;
+    this->offset = G4ThreeVector();
+    this->reverse = false;
+
+    this->file_name = "";
+    this->file_type = "";
+    this->file_type.toUpper();
+
+    this->material = NULL;
+    this->quality = 0;
+
+    this->has_mesh = false;
+    this->has_solid = false;
+    this->verbose = 0;
+    
+    this->scene = scene_;
+}
+
+
 // TODO: The following constructors will be depricated in a future version.
 
 CADMesh::CADMesh(char * file_name_, double scale_,
@@ -179,12 +200,14 @@ G4VSolid* CADMesh::TessellatedMesh()
 
 G4VSolid* CADMesh::TessellatedMesh(G4int index)
 {
-    Assimp::Importer importer;
-
-    scene = importer.ReadFile(file_name,
-            aiProcess_Triangulate           |
-            aiProcess_JoinIdenticalVertices |
-            aiProcess_CalcTangentSpace);
+    if (!scene) {
+        Assimp::Importer importer;
+        
+        scene = importer.ReadFile(file_name,
+                aiProcess_Triangulate           |
+                aiProcess_JoinIdenticalVertices |
+                aiProcess_CalcTangentSpace);
+    }
 
     if (!scene) {
         G4Exception("CADMesh::TessellatedMesh", "The mesh cannot be loaded.",
@@ -238,11 +261,14 @@ G4VSolid* CADMesh::TessellatedMesh(G4int index)
 
 G4VSolid* CADMesh::TessellatedMesh(G4String name_)
 {
-    Assimp::Importer importer;
-    scene = importer.ReadFile(file_name,
-            aiProcess_Triangulate           |
-            aiProcess_JoinIdenticalVertices |
-            aiProcess_CalcTangentSpace);
+    if (!scene) {
+        Assimp::Importer importer;
+        
+        scene = importer.ReadFile(file_name,
+                aiProcess_Triangulate           |
+                aiProcess_JoinIdenticalVertices |
+                aiProcess_CalcTangentSpace);
+    }
 
     for (unsigned int index = 0; index < scene->mNumMeshes; index++) {
         aiMesh* mesh = scene->mMeshes[index];

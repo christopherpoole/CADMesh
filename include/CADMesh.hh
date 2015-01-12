@@ -37,6 +37,8 @@ class CADMesh {
   public:
     CADMesh(char * file_);
     CADMesh(char * file_, char * type_);
+    CADMesh(aiScene* scene);
+
     ~CADMesh();
     
     // TODO: The following constructors will be depricated in a future version.

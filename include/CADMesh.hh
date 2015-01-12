@@ -37,7 +37,7 @@ class CADMesh {
   public:
     CADMesh(char * file_);
     CADMesh(char * file_, char * type_);
-    CADMesh(aiScene* scene);
+    CADMesh(const aiScene* scene);
 
     ~CADMesh();
     

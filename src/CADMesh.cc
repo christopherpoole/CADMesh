@@ -55,7 +55,7 @@ CADMesh::CADMesh(char * file_name_, char * file_type_)
 }
 
 
-CADMesh::CADMesh(aiScene* scene_)
+CADMesh::CADMesh(const aiScene* scene_)
 {
     this->scale = mm;
     this->offset = G4ThreeVector();

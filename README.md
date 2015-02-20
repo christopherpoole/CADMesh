@@ -111,10 +111,15 @@ Here is a basic example usage. The CMakeLists.txt file illustrates how to link a
 
     cmake .. -Dcadmesh_DIR:PATH=<cadmesh install location> 
     make
-    cd ..
 
-    ./build/cadmesh_example macros/vis.mac
+    ./cadmesh_example <macro> <cad file name> <cad file type, optional>
+    
+    # Still in the build directory:
+    ./cadmesh_example ../macros/vis.mac ../../../models/cone.ply
     Idle> exit
+
+    # To use the tetrahedram meshing as well (tetgen needs to know the file type):
+    ./cadmesh_example ../macros/vis.mac ../../../models/cone.ply PLY
 
 If you get an error such as this:
 

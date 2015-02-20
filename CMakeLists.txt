@@ -79,3 +79,6 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "li
 install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
 install(TARGETS cadmesh DESTINATION lib)
 
+# Build the examples as well.
+add_subdirectory(${PROJECT_SOURCE_DIR}/examples/basic)
+

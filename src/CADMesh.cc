@@ -200,14 +200,12 @@ G4VSolid* CADMesh::TessellatedMesh()
 
 G4VSolid* CADMesh::TessellatedMesh(G4int index)
 {
-    if (!scene) {
-        Assimp::Importer importer;
-        
-        scene = importer.ReadFile(file_name,
-                aiProcess_Triangulate           |
-                aiProcess_JoinIdenticalVertices |
-                aiProcess_CalcTangentSpace);
-    }
+    Assimp::Importer importer;
+    
+    scene = importer.ReadFile(file_name,
+            aiProcess_Triangulate           |
+            aiProcess_JoinIdenticalVertices |
+            aiProcess_CalcTangentSpace);
 
     if (!scene) {
         G4Exception("CADMesh::TessellatedMesh", "The mesh cannot be loaded.",

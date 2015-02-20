@@ -13,6 +13,9 @@
 #ifndef DetectorConstruction_H
 #define DetectorConstruction_H 1
 
+// STL //
+#include <string>
+
 // GEANT4 //
 class G4VSolid;
 class G4LogicalVolume;
@@ -30,6 +33,15 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4VPhysicalVolume* Construct();
 
+    void SetCADFilename(std::string name) {
+        filename = name;
+    };
+
+    void SetCADFiletype(std::string type) {
+        filetype = type;
+    };
+
+
   private:
     G4VSolid * world_solid;
     G4LogicalVolume* world_logical;
@@ -39,6 +51,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4VSolid * cad_solid;
     G4LogicalVolume * cad_logical;
     G4VPhysicalVolume * cad_physical;
+
+    std::string filename;
+    std::string filetype;
 };
 
 #endif

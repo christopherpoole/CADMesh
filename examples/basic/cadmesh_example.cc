@@ -22,28 +22,40 @@
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 
-int main(int argc,char** argv)
+int main(int argc, char** argv)
 {
     G4RunManager* run_manager = new G4RunManager;
 
-    G4VUserDetectorConstruction* detector_construction = new DetectorConstruction;
+    DetectorConstruction* detector_construction = new DetectorConstruction;
+
+    if (argc == 3) {
+        detector_construction->SetCADFilename(argv[2]);
+    } else if (argc == 4) {
+        // We must specify the file type for tetrahedral meshes.
+        detector_construction->SetCADFilename(argv[2]);
+        detector_construction->SetCADFiletype(argv[3]);
+    } else {
+        G4cout << "Usage:" << G4endl;
+        G4cout << "    cadmesh_example <macro> <cad file name> <cad file type, optional>" << G4endl;
+        return 0;
+    }
+
     run_manager->SetUserInitialization(detector_construction);
 
-    G4VUserPhysicsList* physics_list = new PhysicsList;
+    PhysicsList* physics_list = new PhysicsList;
     run_manager->SetUserInitialization(physics_list);
 
-    G4VUserPrimaryGeneratorAction* primary_generator = new PrimaryGeneratorAction;
+    PrimaryGeneratorAction* primary_generator = new PrimaryGeneratorAction;
     run_manager->SetUserAction(primary_generator);
 
     run_manager->Initialize();
-    
 
     G4VisManager* vis_manager = new G4VisExecutive;
     vis_manager->Initialize();
 
     G4UImanager * ui_manager = G4UImanager::GetUIpointer();
     G4UIExecutive* ui = new G4UIExecutive(argc, argv);
-    ui_manager->ApplyCommand("/control/execute macros/vis.mac"); 
+    ui_manager->ApplyCommand(G4String("/control/execute ") + G4String(argv[1])); 
     ui->SessionStart();
     delete ui; 
     

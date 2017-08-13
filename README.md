@@ -1,5 +1,5 @@
 # Notice
-This `master` branch is where development occurs. Make sure you checkout `v1.1` if your are trying to compile the latest release, or [download it from here] (https://github.com/christopherpoole/CADMesh/releases/tag/v1.1).
+This `master` branch is where development occurs. Make sure you checkout `v1.1` if your are trying to compile the latest release, or [download it from here](https://github.com/christopherpoole/CADMesh/releases/tag/v1.1).
 
 CADMesh version 2.0 is under development right now, with a new API that is much easier to use:
 

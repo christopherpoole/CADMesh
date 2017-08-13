@@ -1,9 +1,21 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
 project(cadmesh)
+
+set(CADMESH_MAJOR_VERSION 1)
+set(CADMESH_MINOR_VERSION 0)
+set(CADMESH_PATCH_VERSION 0)
+set(CADMESH_VERSION
+    ${CADMESH_MAJOR_VERSION}.${CADMESH_MINOR_VERSION}.${CADMESH_PATCH_VERSION})
 
 include(FindPkgConfig)
 include(ExternalProject)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
+
+# Make the include and lib directories in the build area.
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/include)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # GEANT4
 option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
@@ -32,9 +44,9 @@ else()
         tetgen_external
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/tetgen
         GIT_REPOSITORY https://github.com/christopherpoole/tetgen.git
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     )
-    include_directories(${PROJECT_BINARY_DIR}/external/tetgen/include)
+    include_directories(${PROJECT_BINARY_DIR}/include)
 endif()
 
 # Open Asset Importer Library
@@ -47,9 +59,9 @@ else()
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/assimp
         GIT_REPOSITORY https://github.com/assimp/assimp.git
         GIT_TAG v3.1.1
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     )
-    include_directories(${PROJECT_BINARY_DIR}/external/assimp/include)
+    include_directories(${PROJECT_BINARY_DIR}/include/assimp/include)
 endif()
 
 # CADMesh
@@ -59,25 +71,39 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${CMAKE_INSTALL_PREFIX}/include)
 
+# Set up the target.
 add_library(cadmesh "SHARED" ${sources} ${headers}) 
 
+# Link against either the system libraries, or the external project libaries.
 if(${WITH_SYS_TETGEN} MATCHES "OFF")
     add_dependencies(cadmesh tetgen_external)
+    target_link_libraries(cadmesh -L${CMAKE_BINARY_DIR}/lib tet)
+else()
+    target_link_libraries(cadmesh tet)
 endif()
 
-if(${WITH_SYS_TETGEN} MATCHES "OFF")
+if(${WITH_SYS_ASSIMP} MATCHES "OFF")
     add_dependencies(cadmesh assimp_external)
+    target_link_libraries(cadmesh -L${CMAKE_BINARY_DIR}/lib assimp)
+else()
+    target_link_libraries(cadmesh assimp)
 endif()
 
 target_link_libraries(cadmesh ${Geant4_LIBRARIES})
-target_link_libraries(cadmesh -L${CMAKE_INSTALL_PREFIX}/lib tet)
-target_link_libraries(cadmesh assimp)
 
+# Configure the installation.
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cadmesh-config.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" @ONLY IMMEDIATE)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_VERSION_MAJOR}.${CADMESH_VERSION_MINOR}")
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_MAJOR_VERSION}.${CADMESH_MINOR_VERSION}.${CADMESH_PATCH_VERSION}")
 
+# Install the CADMesh headers library.
 install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
 install(TARGETS cadmesh DESTINATION lib)
+
+# Install the external project headers.
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION include)
+
+# Install the external project libraries.
+install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION lib)
 
 # Build the examples as well.
 add_subdirectory(${PROJECT_SOURCE_DIR}/examples/basic)

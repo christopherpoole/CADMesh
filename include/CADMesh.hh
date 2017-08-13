@@ -9,8 +9,7 @@
  * Date:      7th March, 2011
  **************************************************/
 
-#ifndef CADMesh_HH
-#define CADMesh_HH
+#pragma once
 
 // TETGEN //
 #include "tetgen.h"
@@ -35,18 +34,18 @@
 
 class CADMesh {
   public:
-    CADMesh(char * file_);
-    CADMesh(char * file_, char * type_);
+    CADMesh(char * file_name);
+    CADMesh(char * file_name, char * file_type);
     CADMesh(const aiScene* scene);
 
+    //static CADMesh* FromPLY(char* file);
+    //static CADMesh* FromSTL(char* file);
+    //static CADMesh* FromOBJ(char* file);
+
     ~CADMesh();
-    
-    // TODO: The following constructors will be depricated in a future version.
-    CADMesh(char * file_, double scale_, G4ThreeVector offset_, G4bool reverse_);
-    CADMesh(char * file_, char * type_, double scale_, G4ThreeVector offset_, G4bool reverse_);
-    CADMesh(char * file_, char * type_, G4Material * material_, double quality_);
-    CADMesh(char * file_, char * type_, G4Material * material_, double quality_, G4ThreeVector offset_);
-    CADMesh(char * file_, char * type_, G4Material * material_);
+
+  protected:
+    Init();
 
   public:
     // Load tessellated meshes using ASSIMP.
@@ -60,11 +59,6 @@ class CADMesh {
     // Getters and setters for various properties. 
     G4TessellatedSolid * GetSolid() {
         return volume_solid;
-    };
-
-    // TODO: This method will be removed in a future version. Use CADMesh::GetFileName instead.
-    G4String MeshName() {
-        return file_name;
     };
 
     G4String GetFileName() {
@@ -167,6 +161,4 @@ class CADMesh {
     G4String file_name;
     G4String file_type;
 };
-
-#endif // CADMesh_HH
 

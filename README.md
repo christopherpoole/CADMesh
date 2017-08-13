@@ -1,3 +1,16 @@
+---
+# Notice
+This `master` branch is where development occurs. Make sure you checkout `v1.1` if your are trying to compile the latest release, or [download it from here] (https://github.com/christopherpoole/CADMesh/releases/tag/v1.1).
+
+CADMesh version 2.0 is under development right now, with a new API that is much easier to use:
+
+```cpp 
+    auto mesh = CADMesh::TessellatedMesh::FromPLY("mesh.ply");
+    G4VSolid* mesh->GetSolid();
+```
+
+---
+
 # Introduction
 Importing predefined CAD models into [GEANT4](http://www.geant4.org/geant4/) is not always possible or requires intermediate file format conversion to Geometry Description Markup Language (GDML) using commercial or third party software.
 CADMesh is a direct CAD model import interface for GEANT4 leveraging [ASSIMP](http://assimp.sourceforge.net/) for reading the CAD files.
@@ -35,7 +48,8 @@ The fast tessellated solid navigation technique included in CADMesh is described
         publisher={Institute of Electrical and Electronics Engineers}
     }
 
-#Example Usage
+
+# Example Usage
 The following shows basic default usage for cadmesh in a UserDetectorConstruction:
 
     // User Detector Constructor
@@ -135,3 +149,4 @@ Make sure the CADMesh library is in your path:
 or on a Mac:
     
     export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:<cadmesh install location>/lib
+

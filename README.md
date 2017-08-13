@@ -10,7 +10,7 @@ The old [Google Code page for CADMesh](http://code.google.com/p/cadmesh/) is sti
 Additional functionality is included for the fast navigation of tessellated solids by automatically creating equivalent tetrahedral meshes thereby making smart voxelisation available for the solid.
 
 # Citing CADMesh
-CADMesh is described in a technical paper, available [here](http://christopherpoole.github.com/A-CAD-interface-for-GEANT4/). If you would like the cite the article, you may wish use the following bibtex entry:
+CADMesh is described in a technical paper, available [here](http://www.christopherpoole.net/publications/a-cad-interface-for-geant4.html). If you would like the cite the article, you may wish use the following bibtex entry:
 
     @article{poole2012acad,
         author = {Poole, C. M. and Cornelius, I. and Trapp, J. V. and Langton, C. M.},
@@ -22,7 +22,7 @@ CADMesh is described in a technical paper, available [here](http://christopherpo
         url = {http://www.springerlink.com/content/u563877422284578}
     }
 
-The fast tessellated solid navigation technique included in CADMesh is described [here](http://christopherpoole.github.com/Fast-tessellated-solid-navigation-in-GEANT4/):
+The fast tessellated solid navigation technique included in CADMesh is described [here](http://www.christopherpoole.net/publications/fast-tessellated-solid-navigation-in-geant4.html):
 
     @article{poole2012fast,
         title={Fast Tessellated Solid Navigation in GEANT4},

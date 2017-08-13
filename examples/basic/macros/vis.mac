@@ -35,3 +35,6 @@
 
 /run/beamOn 100
 
+# Update the viewer, as sometimes the geometry is hidden.
+/vis/viewer/refresh
+

@@ -14,6 +14,9 @@
 // CADMesh //
 #include "CADMeshTemplate.hh"
 
+// STL //
+#include <memory>
+
 // TETGEN //
 #include "tetgen.h"
 
@@ -34,18 +37,21 @@ class TetrahedralMesh : public CADMeshTemplate<TetrahedralMesh>
 {
   public:
     TetrahedralMesh()
-        : CADMeshTemplate<TetrahedralMesh>()
     {
+        TetrahedralMesh((char*) "");
     };
 
     TetrahedralMesh(char* file_name)
         : CADMeshTemplate<TetrahedralMesh>(file_name)
     {
+        TetrahedralMesh(file_name, (char*) "");
     };
 
     TetrahedralMesh(char* file_name, char* file_type)
         : CADMeshTemplate<TetrahedralMesh>(file_name, file_type)
     {
+        in = std::make_shared<tetgenio>();
+        out = std::make_shared<tetgenio>();
     };
 
     ~TetrahedralMesh();
@@ -69,11 +75,11 @@ class TetrahedralMesh : public CADMeshTemplate<TetrahedralMesh>
         return this->quality_;
     };
 
-    tetgenio GetTetgenInput() {
+    std::shared_ptr<tetgenio> GetTetgenInput() {
         return in;
     };
 
-    tetgenio GetTetgenOutput() {
+    std::shared_ptr<tetgenio> GetTetgenOutput() {
         return out;
     };
 
@@ -82,8 +88,8 @@ class TetrahedralMesh : public CADMeshTemplate<TetrahedralMesh>
     G4ThreeVector GetTetPoint(G4int index_offset);
  
   private:
-    tetgenio in;
-    tetgenio out;
+    std::shared_ptr<tetgenio> in;
+    std::shared_ptr<tetgenio> out;
 
     G4double quality_;
     G4Material* material_;

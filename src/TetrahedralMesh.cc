@@ -23,25 +23,23 @@ TetrahedralMesh::~TetrahedralMesh()
 
 G4AssemblyVolume * TetrahedralMesh::GetAssembly()
 {
-    // USAGE: assembly->MakeImprint(world_logical, assembly_transform_3d, 0); //
-
     char* fn = (char*) file_name_.c_str();
 
     G4bool do_tet = true;
    
     if (file_type_ == "STL")
     {
-        in.load_stl(fn);
+        in->load_stl(fn);
     } else if (file_type_ == "PLY")
     {
-        in.load_ply(fn);
+        in->load_ply(fn);
     } else if (file_type_ == "TET")
     {
-        out.load_tetmesh(fn, 0);
+        out->load_tetmesh(fn, 0);
         do_tet = false;
     } else if (file_type_ == "OFF")
     {
-        out.load_off(fn);
+        out->load_off(fn);
         do_tet = false;
     }
 
@@ -52,7 +50,7 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
         behavior->plc = 1;
         behavior->quality = quality_;
 
-        tetrahedralize(behavior, &in, &out);
+        tetrahedralize(behavior, in.get(), out.get());
     }
 
     auto assembly = new G4AssemblyVolume();
@@ -60,8 +58,8 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
     G4ThreeVector element_position = G4ThreeVector();
     G4Transform3D assembly_transform = G4Translate3D();
 
-    for (int i=0; i<out.numberoftetrahedra; i++) {
-        int index_offset = i * 4; /* For a tetrahedron, out.numberofcorners == 4 */
+    for (int i=0; i<out->numberoftetrahedra; i++) {
+        int index_offset = i * 4; /* For a tetrahedron, out->numberofcorners == 4 */
 
         G4ThreeVector p1 = GetTetPoint(index_offset);
         G4ThreeVector p2 = GetTetPoint(index_offset + 1);
@@ -80,9 +78,9 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
 
 G4ThreeVector TetrahedralMesh::GetTetPoint(G4int index_offset)
 {
-    return G4ThreeVector(out.pointlist[out.tetrahedronlist[index_offset]*3] * scale_ - offset_.x(),
-            out.pointlist[out.tetrahedronlist[index_offset]*3+1] * scale_ - offset_.y(),
-            out.pointlist[out.tetrahedronlist[index_offset]*3+2] * scale_ - offset_.z());
+    return G4ThreeVector(out->pointlist[out->tetrahedronlist[index_offset]*3] * scale_ - offset_.x(),
+            out->pointlist[out->tetrahedronlist[index_offset]*3+1] * scale_ - offset_.y(),
+            out->pointlist[out->tetrahedronlist[index_offset]*3+2] * scale_ - offset_.z());
 }
 
 } // CADMesh namespace

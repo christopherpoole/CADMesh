@@ -5,7 +5,7 @@ CADMesh version 2.0 is under development right now, with a new API that is much 
 
 ```cpp 
     auto mesh = CADMesh::TessellatedMesh::FromPLY("mesh.ply");
-    G4VSolid* mesh->GetSolid();
+    G4VSolid* solid = mesh->GetSolid();
 ```
 
 ---

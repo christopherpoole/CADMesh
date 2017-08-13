@@ -60,31 +60,30 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     offset = G4ThreeVector(-20*cm, 0, 0);
     
     // Note that offset is applied to the points in mesh directly before placement.
-    CADMesh * mesh = new CADMesh((char*) filename.c_str());
+    auto mesh = CADMesh::TessellatedMesh::FromPLY((char*) filename.c_str());
     mesh->SetScale(mm);
     mesh->SetOffset(offset);
     mesh->SetReverse(false);
 
-    cad_solid = mesh->TessellatedMesh();
+    cad_solid = mesh->GetSolid();
     cad_logical = new G4LogicalVolume(cad_solid, water, "cad_logical", 0, 0, 0);
     cad_physical = new G4PVPlacement(rot, G4ThreeVector(), cad_logical,
                                      "cad_physical", world_logical, false, 0);
     cad_logical->SetVisAttributes(G4Color(0.5, 0.3, 1, 1));
    
-    if (filetype != "") { 
-        // Load CAD file as tetrahedral mesh //
-        CADMesh * tet_mesh = new CADMesh((char*) filename.c_str(), (char*) filetype.c_str());
-        tet_mesh->SetScale(1.5);
-        tet_mesh->SetMaterial(water); // We have to do this before making the G4AssemblyVolume.
+    
+    // Load CAD file as tetrahedral mesh //
+    auto tet_mesh = CADMesh::TetrahedralMesh::FromPLY((char*) filename.c_str());
+    tet_mesh->SetScale(1.5);
+    tet_mesh->SetMaterial(water); // We have to do this before making the G4AssemblyVolume.
 
-        G4AssemblyVolume * cad_assembly = tet_mesh->TetrahedralMesh();
+    G4AssemblyVolume * cad_assembly = tet_mesh->GetAssembly();
 
-        G4Translate3D translation(20*cm, 0., 0.);
-        G4Transform3D rotation = G4Rotate3D(*rot);
-        G4Transform3D transform = translation*rotation;
+    G4Translate3D translation(20*cm, 0., 0.);
+    G4Transform3D rotation = G4Rotate3D(*rot);
+    G4Transform3D transform = translation*rotation;
 
-        cad_assembly->MakeImprint(world_logical, transform, 0, 0);
-    }
+    cad_assembly->MakeImprint(world_logical, transform, 0, 0);
 
     return world_physical;
 }

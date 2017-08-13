@@ -1,7 +1,7 @@
 /* ************************************************
  * GEANT4 CAD INTERFACE
  *
- * File:      CADMesh.hh
+ * File:      CADMesh.cc
  *
  * Author:    Christopher M Poole,
  * Email:     mail@christopherpoole.net
@@ -9,8 +9,18 @@
  * Date:      7th March, 2011
  **************************************************/
 
-#pragma once
+// CADMesh //
+#include "CADMeshTemplate.cc"
 
 #include "TessellatedMesh.hh"
 #include "TetrahedralMesh.hh"
+
+
+namespace CADMesh
+{
+
+template class CADMeshTemplate<TessellatedMesh>;
+template class CADMeshTemplate<TetrahedralMesh>;
+
+}
 

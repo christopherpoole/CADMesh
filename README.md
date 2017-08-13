@@ -1,4 +1,3 @@
----
 # Notice
 This `master` branch is where development occurs. Make sure you checkout `v1.1` if your are trying to compile the latest release, or [download it from here] (https://github.com/christopherpoole/CADMesh/releases/tag/v1.1).
 

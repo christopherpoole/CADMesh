@@ -43,12 +43,12 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     {
     };
 
-    TessellatedMesh(char* file_name)
+    TessellatedMesh(G4String file_name)
         : CADMeshTemplate<TessellatedMesh>(file_name)
     {
     };
 
-    TessellatedMesh(char* file_name, char* file_type)
+    TessellatedMesh(G4String file_name, G4String file_type)
         : CADMeshTemplate<TessellatedMesh>(file_name, file_type)
     {
     };
@@ -57,9 +57,9 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     ~TessellatedMesh();
 
   public:
-    G4TessellatedSolid * GetSolid();
-    G4TessellatedSolid * GetSolid(G4int index);
-    G4TessellatedSolid * GetSolid(G4String name);
+    G4TessellatedSolid* GetSolid();
+    G4TessellatedSolid* GetSolid(G4int index);
+    G4TessellatedSolid* GetSolid(G4String name);
 
   public:
     void SetReverse(G4bool reverse) {

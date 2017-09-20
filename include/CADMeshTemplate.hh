@@ -35,10 +35,10 @@ class CADMeshTemplate
 {
   public:
     CADMeshTemplate();
-    CADMeshTemplate(char * file_name);
-    CADMeshTemplate(char * file_name, char * file_type);
+    CADMeshTemplate(G4String file_name);
+    CADMeshTemplate(G4String file_name, G4String file_type);
 
-    static std::shared_ptr<T> FromPLY(char* file_name);
+    static std::shared_ptr<T> FromPLY(G4String file_name);
 
     ~CADMeshTemplate();
 

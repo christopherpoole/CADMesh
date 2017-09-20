@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(cadmesh)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ")
+
 set(CADMESH_MAJOR_VERSION 1)
 set(CADMESH_MINOR_VERSION 1)
 set(CADMESH_PATCH_VERSION 0)
@@ -58,7 +60,7 @@ else()
         assimp_external
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/assimp
         GIT_REPOSITORY https://github.com/assimp/assimp.git
-        GIT_TAG v3.1.1
+        GIT_TAG v4.0.1
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     )
     include_directories(${PROJECT_BINARY_DIR}/include/assimp/include)

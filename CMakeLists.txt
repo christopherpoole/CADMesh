@@ -109,6 +109,7 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION lib)
 
 # Build the examples as well.
 add_subdirectory(${PROJECT_SOURCE_DIR}/examples/basic)
+add_subdirectory(${PROJECT_SOURCE_DIR}/examples/template)
 
 # Set CPack to build an archive.
 set(CPACK_GENERATOR "TGZ")

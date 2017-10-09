@@ -60,7 +60,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     offset = G4ThreeVector(-20*cm, 0, 0);
     
     // Note that offset is applied to the points in mesh directly before placement.
-    auto mesh = CADMesh::TessellatedMesh::FromPLY((char*) filename.c_str());
+    auto mesh = CADMesh::TessellatedMesh::FromPLY(filename);
     mesh->SetScale(mm);
     mesh->SetOffset(offset);
     mesh->SetReverse(false);
@@ -73,7 +73,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
    
     
     // Load CAD file as tetrahedral mesh //
-    auto tet_mesh = CADMesh::TetrahedralMesh::FromPLY((char*) filename.c_str());
+    auto tet_mesh = CADMesh::TetrahedralMesh::FromPLY(filename);
     tet_mesh->SetScale(1.5);
     tet_mesh->SetMaterial(water); // We have to do this before making the G4AssemblyVolume.
 

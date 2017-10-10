@@ -11,6 +11,10 @@
 
 #pragma once
 
+// STL //
+#include <string>
+#include <map>
+
 
 namespace CADMesh
 {
@@ -28,6 +32,16 @@ enum Type
     TET,
     OFF,
 }; 
+
+
+static std::map<Type, std::string> Entension = {
+    { PLY, "ply" },
+    { STL, "stl" },
+    { DAE, "dae" },
+    { OBJ, "obj" },
+    { TET, "tet" },
+    { OFF, "off" }
+};
 
 }
 

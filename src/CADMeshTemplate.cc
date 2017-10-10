@@ -32,7 +32,7 @@ CADMeshTemplate<T>::CADMeshTemplate(G4String file_name)
 
 
 template <typename T>
-CADMeshTemplate<T>::CADMeshTemplate(G4String file_name, G4String file_type)
+CADMeshTemplate<T>::CADMeshTemplate(G4String file_name, File::Type file_type)
 {
     Init();
     this->file_name_ = file_name;
@@ -43,7 +43,7 @@ CADMeshTemplate<T>::CADMeshTemplate(G4String file_name, G4String file_type)
 template <typename T>
 std::shared_ptr<T> CADMeshTemplate<T>::FromPLY(G4String file_name)
 {
-    return std::make_shared<T>(file_name, "PLY");
+    return std::make_shared<T>(file_name, File::PLY);
 }
 
 
@@ -57,7 +57,7 @@ template <typename T>
 void CADMeshTemplate<T>::Init()
 {
     this->file_name_ = "";
-    this->file_type_ = "";
+    this->file_type_ = File::Unknown;
 
     this->scale_ = mm;
 

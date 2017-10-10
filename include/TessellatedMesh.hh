@@ -48,7 +48,7 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     {
     };
 
-    TessellatedMesh(G4String file_name, G4String file_type)
+    TessellatedMesh(G4String file_name, File::Type file_type)
         : CADMeshTemplate<TessellatedMesh>(file_name, file_type)
     {
     };

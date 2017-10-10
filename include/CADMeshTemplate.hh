@@ -11,6 +11,9 @@
 
 #pragma once
 
+// CADMesh //
+#include "FileTypes.hh"
+
 // STL //
 #include <memory>
 
@@ -36,7 +39,7 @@ class CADMeshTemplate
   public:
     CADMeshTemplate();
     CADMeshTemplate(G4String file_name);
-    CADMeshTemplate(G4String file_name, G4String file_type);
+    CADMeshTemplate(G4String file_name, File::Type file_type);
 
     static std::shared_ptr<T> FromPLY(G4String file_name);
 
@@ -50,7 +53,7 @@ class CADMeshTemplate
         return this->file_name_;
     };
 
-    G4String GetFileType() {
+    File::Type GetFileType() {
         return this->file_type_;
     };
 
@@ -80,7 +83,7 @@ class CADMeshTemplate
 
   protected:
     G4String file_name_;
-    G4String file_type_;
+    File::Type file_type_;
 
     G4int verbose_;
     

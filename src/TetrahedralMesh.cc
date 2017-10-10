@@ -27,17 +27,17 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
 
     G4bool do_tet = true;
    
-    if (file_type_ == "STL")
+    if (file_type_ == File::STL)
     {
         in->load_stl(fn);
-    } else if (file_type_ == "PLY")
+    } else if (file_type_ == File::PLY)
     {
         in->load_ply(fn);
-    } else if (file_type_ == "TET")
+    } else if (file_type_ == File::TET)
     {
         out->load_tetmesh(fn, 0);
         do_tet = false;
-    } else if (file_type_ == "OFF")
+    } else if (file_type_ == File::OFF)
     {
         out->load_off(fn);
         do_tet = false;

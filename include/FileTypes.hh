@@ -15,9 +15,12 @@
 namespace CADMesh
 {
 
-enum FileType
+namespace File
 {
-    UnknownType,
+
+enum Type
+{
+    Unknown,
     PLY,
     STL,
     DAE,
@@ -25,6 +28,8 @@ enum FileType
     TET,
     OFF,
 }; 
+
+}
 
 }
 

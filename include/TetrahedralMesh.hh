@@ -44,10 +44,10 @@ class TetrahedralMesh : public CADMeshTemplate<TetrahedralMesh>
     TetrahedralMesh(G4String file_name)
         : CADMeshTemplate<TetrahedralMesh>(file_name)
     {
-        TetrahedralMesh(file_name, "");
+        TetrahedralMesh(file_name, File::Unknown);
     };
 
-    TetrahedralMesh(G4String file_name, G4String file_type)
+    TetrahedralMesh(G4String file_name, File::Type file_type)
         : CADMeshTemplate<TetrahedralMesh>(file_name, file_type)
     {
         in = std::make_shared<tetgenio>();

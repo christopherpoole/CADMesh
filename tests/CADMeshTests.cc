@@ -8,9 +8,9 @@
 SCENARIO( "Load a PLY file as a tessellated mesh.") {
 
     GIVEN( "the PLY file on disk" ) {
-        auto mesh = CADMesh::TessellatedMesh::FromPLY("sphere.ply");
+        auto mesh = CADMesh::TessellatedMesh::FromPLY("../models/sphere.ply");
 
-        REQUIRE( mesh->GetFileName() == "sphere.ply" );
+        REQUIRE( mesh->GetFileName() == "../models/sphere.ply" );
         
         WHEN( "setting the output verbosity" ) {
             mesh->SetVerbose(1);

@@ -35,9 +35,6 @@ CADMeshTemplate<T>::CADMeshTemplate(G4String file_name, File::Type file_type)
     this->file_name_ = file_name;
     this->file_type_ = file_type;
 
-    this->file_name_ = "";
-    this->file_type_ = File::Unknown;
-
     this->scale_ = mm;
 
     this->offset_ = G4ThreeVector();

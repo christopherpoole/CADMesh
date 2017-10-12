@@ -18,12 +18,12 @@ SCENARIO( "Load a PLY file as a tessellated mesh.") {
         WHEN( "constructing the solid volume" ) {
             auto solid = (G4TessellatedSolid*) mesh->GetSolid();
 
-            THEN( "the number of facets should equal that in the file" ) {
-                REQUIRE( solid->GetNumberOfFacets() == 994 );
+            THEN( "CADMesh should report that the volume is navigable" ) {
+                REQUIRE_FALSE( mesh->IsValidForNavigation() );
             }
 
-            THEN( "the inside point (0, 0, 0) reports as not inside" ) {
-                REQUIRE_FALSE( solid->Inside(G4ThreeVector(0, 0, 0)) == kInside );
+            THEN( "the number of facets should equal that in the file" ) {
+                REQUIRE( solid->GetNumberOfFacets() == 1279 );
             }
 
             THEN( "the geometry should not be navigable by the Geant4 kernel" ) {

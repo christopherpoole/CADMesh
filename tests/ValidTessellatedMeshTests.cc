@@ -14,6 +14,10 @@ SCENARIO( "Load a PLY file as a tessellated mesh.") {
         WHEN( "constructing the solid volume" ) {
             auto solid = (G4TessellatedSolid*) mesh->GetSolid();
 
+            THEN( "CADMesh should report that the volume is navigable" ) {
+                REQUIRE( mesh->IsValidForNavigation() );
+            }
+
             THEN( "the number of facets should equal that in the file" ) {
                 REQUIRE( solid->GetNumberOfFacets() == 1280 );
             }

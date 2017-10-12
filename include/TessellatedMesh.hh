@@ -65,6 +65,7 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     bool IsValidForNavigation();
     bool IsValidForNavigation(G4int index);
     bool IsValidForNavigation(G4String name);
+    bool IsValidForNavigation(aiMesh* mesh);
         
   public:
     void SetReverse(G4bool reverse) {

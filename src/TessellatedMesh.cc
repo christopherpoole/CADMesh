@@ -171,20 +171,22 @@ bool TessellatedMesh::IsValidForNavigation()
 
 bool TessellatedMesh::IsValidForNavigation(G4String name)
 {
-    // TODO: get index from name.
-    int index = 0;
-    return IsValidForNavigation(index);
+    return IsValidForNavigation(GetMesh(name));
 }
 
 
 bool TessellatedMesh::IsValidForNavigation(G4int index)
 {
+    return IsValidForNavigation(GetMesh(index));
+}
 
+
+bool TessellatedMesh::IsValidForNavigation(aiMesh* mesh)
+{
     typedef std::pair<int, int> Edge; // such that Edge.first < Edge.second
 
     std::map<Edge, int> edge_use_count;
 
-    aiMesh* mesh = scene_->mMeshes[index];
 
     for(unsigned int i=0; i < mesh->mNumFaces; i++)
     {

@@ -44,14 +44,11 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     };
 
     TessellatedMesh(G4String file_name)
-        : CADMeshTemplate<TessellatedMesh>(file_name)
+        : TessellatedMesh(file_name, File::Unknown)
     {
     };
 
-    TessellatedMesh(G4String file_name, File::Type file_type)
-        : CADMeshTemplate<TessellatedMesh>(file_name, file_type)
-    {
-    };
+    TessellatedMesh(G4String file_name, File::Type file_type);
 
     TessellatedMesh(const aiScene* scene);
     ~TessellatedMesh();
@@ -61,6 +58,10 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     G4TessellatedSolid* GetSolid(G4int index);
     G4TessellatedSolid* GetSolid(G4String name);
 
+    aiMesh* GetMesh();
+    aiMesh* GetMesh(unsigned int index);
+    aiMesh* GetMesh(G4String name);
+
   public:
     void SetReverse(G4bool reverse) {
         this->reverse_ = reverse;
@@ -69,10 +70,10 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     G4bool GetReverse() {
         return this->reverse_;
     };
-
+    
   private:
+    Assimp::Importer* importer_;
     const aiScene* scene_;
-    aiMesh* mesh_;
 
     G4bool reverse_;
 };

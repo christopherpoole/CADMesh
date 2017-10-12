@@ -17,26 +17,32 @@ namespace CADMesh
 {
 
 template <typename T>
-CADMeshTemplate<T>::CADMeshTemplate()
+CADMeshTemplate<T>::CADMeshTemplate() : CADMeshTemplate("")
 {
-    Init();
 }
 
 
 template <typename T>
 CADMeshTemplate<T>::CADMeshTemplate(G4String file_name)
+        : CADMeshTemplate(file_name, File::Unknown)
 {
-    Init();
-    this->file_name_ = file_name;
 }
 
 
 template <typename T>
 CADMeshTemplate<T>::CADMeshTemplate(G4String file_name, File::Type file_type)
 {
-    Init();
     this->file_name_ = file_name;
     this->file_type_ = file_type;
+
+    this->file_name_ = "";
+    this->file_type_ = File::Unknown;
+
+    this->scale_ = mm;
+
+    this->offset_ = G4ThreeVector();
+
+    this->verbose_ = 0;
 }
 
 
@@ -50,20 +56,6 @@ std::shared_ptr<T> CADMeshTemplate<T>::FromPLY(G4String file_name)
 template <typename T>
 CADMeshTemplate<T>::~CADMeshTemplate()
 {
-}
-
-
-template <typename T>
-void CADMeshTemplate<T>::Init()
-{
-    this->file_name_ = "";
-    this->file_type_ = File::Unknown;
-
-    this->scale_ = mm;
-
-    this->offset_ = G4ThreeVector();
-
-    this->verbose_ = 0;
 }
 
 } // CADMesh namespace

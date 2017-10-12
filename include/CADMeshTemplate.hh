@@ -45,9 +45,6 @@ class CADMeshTemplate
 
     ~CADMeshTemplate();
 
-  protected:
-    void Init();
-
   public:
     G4String GetFileName() {
         return this->file_name_;

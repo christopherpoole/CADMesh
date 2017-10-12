@@ -66,6 +66,19 @@ else()
     include_directories(${PROJECT_BINARY_DIR}/include/assimp/include)
 endif()
 
+# Catch unit testing library
+option(WITH_TESTS "WITH_TESTS" OFF)
+if(${WITH_TESTS} MATCHES "ON")
+    ExternalProject_Add(
+        catch_external
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/catch
+        GIT_REPOSITORY https://github.com/philsquared/Catch.git
+        GIT_TAG v1.10.0
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR} -DNO_SELFTEST=ON
+    )
+    include_directories(${PROJECT_BINARY_DIR}/include/catch)
+endif()
+
 # CADMesh
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
@@ -120,4 +133,25 @@ set(CPACK_PACKAGE_VERSION_MINOR ${CADMESH_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${CADMESH_PATCH_VERSION})
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
 include(CPack)
+
+# Tests
+if(${WITH_TESTS} MATCHES "ON")
+    enable_testing()
+
+    add_executable(CADMeshTests tests/CADMeshTests.cc)
+    add_dependencies(CADMeshTests catch_external)
+    target_link_libraries(CADMeshTests cadmesh)
+    add_test(NAME CADMeshTests COMMAND CADMeshTests)
+
+    add_executable(ValidTessellatedMeshTests tests/ValidTessellatedMeshTests.cc)
+    add_dependencies(ValidTessellatedMeshTests catch_external)
+    target_link_libraries(ValidTessellatedMeshTests cadmesh)
+    add_test(NAME ValidTessellatedMeshTests COMMAND ValidTessellatedMeshTests)
+
+    add_executable(InvalidTessellatedMeshTests tests/InvalidTessellatedMeshTests.cc)
+    add_dependencies(InvalidTessellatedMeshTests catch_external)
+    target_link_libraries(InvalidTessellatedMeshTests cadmesh)
+    add_test(NAME InvalidTessellatedMeshTests COMMAND InvalidTessellatedMeshTests)
+
+endif()
 

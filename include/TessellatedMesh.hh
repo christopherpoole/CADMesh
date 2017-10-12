@@ -61,7 +61,11 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     aiMesh* GetMesh();
     aiMesh* GetMesh(unsigned int index);
     aiMesh* GetMesh(G4String name);
-
+    
+    bool IsValidForNavigation();
+    bool IsValidForNavigation(G4int index);
+    bool IsValidForNavigation(G4String name);
+        
   public:
     void SetReverse(G4bool reverse) {
         this->reverse_ = reverse;

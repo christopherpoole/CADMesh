@@ -14,6 +14,7 @@
 
 // GEANT4 //
 #include "G4UIcommand.hh"
+#include "Randomize.hh"
 
 
 namespace CADMesh
@@ -159,6 +160,82 @@ aiMesh* TessellatedMesh::GetMesh(G4String name)
                , FatalException, "");
 
     return nullptr;
+}
+
+    
+bool TessellatedMesh::IsValidForNavigation()
+{
+    return IsValidForNavigation(0);
+}
+
+
+bool TessellatedMesh::IsValidForNavigation(G4String name)
+{
+    // TODO: get index from name.
+    int index = 0;
+    return IsValidForNavigation(index);
+}
+
+
+bool TessellatedMesh::IsValidForNavigation(G4int index)
+{
+
+    typedef std::pair<int, int> Edge; // such that Edge.first < Edge.second
+
+    std::map<Edge, int> edge_use_count;
+
+    aiMesh* mesh = scene_->mMeshes[index];
+
+    for(unsigned int i=0; i < mesh->mNumFaces; i++)
+    {
+        const aiFace& face = mesh->mFaces[i];
+
+        int a = face.mIndices[0];
+        int b = face.mIndices[1];
+        int c = face.mIndices[2];
+
+        if (a < b)
+        {
+            edge_use_count[Edge(a, b)] += 1; 
+        }
+
+        else if (a > b)
+        {
+            edge_use_count[Edge(b, a)] += 1; 
+        }
+
+        if (b < c)
+        {
+            edge_use_count[Edge(b, c)] += 1; 
+        }
+
+        else if (b > c)
+        {
+            edge_use_count[Edge(c, b)] += 1; 
+        }
+
+        if (c < a)
+        {
+            edge_use_count[Edge(c, a)] += 1; 
+        }
+
+        else if (c > a)
+        {
+            edge_use_count[Edge(a, c)] += 1; 
+ 
+        }
+    }
+
+    // Every edge should be shared with exactly two triangles.
+    for (auto count : edge_use_count)
+    {
+        if (count.second != 2)
+        {
+            return false;
+        }
+    }
+   
+    return true; 
 }
 
 }

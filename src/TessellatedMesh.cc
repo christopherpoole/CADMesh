@@ -55,13 +55,64 @@ TessellatedMesh::~TessellatedMesh()
 }
 
 
-G4TessellatedSolid* TessellatedMesh::GetSolid()
+G4VSolid* TessellatedMesh::GetSolid()
 {
-    return GetSolid(0);
+    return (G4VSolid*) GetTessellatedSolid();
 }
 
 
-G4TessellatedSolid* TessellatedMesh::GetSolid(G4int index)
+G4VSolid* TessellatedMesh::GetSolid(G4int index)
+{
+    return (G4VSolid*) GetTessellatedSolid(index);
+}
+
+
+G4VSolid* TessellatedMesh::GetSolid(G4String name)
+{
+    return (G4VSolid*) GetTessellatedSolid(name);
+}
+
+
+G4AssemblyVolume* TessellatedMesh::GetAssembly()
+{
+    if (assembly_)
+    {
+        return assembly_;
+    }
+
+    for (unsigned int index = 0; index < scene_->mNumMeshes; index++)
+    {
+        G4String name = file_name_
+                      + G4String("_mesh_")
+                      + G4UIcommand::ConvertToString((int) index);
+
+        auto solid = GetSolid(index); 
+
+        // TODO: Determine the material for this solid.
+        G4Material* material = nullptr;
+
+        auto logical = new G4LogicalVolume( solid
+                                          , material 
+                                          , name
+        );
+
+        G4ThreeVector position = G4ThreeVector();
+        G4RotationMatrix* rotation = new G4RotationMatrix();
+
+        assembly_->AddPlacedVolume(logical, position, rotation);
+    }
+
+    return assembly_;    
+}
+
+
+G4TessellatedSolid* TessellatedMesh::GetTessellatedSolid()
+{
+    return GetTessellatedSolid(0);
+}
+
+
+G4TessellatedSolid* TessellatedMesh::GetTessellatedSolid(G4int index)
 {
     auto mesh = GetMesh(index);
 
@@ -99,7 +150,7 @@ G4TessellatedSolid* TessellatedMesh::GetSolid(G4int index)
     volume_solid->SetSolidClosed(true);
 
     if (volume_solid->GetNumberOfFacets() == 0) {
-        G4Exception( "TessellatedMesh::GetSolid", "The loaded mesh has 0 faces."
+        G4Exception( "TessellatedMesh::GetTessellatedSolid", "The loaded mesh has 0 faces."
                    , FatalException, "The file may be empty.");
         return 0;
     }
@@ -108,16 +159,16 @@ G4TessellatedSolid* TessellatedMesh::GetSolid(G4int index)
 }
 
 
-G4TessellatedSolid* TessellatedMesh::GetSolid(G4String name)
+G4TessellatedSolid* TessellatedMesh::GetTessellatedSolid(G4String name)
 {
     for (unsigned int index = 0; index < scene_->mNumMeshes; index++) {
         aiMesh* mesh = scene_->mMeshes[index];
 
         if (strcmp(mesh->mName.C_Str(), name.c_str()))
-            return GetSolid(index);
+            return GetTessellatedSolid(index);
     }
 
-    G4Exception( "TessellatedMesh::GetSolid", "The mesh could not be found."
+    G4Exception( "TessellatedMesh::GetTessellatedSolid", "The mesh could not be found."
                , FatalException, name);
 
 

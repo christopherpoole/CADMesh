@@ -21,8 +21,31 @@ TetrahedralMesh::~TetrahedralMesh()
 }
 
 
+G4VSolid* TetrahedralMesh::GetSolid()
+{
+    return nullptr;
+}
+
+
+G4VSolid* TetrahedralMesh::GetSolid(G4int index)
+{
+    return nullptr;
+}
+
+
+G4VSolid* TetrahedralMesh::GetSolid(G4String name)
+{
+    return nullptr;
+}
+
+
 G4AssemblyVolume * TetrahedralMesh::GetAssembly()
 {
+    if (assembly_)
+    {
+        return assembly_;
+    }
+
     char* fn = (char*) file_name_.c_str();
 
     G4bool do_tet = true;
@@ -53,7 +76,6 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
         tetrahedralize(behavior, in.get(), out.get());
     }
 
-    auto assembly = new G4AssemblyVolume();
     G4RotationMatrix * element_rotation = new G4RotationMatrix();
     G4ThreeVector element_position = G4ThreeVector();
     G4Transform3D assembly_transform = G4Translate3D();
@@ -70,10 +92,10 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
 
         G4VSolid * tet_solid = new G4Tet(tet_name + G4String("_solid"), p1, p2, p3, p4, 0);
         G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material_, tet_name + G4String("_logical"), 0, 0, 0);
-        assembly->AddPlacedVolume(tet_logical, element_position, element_rotation);
+        assembly_->AddPlacedVolume(tet_logical, element_position, element_rotation);
     }
 
-    return assembly;
+    return assembly_;
 }
 
 G4ThreeVector TetrahedralMesh::GetTetPoint(G4int index_offset)

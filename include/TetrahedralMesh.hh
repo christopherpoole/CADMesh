@@ -57,8 +57,13 @@ class TetrahedralMesh : public CADMeshTemplate<TetrahedralMesh>
     ~TetrahedralMesh();
   
   public:
+    G4VSolid* GetSolid();
+    G4VSolid* GetSolid(G4int index);
+    G4VSolid* GetSolid(G4String name);
+
     G4AssemblyVolume* GetAssembly();
 
+  public:
     void SetMaterial(G4Material* material) {
         this->material_ = material;
     };
@@ -92,6 +97,7 @@ class TetrahedralMesh : public CADMeshTemplate<TetrahedralMesh>
     std::shared_ptr<tetgenio> out;
 
     G4double quality_;
+
     G4Material* material_;
 };
 

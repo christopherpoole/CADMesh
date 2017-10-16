@@ -46,6 +46,13 @@ class CADMeshTemplate
     ~CADMeshTemplate();
 
   public:
+    virtual G4VSolid* GetSolid() = 0;
+    virtual G4VSolid* GetSolid(G4int index) = 0;
+    virtual G4VSolid* GetSolid(G4String name) = 0;
+
+    virtual G4AssemblyVolume* GetAssembly() = 0;
+
+  public:
     G4String GetFileName() {
         return this->file_name_;
     };
@@ -87,6 +94,8 @@ class CADMeshTemplate
     G4double scale_;
    
     G4ThreeVector offset_;
+
+    G4AssemblyVolume* assembly_;
 };
 
 }

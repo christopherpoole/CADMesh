@@ -54,9 +54,15 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     ~TessellatedMesh();
 
   public:
-    G4TessellatedSolid* GetSolid();
-    G4TessellatedSolid* GetSolid(G4int index);
-    G4TessellatedSolid* GetSolid(G4String name);
+    G4VSolid* GetSolid();
+    G4VSolid* GetSolid(G4int index);
+    G4VSolid* GetSolid(G4String name);
+
+    G4TessellatedSolid* GetTessellatedSolid();
+    G4TessellatedSolid* GetTessellatedSolid(G4int index);
+    G4TessellatedSolid* GetTessellatedSolid(G4String name);
+
+    G4AssemblyVolume* GetAssembly();
 
     aiMesh* GetMesh();
     aiMesh* GetMesh(unsigned int index);

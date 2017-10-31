@@ -37,21 +37,7 @@ namespace CADMesh
 
 class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
 {
-  public:
-    TessellatedMesh()
-        : CADMeshTemplate<TessellatedMesh>()
-    {
-    };
-
-    TessellatedMesh(G4String file_name)
-        : TessellatedMesh(file_name, File::Unknown)
-    {
-    };
-
-    TessellatedMesh(G4String file_name, File::Type file_type);
-
-    TessellatedMesh(const aiScene* scene);
-    ~TessellatedMesh();
+  using CADMeshTemplate::CADMeshTemplate;
 
   public:
     G4VSolid* GetSolid();
@@ -61,18 +47,10 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     G4TessellatedSolid* GetTessellatedSolid();
     G4TessellatedSolid* GetTessellatedSolid(G4int index);
     G4TessellatedSolid* GetTessellatedSolid(G4String name);
+    G4TessellatedSolid* GetTessellatedSolid(std::shared_ptr<Mesh> mesh);
 
     G4AssemblyVolume* GetAssembly();
 
-    aiMesh* GetMesh();
-    aiMesh* GetMesh(unsigned int index);
-    aiMesh* GetMesh(G4String name);
-    
-    bool IsValidForNavigation();
-    bool IsValidForNavigation(G4int index);
-    bool IsValidForNavigation(G4String name);
-    bool IsValidForNavigation(aiMesh* mesh);
-        
   public:
     void SetReverse(G4bool reverse) {
         this->reverse_ = reverse;
@@ -83,9 +61,6 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
     };
     
   private:
-    Assimp::Importer* importer_;
-    const aiScene* scene_;
-
     G4bool reverse_;
 };
 

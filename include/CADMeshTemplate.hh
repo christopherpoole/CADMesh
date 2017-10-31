@@ -13,6 +13,7 @@
 
 // CADMesh //
 #include "FileTypes.hh"
+#include "Reader.hh"
 
 // STL //
 #include <memory>
@@ -38,10 +39,25 @@ class CADMeshTemplate
 {
   public:
     CADMeshTemplate();
-    CADMeshTemplate(G4String file_name);
-    CADMeshTemplate(G4String file_name, File::Type file_type);
 
-    static std::shared_ptr<T> FromPLY(G4String file_name);
+    CADMeshTemplate( G4String file_name);
+
+    CADMeshTemplate( G4String file_name
+                   , File::Type file_type);
+
+    CADMeshTemplate( std::shared_ptr<File::Reader> reader);
+
+    CADMeshTemplate( G4String file_name
+                   , std::shared_ptr<File::Reader> reader);
+
+    CADMeshTemplate( G4String file_name
+                   , File::Type file_type
+                   , std::shared_ptr<File::Reader> reader);
+
+    static std::shared_ptr<T> FromPLY( G4String file_name);
+
+    static std::shared_ptr<T> FromPLY( G4String file_name
+                                     , std::shared_ptr<File::Reader> reader);
 
     ~CADMeshTemplate();
 
@@ -52,50 +68,33 @@ class CADMeshTemplate
 
     virtual G4AssemblyVolume* GetAssembly() = 0;
 
+    bool IsValidForNavigation();
+    // TODO: Add method with same arguments as GetSolid.
+
   public:
-    G4String GetFileName() {
-        return this->file_name_;
-    };
+    G4String GetFileName();
 
-    File::Type GetFileType() {
-        return this->file_type_;
-    };
+    File::Type GetFileType();
 
-    void SetVerbose(G4int verbose) {
-        this->verbose_ = verbose;
-    };
+    void SetVerbose(G4int verbose);
+    G4int GetVerbose();
 
-    G4int GetVerbose() {
-        return this->verbose_;
-    };
+    void SetScale(G4double scale);
+    G4double GetScale();
 
-    void SetScale(G4double scale) {
-        this->scale_ = scale;
-    };
-
-    G4double GetScale() {
-        return this->scale_;
-    };
-
-    void SetOffset(G4ThreeVector offset) {
-        this->offset_ = offset;
-    };
-    
-    G4ThreeVector GetOffset() {
-        return this->offset_;
-    };
+    void SetOffset(G4ThreeVector offset);
+    G4ThreeVector GetOffset();
 
   protected:
     G4String file_name_;
     File::Type file_type_;
-
     G4int verbose_;
-    
     G4double scale_;
-   
     G4ThreeVector offset_;
 
-    G4AssemblyVolume* assembly_;
+    G4AssemblyVolume* assembly_ = nullptr;
+
+    std::shared_ptr<File::Reader> reader_ = nullptr;
 };
 
 }

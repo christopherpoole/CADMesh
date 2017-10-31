@@ -16,6 +16,11 @@
 namespace CADMesh
 {
 
+TetrahedralMesh::TetrahedralMesh()
+{
+}
+
+
 TetrahedralMesh::~TetrahedralMesh()
 {
 }
@@ -23,18 +28,22 @@ TetrahedralMesh::~TetrahedralMesh()
 
 G4VSolid* TetrahedralMesh::GetSolid()
 {
+    return GetSolid(0);
+}
+
+
+G4VSolid* TetrahedralMesh::GetSolid(G4int /*index*/)
+{
+    // TODO: Get a solid by index.
+
     return nullptr;
 }
 
 
-G4VSolid* TetrahedralMesh::GetSolid(G4int index)
+G4VSolid* TetrahedralMesh::GetSolid(G4String /*name*/)
 {
-    return nullptr;
-}
+    // TODO: Get a solid by name.
 
-
-G4VSolid* TetrahedralMesh::GetSolid(G4String name)
-{
     return nullptr;
 }
 
@@ -45,6 +54,11 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
     {
         return assembly_;
     }
+    
+    assembly_ = new G4AssemblyVolume();
+
+    in_ = std::make_shared<tetgenio>();
+    out_ = std::make_shared<tetgenio>();
 
     char* fn = (char*) file_name_.c_str();
 
@@ -52,17 +66,23 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
    
     if (file_type_ == File::STL)
     {
-        in->load_stl(fn);
-    } else if (file_type_ == File::PLY)
+        in_->load_stl(fn);
+    }
+    
+    else if (file_type_ == File::PLY)
     {
-        in->load_ply(fn);
-    } else if (file_type_ == File::TET)
+        in_->load_ply(fn);
+    }
+    
+    else if (file_type_ == File::TET)
     {
-        out->load_tetmesh(fn, 0);
+        out_->load_tetmesh(fn, 0);
         do_tet = false;
-    } else if (file_type_ == File::OFF)
+    }
+    
+    else if (file_type_ == File::OFF)
     {
-        out->load_off(fn);
+        out_->load_off(fn);
         do_tet = false;
     }
 
@@ -73,26 +93,38 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
         behavior->plc = 1;
         behavior->quality = quality_;
 
-        tetrahedralize(behavior, in.get(), out.get());
+        tetrahedralize(behavior, in_.get(), out_.get());
     }
 
-    G4RotationMatrix * element_rotation = new G4RotationMatrix();
+    G4RotationMatrix* element_rotation = new G4RotationMatrix();
     G4ThreeVector element_position = G4ThreeVector();
     G4Transform3D assembly_transform = G4Translate3D();
 
-    for (int i=0; i<out->numberoftetrahedra; i++) {
-        int index_offset = i * 4; /* For a tetrahedron, out->numberofcorners == 4 */
+    for (int i=0; i<out_->numberoftetrahedra; i++)
+    {
+        // For a tetrahedron, out_->numberofcorners == 4 
+        int index_offset = i * 4;
 
         G4ThreeVector p1 = GetTetPoint(index_offset);
         G4ThreeVector p2 = GetTetPoint(index_offset + 1);
         G4ThreeVector p3 = GetTetPoint(index_offset + 2);
         G4ThreeVector p4 = GetTetPoint(index_offset + 3);
 
-        G4String tet_name = file_name_ + G4String("_tet_") + G4UIcommand::ConvertToString(i);
+        G4String tet_name = file_name_
+                          + G4String("_tet_")
+                          + G4UIcommand::ConvertToString(i);
 
-        G4VSolid * tet_solid = new G4Tet(tet_name + G4String("_solid"), p1, p2, p3, p4, 0);
-        G4LogicalVolume * tet_logical = new G4LogicalVolume(tet_solid, material_, tet_name + G4String("_logical"), 0, 0, 0);
-        assembly_->AddPlacedVolume(tet_logical, element_position, element_rotation);
+        auto tet_solid = new G4Tet( tet_name + G4String("_solid")
+                                  , p1, p2, p3, p4, 0);
+
+        auto tet_logical = new G4LogicalVolume( tet_solid
+                                              , material_
+                                              , tet_name + G4String("_logical")
+                                              , 0, 0, 0);
+
+        assembly_->AddPlacedVolume( tet_logical
+                                  , element_position
+                                  , element_rotation);
     }
 
     return assembly_;
@@ -100,9 +132,10 @@ G4AssemblyVolume * TetrahedralMesh::GetAssembly()
 
 G4ThreeVector TetrahedralMesh::GetTetPoint(G4int index_offset)
 {
-    return G4ThreeVector(out->pointlist[out->tetrahedronlist[index_offset]*3] * scale_ - offset_.x(),
-            out->pointlist[out->tetrahedronlist[index_offset]*3+1] * scale_ - offset_.y(),
-            out->pointlist[out->tetrahedronlist[index_offset]*3+2] * scale_ - offset_.z());
+    return G4ThreeVector(
+            out_->pointlist[out_->tetrahedronlist[index_offset]*3] * scale_ - offset_.x(),
+            out_->pointlist[out_->tetrahedronlist[index_offset]*3+1] * scale_ - offset_.y(),
+            out_->pointlist[out_->tetrahedronlist[index_offset]*3+2] * scale_ - offset_.z());
 }
 
 } // CADMesh namespace

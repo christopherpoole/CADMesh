@@ -12,6 +12,7 @@
 #pragma once
 
 // CADMesh //
+#include "Configuration.hh"
 #include "FileTypes.hh"
 #include "Reader.hh"
 

@@ -1,0 +1,2 @@
+#define CADMESH_DEFAULT_READER Readers::@DEFAULT_READER@()
+

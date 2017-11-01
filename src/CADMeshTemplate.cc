@@ -34,7 +34,7 @@ CADMeshTemplate<T>::CADMeshTemplate(G4String file_name)
 
 template <typename T>
 CADMeshTemplate<T>::CADMeshTemplate( G4String file_name, File::Type file_type)
-        : CADMeshTemplate<T>(file_name, file_type, Readers::ASSIMP())
+        : CADMeshTemplate<T>(file_name, file_type, CADMESH_DEFAULT_READER)
 {
 }
 

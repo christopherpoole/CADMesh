@@ -123,9 +123,16 @@ Item* Lexer::StartOfA(Token token, std::string error)
 }
 
 
-Item* Lexer::EndOfA(Token /*token*/, std::string /*error*/)
+Item* Lexer::EndOfA(Token token, std::string /*error*/)
 {
-    // TODO: Check that we are ending a token of the right kind.
+    if (parent_item_->token.name != token.name)
+    {
+        Exceptions::LexerError("Lexer::EndOfA", "Trying to end a '"
+                                              + parent_item_->token.name
+                                              + "' with a '"
+                                              + token.name
+                                              + "' token.");
+    }
 
     if (dry_run_) return nullptr;
 

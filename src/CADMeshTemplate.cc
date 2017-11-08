@@ -59,7 +59,6 @@ CADMeshTemplate<T>::CADMeshTemplate( G4String file_name
 {
     if (!reader->CanRead(file_type))
     {
-        // TODO: Check that the file type exists in the type name map.
         Exceptions::ReaderCantReadError( reader->GetName()
                                        , file_type
                                        , file_name);

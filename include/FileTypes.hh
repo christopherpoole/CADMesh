@@ -11,8 +11,10 @@
 
 #pragma once
 
+// GEANT4 //
+#include "G4String.hh"
+
 // STL //
-#include <string>
 #include <map>
 
 
@@ -34,7 +36,8 @@ enum Type
 }; 
 
 
-static std::map<Type, std::string> Extension = {
+static std::map<Type, G4String> Extension = {
+    { Unknown, "unknown" },
     { PLY, "ply" },
     { STL, "stl" },
     { DAE, "dae" },
@@ -44,7 +47,8 @@ static std::map<Type, std::string> Extension = {
 };
 
 
-static std::map<Type, std::string> TypeString = {
+static std::map<Type, G4String> TypeString = {
+    { Unknown, "UNKNOWN" },
     { PLY, "PLY" },
     { STL, "STL" },
     { DAE, "DAE" },
@@ -54,7 +58,8 @@ static std::map<Type, std::string> TypeString = {
 };
 
 
-static std::map<Type, std::string> TypeName = {
+static std::map<Type, G4String> TypeName = {
+    { Unknown, "Unknown File Format" },
     { PLY, "Stanford Triangle Format (PLY)" },
     { STL, "Stereolithography (STL)" },
     { DAE, "COLLADA (DAE)" },

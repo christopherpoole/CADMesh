@@ -35,6 +35,13 @@ std::shared_ptr<Mesh> Mesh::New( Triangles triangles
 }
 
 
+std::shared_ptr<Mesh> Mesh::New( std::shared_ptr<Mesh> mesh
+                               , G4String name )
+{
+    return New(mesh->GetPoints(), mesh->GetTriangles(), name);
+}
+
+
 G4String Mesh::GetName()
 {
     return name_;

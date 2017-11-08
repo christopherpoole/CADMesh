@@ -60,6 +60,11 @@ class CADMeshTemplate
     static std::shared_ptr<T> FromPLY( G4String file_name
                                      , std::shared_ptr<File::Reader> reader);
 
+    static std::shared_ptr<T> FromSTL( G4String file_name);
+
+    static std::shared_ptr<T> FromSTL( G4String file_name
+                                     , std::shared_ptr<File::Reader> reader);
+
     ~CADMeshTemplate();
 
   public:

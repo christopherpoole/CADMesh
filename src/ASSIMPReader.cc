@@ -4,10 +4,10 @@
 namespace CADMesh
 {
 
-namespace Readers
+namespace File
 {
 
-ASSIMPReader::ASSIMPReader()
+ASSIMPReader::ASSIMPReader() : Reader("ASSIMPReader")
 {
     importer_ = new Assimp::Importer();
 }
@@ -65,12 +65,19 @@ G4bool ASSIMPReader::Read(G4String filepath)
 }
 
 
+G4bool ASSIMPReader::CanRead(Type /*file_type*/)
+{
+    // TODO: Assuming ASSIMP can read anything in the list of file types.
+    return true;
+}
+
+
 std::shared_ptr<ASSIMPReader> ASSIMP()
 {
     return std::make_shared<ASSIMPReader>();
 }
 
-} // Readers namespace 
+} // File namespace 
 
 } // CADMesh namespace
 

@@ -9,13 +9,19 @@ namespace CADMesh
 namespace File
 {
 
-Reader::Reader()
+Reader::Reader(G4String reader_name) : name_(reader_name)
 {
 }
 
 
 Reader::~Reader()
 {
+}
+
+
+G4String Reader::GetName()
+{
+    return name_;
 }
 
 
@@ -61,6 +67,13 @@ size_t Reader::AddMesh(std::shared_ptr<Mesh> mesh)
 
     return meshes_.size();
 }
+
+
+void Reader::SetMeshes(Meshes meshes)
+{
+    meshes_ = meshes;
+}
+
 
 }
 

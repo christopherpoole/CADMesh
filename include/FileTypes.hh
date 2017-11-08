@@ -34,7 +34,7 @@ enum Type
 }; 
 
 
-static std::map<Type, std::string> Entension = {
+static std::map<Type, std::string> Extension = {
     { PLY, "ply" },
     { STL, "stl" },
     { DAE, "dae" },
@@ -42,6 +42,27 @@ static std::map<Type, std::string> Entension = {
     { TET, "tet" },
     { OFF, "off" }
 };
+
+
+static std::map<Type, std::string> TypeString = {
+    { PLY, "PLY" },
+    { STL, "STL" },
+    { DAE, "DAE" },
+    { OBJ, "OBJ" },
+    { TET, "TET" },
+    { OFF, "OFF" }
+};
+
+
+static std::map<Type, std::string> TypeName = {
+    { PLY, "Stanford Triangle Format (PLY)" },
+    { STL, "Stereolithography (STL)" },
+    { DAE, "COLLADA (DAE)" },
+    { OBJ, "Wavefront (OBJ)" },
+    { TET, "TetGet (TET)" },
+    { OFF, "Object File Format (OFF)" }
+};
+
 
 }
 

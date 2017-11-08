@@ -29,6 +29,9 @@ class Mesh
     static std::shared_ptr<Mesh> New( Triangles triangles
                                     , G4String name = "");
 
+    static std::shared_ptr<Mesh> New( std::shared_ptr<Mesh> mesh
+                                    , G4String name="");
+
   public:
     G4String GetName();
     Points GetPoints();

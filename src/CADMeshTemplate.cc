@@ -11,9 +11,7 @@
 
 // CADMesh //
 #include "CADMeshTemplate.hh"
-
-// TODO: Including the ASSIMP read here is temporary.
-#include "ASSIMPReader.hh"
+#include "Exceptions.hh"
 
 
 namespace CADMesh
@@ -59,6 +57,14 @@ CADMeshTemplate<T>::CADMeshTemplate( G4String file_name
                                    , File::Type file_type
                                    , std::shared_ptr<File::Reader> reader)
 {
+    if (!reader->CanRead(file_type))
+    {
+        // TODO: Check that the file type exists in the type name map.
+        Exceptions::ReaderCantReadError( reader->GetName()
+                                       , file_type
+                                       , file_name);
+    }
+
     file_name_ = file_name;
     file_type_ = file_type;
 
@@ -88,6 +94,20 @@ std::shared_ptr<T> CADMeshTemplate<T>::FromPLY( G4String file_name
     return std::make_shared<T>(file_name, File::PLY, reader);
 }
 
+
+template <typename T>
+std::shared_ptr<T> CADMeshTemplate<T>::FromSTL(G4String file_name)
+{
+    return std::make_shared<T>(file_name, File::STL);
+}
+
+    
+template <typename T>
+std::shared_ptr<T> CADMeshTemplate<T>::FromSTL( G4String file_name
+                                              , std::shared_ptr<File::Reader> reader)
+{
+    return std::make_shared<T>(file_name, File::STL, reader);
+}
 
 
 template <typename T>

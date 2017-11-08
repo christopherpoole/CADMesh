@@ -23,7 +23,7 @@
 namespace CADMesh
 {
 
-namespace Readers
+namespace File
 {
 
 class ASSIMPReader : public File::Reader
@@ -34,6 +34,7 @@ class ASSIMPReader : public File::Reader
 
   public:
     G4bool Read(G4String filepath);
+    G4bool CanRead(Type file_type);
 
   private:
     Assimp::Importer* importer_;
@@ -41,7 +42,7 @@ class ASSIMPReader : public File::Reader
 
 std::shared_ptr<ASSIMPReader> ASSIMP();
 
-} // Readers namespace
+} // File namespace
 
 } // CADMesh namespace
 

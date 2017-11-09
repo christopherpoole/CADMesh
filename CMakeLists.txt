@@ -1,23 +1,27 @@
+#------------------------------------------------------------------------------
+# project set-up
+#
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
 project(cadmesh)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(CADMESH_MAJOR_VERSION 1)
-set(CADMESH_MINOR_VERSION 1)
-set(CADMESH_PATCH_VERSION 0)
+set(CADMESH_MAJOR_VERSION 2)
+set(CADMESH_MINOR_VERSION 0)
+set(CADMESH_PATCH_VERSION rc1)
 set(CADMESH_VERSION
     ${CADMESH_MAJOR_VERSION}.${CADMESH_MINOR_VERSION}.${CADMESH_PATCH_VERSION})
 
 include(FindPkgConfig)
 include(ExternalProject)
 
+# for "find_package(...)"
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules ${CMAKE_MODULE_PATH})
 
-# Make the include and lib directories in the build area.
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/include)
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+#------------------------------------------------------------------------------
+# dependencies
+#
 
 # GEANT4
 option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
@@ -27,29 +31,6 @@ else()
     find_package(Geant4 REQUIRED)
 endif()
 include(${Geant4_USE_FILE})
-
-# X11 if on a Mac
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(OPENGL_INCLUDE_DIR_MAC /var/empty/X11/include )
-    include_directories(${OPENGL_INCLUDE_DIR_MAC})
-
-    set(OPENGL_INCLUDE_DIR /var/empty/include )
-    include_directories(${OPENGL_INCLUDE_DIR})
-endif()
-
-# Tetgen
-option(WITH_SYS_TETGEN "WITH_SYS_TETGEN" OFF)
-if(${WITH_SYS_TETGEN} MATCHES "ON")
-    find_package(tetgen)
-else()
-    ExternalProject_Add(
-        tetgen_external
-        SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/tetgen
-        GIT_REPOSITORY https://github.com/christopherpoole/tetgen.git
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
-    )
-    include_directories(${PROJECT_BINARY_DIR}/include)
-endif()
 
 # Open Asset Importer Library
 option(WITH_SYS_ASSIMP "WITH_SYS_ASSIMP" OFF)
@@ -63,27 +44,34 @@ else()
         GIT_TAG v4.0.1
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     )
-    include_directories(${PROJECT_BINARY_DIR}/include/assimp/include)
+    include_directories(${CMAKE_BINARY_DIR}/include)
 endif()
 
-# CADMesh
+# X11 if on a Mac
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(OPENGL_INCLUDE_DIR_MAC /var/empty/X11/include )
+    include_directories(${OPENGL_INCLUDE_DIR_MAC})
+
+    set(OPENGL_INCLUDE_DIR /var/empty/include )
+    include_directories(${OPENGL_INCLUDE_DIR})
+endif()
+
+
+#------------------------------------------------------------------------------
+# sources, headers, targets
+#
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${CMAKE_INSTALL_PREFIX}/include)
 
 # Set up the target.
 add_library(cadmesh "SHARED" ${sources} ${headers}) 
 
-# Link against either the system libraries, or the external project libaries.
-if(${WITH_SYS_TETGEN} MATCHES "OFF")
-    add_dependencies(cadmesh tetgen_external)
-    target_link_libraries(cadmesh -L${CMAKE_BINARY_DIR}/lib tet)
-else()
-    target_link_libraries(cadmesh tet)
-endif()
+# mandatory dependence 1: linking to Geant4
+target_link_libraries(cadmesh ${Geant4_LIBRARIES})
 
+# mandatory dependence 2: linking to Assimp
 if(${WITH_SYS_ASSIMP} MATCHES "OFF")
     add_dependencies(cadmesh assimp_external)
     target_link_libraries(cadmesh -L${CMAKE_BINARY_DIR}/lib assimp)
@@ -91,25 +79,31 @@ else()
     target_link_libraries(cadmesh assimp)
 endif()
 
-target_link_libraries(cadmesh ${Geant4_LIBRARIES})
 
-# Configure the installation.
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cadmesh-config.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" @ONLY IMMEDIATE)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_MAJOR_VERSION}.${CADMESH_MINOR_VERSION}.${CADMESH_PATCH_VERSION}")
+#----------------------------------------------------------------------------
+# Examples
+#
+add_subdirectory(${PROJECT_SOURCE_DIR}/examples/polygon_mesh)
+add_subdirectory(${PROJECT_SOURCE_DIR}/examples/tetrahedral_mesh)
+add_subdirectory(${PROJECT_SOURCE_DIR}/examples/nested_polygon_mesh)
+
+
+#------------------------------------------------------------------------------
+# Configure the installation
+#
+configure_file(${PROJECT_SOURCE_DIR}/cadmesh-config.cmake.in cadmesh-config.cmake)
+install(FILES ${CMAKE_BINARY_DIR}/cadmesh-config.cmake
+        DESTINATION lib/cmake/cadmesh-${CADMESH_VERSION})
 
 # Install the CADMesh headers library.
-install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
 install(TARGETS cadmesh DESTINATION lib)
+
+# Install the external project libraries
+install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION lib)
 
 # Install the external project headers.
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION include)
-
-# Install the external project libraries.
-install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION lib)
-
-# Build the examples as well.
-add_subdirectory(${PROJECT_SOURCE_DIR}/examples/basic)
-add_subdirectory(${PROJECT_SOURCE_DIR}/examples/template)
 
 # Set CPack to build an archive.
 set(CPACK_GENERATOR "TGZ")
@@ -120,4 +114,3 @@ set(CPACK_PACKAGE_VERSION_MINOR ${CADMESH_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${CADMESH_PATCH_VERSION})
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 0)
 include(CPack)
-

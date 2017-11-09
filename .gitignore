@@ -2,3 +2,6 @@
 *.swp
 
 *build*
+
+# project settings folder of the VS-Code editor
+.vscode

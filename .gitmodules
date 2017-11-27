@@ -1,6 +1,3 @@
 [submodule "external/assimp"]
 	path = external/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "external/tetgen"]
-	path = external/tetgen
-	url = https://github.com/christopherpoole/tetgen.git

@@ -1,0 +1,33 @@
+# VISUALIZATION
+/vis/open OGL 500x500-500-500
+/vis/drawVolume
+#/vis/scene/add/axes      0 0 0 300 mm
+
+/vis/viewer/set/viewpointThetaPhi 60 80
+
+#/vis/viewer/set/style solid
+#/vis/viewer/set/hiddenEdge 1
+
+/vis/scene/add/trajectories
+/vis/scene/endOfEventAction accumulate
+
+
+# VERBOSITY
+/control/verbose 0
+/run/verbose 1
+/vis/verbose 0
+
+
+# RUN
+/gps/direction 0 0 1
+/gps/pos/centre 0. 0. 40. cm
+/gps/ang/type cos
+/gps/ang/maxtheta 15. deg
+
+/gps/particle gamma
+/gps/energy 100. keV
+
+/run/beamOn 100
+
+# Update the viewer, as sometimes the geometry is hidden.
+/vis/viewer/refresh

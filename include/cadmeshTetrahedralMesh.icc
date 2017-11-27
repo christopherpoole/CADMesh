@@ -1,0 +1,111 @@
+/********************************************************************************
+* CADMesh - A CAD file interface for Geant4                                     *
+*                                                                               *
+* Copyright (c) 2017      Simon Kirchhof <s.kirchhof@dkfz-heidelberg.de>        *
+*                                                                               *
+* Permission is hereby granted, free of charge, to any person obtaining a copy  *
+* of this software and associated documentation files (the "Software"),         *
+* to deal in the Software without restriction, including without limitation     *
+* the rights to use, copy, modify, merge, publish, distribute, sublicense,      *
+* and/or sell copies of the Software, and to permit persons to whom             *
+* the Software is furnished to do so, subject to the following conditions:      *
+*                                                                               *
+* The above copyright notice and this permission notice shall be included       *
+* in all copies or substantial portions of the Software.                        *
+*                                                                               *
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,               *
+* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES               *
+* OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.     *
+* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
+* DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,                 *
+* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE    *
+* OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                 *
+********************************************************************************/
+
+namespace cadmesh {
+
+
+inline
+const std::vector<G4int>& TetAssemblyVolume::GetRegionIDs() const
+{
+  return fRegionIDs;
+}
+
+
+inline
+G4VisExtent TetAssemblyVolume::GetVisExtent() const
+{
+  return G4VisExtent(fXmin, fXmax, fYmin, fYmax, fZmin, fZmax);
+}
+
+inline
+std::size_t TetAssemblyVolume::GetNumberOfTetrahedra() const
+{
+  return fRegionIDs.size();
+}
+
+
+inline
+void TetAssemblyVolume::MakeImprint(G4LogicalVolume* motherVolume,
+                                    const G4ThreeVector& translationInMother,
+                                    G4RotationMatrix* rotationInMother,
+                                    G4bool surfaceCheck)
+{
+  // work around, to allow a default argument
+  G4ThreeVector translationInMother_ = translationInMother;
+  fTetAssembly->MakeImprint(motherVolume, translationInMother_,
+                            rotationInMother, surfaceCheck);
+}
+
+
+inline
+G4VPhysicalVolume* TetAssemblyVolume::GetImprintedPhysicalVolume(G4int index)
+{
+  // via random access iterator
+  return *(fTetAssembly->GetVolumesIterator() + index);
+}
+
+
+inline
+std::size_t TetAssemblyVolume::TotalImprintedVolumes() const
+{
+  return fTetAssembly->TotalImprintedVolumes();
+}
+
+
+inline
+std::size_t TetAssemblyVolume::GetImprintsCount() const
+{
+  return fTetAssembly->GetImprintsCount();
+}
+
+
+inline
+std::size_t TetAssemblyVolume::GetInstanceCount() const
+{
+  return fTetAssembly->GetInstanceCount();
+}
+
+
+inline
+std::size_t TetAssemblyVolume::GetAssemblyID() const
+{
+  return fTetAssembly->GetAssemblyID();
+}
+
+
+inline
+void TetrahedralMeshFileReader::SetUnitOfLength(G4double unitOfLength)
+{
+  fUnitOfLength = unitOfLength;
+}
+
+
+inline
+G4double TetrahedralMeshFileReader::GetUnitOfLength()
+{
+  return fUnitOfLength;
+}
+
+
+}  // namespace cadmesh

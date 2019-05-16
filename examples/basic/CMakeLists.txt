@@ -7,8 +7,8 @@ include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Include CADMesh in your project.
-# find_package(cadmesh)
-# include_directories(${CADMESH_INCLUDE_DIRS})
+find_package(cadmesh)
+include_directories(${CADMESH_INCLUDE_DIRS})
 
 # User code
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
@@ -19,4 +19,3 @@ target_link_libraries(cadmesh_example ${Geant4_LIBRARIES})
 
 target_link_libraries(cadmesh_example cadmesh)
 # OR target_link_libraries(cadmesh_example ${cadmesh_LIBRARIES})
-

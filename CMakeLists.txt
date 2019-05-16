@@ -127,6 +127,7 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION include)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION lib)
 
 # Build the examples as well.
+set(cadmesh_DIR ${PROJECT_BINARY_DIR})
 add_subdirectory(${PROJECT_SOURCE_DIR}/examples/basic)
 add_subdirectory(${PROJECT_SOURCE_DIR}/examples/template)
 

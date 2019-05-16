@@ -4,7 +4,6 @@ project(cadmesh)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ")
 
 set(CADMESH_MAJOR_VERSION 1)
 set(CADMESH_MINOR_VERSION 1)
@@ -93,7 +92,7 @@ include_directories(${CMAKE_INSTALL_PREFIX}/include)
 include_directories(${PROJECT_BINARY_DIR}/include)
 
 # Set up the target.
-add_library(cadmesh "SHARED" ${sources} ${headers}) 
+add_library(cadmesh "SHARED" ${sources} ${headers})
 
 # Link against either the system libraries, or the external project libaries.
 if(${WITH_SYS_TETGEN} MATCHES "OFF")
@@ -117,7 +116,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cadmesh-config.cmake.in" "${CMAKE_CU
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_MAJOR_VERSION}.${CADMESH_MINOR_VERSION}.${CADMESH_PATCH_VERSION}")
 
 # Install the CADMesh headers and library.
-install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
+install(FILES ${headers} DESTINATION include)
 install(FILES ${PROJECT_BINARY_DIR}/include/Configuration.hh DESTINATION include)
 install(TARGETS cadmesh DESTINATION lib)
 
@@ -165,4 +164,3 @@ if(${WITH_TESTS} MATCHES "ON")
                                        ${PROJECT_SOURCE_DIR}/examples/basic/cone.ply
                                        PLY)
 endif()
-

@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(cadmesh)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CADMESH_MAJOR_VERSION 1)
 set(CADMESH_MINOR_VERSION 1)
@@ -53,6 +54,8 @@ endif()
 
 # Open Asset Importer Library
 option(WITH_SYS_ASSIMP "WITH_SYS_ASSIMP" OFF)
+set(WITH_SYS_ASSIMP_GIT_TAG "v5.0.0.rc1" CACHE STRING
+    "GitHub release tag to use if WITH_SYS_ASSIMP=OFF")
 if(${WITH_SYS_ASSIMP} MATCHES "ON")
     find_package(assimp)
 else()
@@ -60,7 +63,7 @@ else()
         assimp_external
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/assimp
         GIT_REPOSITORY https://github.com/assimp/assimp.git
-        GIT_TAG v4.0.1
+        GIT_TAG ${WITH_SYS_ASSIMP_GIT_TAB}
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}
     )
     include_directories(${PROJECT_BINARY_DIR}/include/assimp/include)
@@ -91,7 +94,7 @@ include_directories(${CMAKE_INSTALL_PREFIX}/include)
 include_directories(${PROJECT_BINARY_DIR}/include)
 
 # Set up the target.
-add_library(cadmesh "SHARED" ${sources} ${headers}) 
+add_library(cadmesh "SHARED" ${sources} ${headers})
 
 # Link against either the system libraries, or the external project libaries.
 if(${WITH_SYS_TETGEN} MATCHES "OFF")
@@ -115,7 +118,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cadmesh-config.cmake.in" "${CMAKE_CU
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_MAJOR_VERSION}.${CADMESH_MINOR_VERSION}.${CADMESH_PATCH_VERSION}")
 
 # Install the CADMesh headers and library.
-install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
+install(FILES ${headers} DESTINATION include)
 install(FILES ${PROJECT_BINARY_DIR}/include/Configuration.hh DESTINATION include)
 install(TARGETS cadmesh DESTINATION lib)
 
@@ -126,6 +129,7 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION include)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/ DESTINATION lib)
 
 # Build the examples as well.
+set(cadmesh_DIR ${PROJECT_BINARY_DIR})
 add_subdirectory(${PROJECT_SOURCE_DIR}/examples/basic)
 add_subdirectory(${PROJECT_SOURCE_DIR}/examples/template)
 
@@ -163,4 +167,3 @@ if(${WITH_TESTS} MATCHES "ON")
                                        ${PROJECT_SOURCE_DIR}/examples/basic/cone.ply
                                        PLY)
 endif()
-

@@ -9,7 +9,7 @@
 SCENARIO( "Load a PLY file as a tessellated mesh.") {
 
     GIVEN( "the sphere in the file 'sphere.ply'" ) {
-        auto mesh = CADMesh::TessellatedMesh::FromPLY("../models/sphere.ply");
+        auto mesh = CADMesh::TessellatedMesh::FromPLY("../meshes/sphere.ply");
 
         WHEN( "constructing the solid volume" ) {
             auto solid = (G4TessellatedSolid*) mesh->GetSolid();

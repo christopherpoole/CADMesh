@@ -1,3 +1,24 @@
+// The MIT License (MIT)
+//
+// Copyright (c) 2011-2020 Christopher M. Poole <mail@christopherpoole.net>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 // CADMesh //
 #include "Lexer.hh"
@@ -17,11 +38,16 @@ namespace File
 {
 
 
-Lexer::Lexer(std::string filepath)
+Lexer::Lexer(std::string filepath, State* initial_state)
 {
     std::ifstream file(filepath);
     input_ = std::string( (std::istreambuf_iterator<char>(file))
                         , std::istreambuf_iterator<char>());
+
+    if (initial_state)
+    {
+        Run(initial_state);
+    }
 }
 
 
@@ -31,9 +57,16 @@ std::string Lexer::String()
 }
 
 
-void Lexer::Run(State* initial_state)
+void Lexer::Run(State* initial_state, size_t lines)
 {
+    parent_item_ = new Item { ParentToken, position_, line_, "", "", nullptr, std::vector<Item>() };
+
     state_ = initial_state;
+
+    end_line_ = 0;
+
+    if (lines > 0)
+        end_line_ = line_ + lines;
 
     while (state_)
     {
@@ -44,18 +77,26 @@ void Lexer::Run(State* initial_state)
 
 Items Lexer::GetItems()
 {
-    return items_;
+    return parent_item_->children;
 }
 
 
 void Lexer::Backup()
 {
     position_ -= width_;
+
+    if (input_.substr(position_, 1) == "\n")
+    {
+        line_--;
+    }
 }
 
 
 void Lexer::BackupTo(int position)
 {
+    auto s = input_.substr(position, position_ - position);
+    line_ -= std::count(s.begin(), s.end(), '\n');
+
     position_ = position;
 }
 
@@ -73,14 +114,19 @@ std::string Lexer::Next()
     width_ = 1;
     position_ += width_;
 
-    return next; 
+    if (next == "\n")
+        line_++;
+        
+    return next;
 }
 
 
 std::string Lexer::Peek()
 {
     auto next = Next();
-    Backup();
+
+    if (next != "")
+        Backup();
 
     return next;
 }
@@ -96,17 +142,22 @@ Item* Lexer::ThisIsA(Token token, std::string error)
 {
     if (dry_run_) return nullptr;
 
-    auto item = Item { token, position_, line_, String(), error, parent_item_ };
+    auto item = Item { token, position_, line_, String(), error, parent_item_, Items() };
     Skip();
-
+    
     if (parent_item_)
-    {
+    { 
+        PrintItem(item);
+
         parent_item_->children.push_back(item);
         return &(parent_item_->children.back());
     }
 
     else
     {
+        depth_++;
+        PrintItem(item);
+
         items_.push_back(item);
         return &(items_.back());
     }
@@ -119,12 +170,20 @@ Item* Lexer::StartOfA(Token token, std::string error)
 
     parent_item_ = ThisIsA(token, error);
 
+    depth_ ++;
+
     return parent_item_;
 }
 
 
 Item* Lexer::EndOfA(Token token, std::string /*error*/)
 {
+    if (dry_run_) return nullptr;
+    
+    depth_--;
+    
+    PrintItem(*parent_item_);
+
     if (parent_item_->token.name != token.name)
     {
         Exceptions::LexerError("Lexer::EndOfA", "Trying to end a '"
@@ -133,8 +192,6 @@ Item* Lexer::EndOfA(Token token, std::string /*error*/)
                                               + token.name
                                               + "' token.");
     }
-
-    if (dry_run_) return nullptr;
 
     if (parent_item_)
     {
@@ -145,14 +202,30 @@ Item* Lexer::EndOfA(Token token, std::string /*error*/)
 }
 
 
+Item* Lexer::MaybeEndOfA(Token token, std::string error)
+{
+    if (parent_item_->token.name == token.name)
+    {
+        return EndOfA(token, error);
+    }
+    
+    else
+    {
+        return nullptr;
+    }
+}
+
+
 bool Lexer::OneOf(std::string possibles)
 {
+    auto peek = Peek();
+
     size_t position = possibles.find(Peek());
 
     if (position != std::string::npos)
     {
-        Next();
-        return true;
+        auto next = Next();
+        return next != "";
     }
 
     return false;
@@ -169,6 +242,18 @@ bool Lexer::ManyOf(std::string possibles)
     }
 
     return has;
+}
+
+
+bool Lexer::Until(std::string match)
+{
+    while (!OneOf(match))
+    {
+        if (Next() == "")
+            return false;
+    }
+
+    return true;
 }
 
 
@@ -211,6 +296,13 @@ bool Lexer::ManyLetters()
 {
     return ManyOf("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 }
+
+
+bool Lexer::ManyCharacters()
+{
+    return ManyOf("!\"#$%&\\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[|]^_`abcdefghijklmnopqrstuvwxyz{}~");
+}
+
 
 
 bool Lexer::Integer()
@@ -296,6 +388,7 @@ bool Lexer::SkipWhiteSpace()
 {
     if (!ManyOf(" \t"))
     {
+        Skip();
         return false;
     }
 
@@ -311,8 +404,30 @@ bool Lexer::SkipLineBreak()
         return false;
     }
 
-    line_++;
-        
+    Skip();
+    return true;
+}
+
+
+bool Lexer::SkipLineBreaks()
+{
+    if (!ManyOf("\n\r"))
+    {
+        return false;
+    }
+
+    Skip();
+    return true;
+}
+
+
+bool Lexer::SkipLine()
+{
+    if (!Until("\n\r"))
+    {
+        return false;
+    }
+
     Skip();
     return true;
 }
@@ -320,12 +435,15 @@ bool Lexer::SkipLineBreak()
 
 State* Lexer::Error(std::string message)
 {
-    if (dry_run_) return nullptr;
 
     std::stringstream error;
-    error << "Error on line " << line_  << ": " << message << std::endl;
+    error << "Error around line " << line_  << ": " << message << std::endl;
+   
+    last_error_ = error.str();
+
+    if (dry_run_) return nullptr;
     
-    Item item { ErrorToken, position_, line_, "", error.str(), parent_item_ };
+    Item item { ErrorToken, position_, line_, "", error.str(), parent_item_, Items()};
     items_.push_back(item);
 
     Exceptions::LexerError("Lexer", error.str());
@@ -334,8 +452,30 @@ State* Lexer::Error(std::string message)
 }
 
 
+State* Lexer::LastError()
+{
+    if (last_error_ == "")
+    {
+        Exceptions::LexerError("Lexer", "Something went wrong.");
+    }
+
+    else
+    {
+        Exceptions::LexerError("Lexer", last_error_);
+    }
+        
+    return nullptr;
+}
+
+
 bool Lexer::TestState(State* state)
 {
+    // Short circuit if we are already dry running.
+    if (dry_run_) return false;
+   
+    // Check if an end line has been reached. 
+    if (end_line_ > 0 && line_ > end_line_) return false;
+
     auto start_position = position_;
 
     // Disable emiting anything.
@@ -352,6 +492,42 @@ bool Lexer::TestState(State* state)
 
     return state_transition;
 }
+
+
+bool Lexer::IsDryRun()
+{
+    return dry_run_;
+}
+
+
+size_t Lexer::LineNumber()
+{
+    return line_;
+}
+
+
+# ifdef CADMESH_LEXER_VERBOSE
+void Lexer::PrintMessage(std::string name, std::string message)
+{
+    std::cout << "Lexer::" << name << " : " << message << std::endl;
+}
+# else
+void Lexer::PrintMessage(std::string, std::string)
+{
+}
+#endif
+
+# ifdef CADMESH_LEXER_VERBOSE
+void Lexer::PrintItem(Item item)
+{
+    auto depth = std::max(0, depth_) * 2;
+    std::cout << std::string(depth, ' ') << item.token.name << ": " << item.value << std::endl;
+}
+# else
+void Lexer::PrintItem(Item)
+{
+}
+#endif
 
 }
 

@@ -21,10 +21,7 @@
 // THE SOFTWARE.
 
 // CADMesh //
-#include "BuiltInReader.hh"
-#include "STLReader.hh"
-#include "OBJReader.hh"
-#include "PLYReader.hh"
+#include "FileTypes.hh"
 
 
 namespace CADMesh
@@ -33,57 +30,33 @@ namespace CADMesh
 namespace File
 {
 
-G4bool BuiltInReader::Read(G4String filepath)
+Type TypeFromExtension(G4String extension)
 {
-    File::Reader* reader = nullptr;
+    std::for_each(extension.begin(), extension.end(), [](char & e)
+        {
+            e = ::tolower(e);
+        });
 
-    auto type = TypeFromName(filepath);
-
-    if (type == STL)
+    for (auto e = Extension.begin(); e != Extension.end(); ++e)
     {
-        reader = new File::STLReader();
+        if (e->second == extension)
+        {
+            return e->first;
+        }
     }
 
-    else if (type == OBJ)
-    {
-        reader = new File::OBJReader();
-    }
-
-    else if (type == PLY)
-    {
-        reader = new File::PLYReader();
-    }
-
-    else
-    {
-        Exceptions::ReaderCantReadError( "BuildInReader::Read"
-                                       , type
-                                       , filepath );
-    }
-
-
-    if(!reader->Read(filepath))
-    {
-        return false;
-    }
-
-    SetMeshes(reader->GetMeshes());
-    return true;
+    return Unknown;
 }
 
 
-G4bool BuiltInReader::CanRead(Type type)
+Type TypeFromName(G4String name)
 {
-    return type == STL || type == OBJ || type == PLY; 
+    auto extension = name.substr(name.find_last_of(".") + 1);
+
+    return TypeFromExtension(extension);
 }
 
-
-std::shared_ptr<BuiltInReader> BuiltIn()
-{
-    return std::make_shared<BuiltInReader>();
 }
 
-} // File namespace 
-
-} // CADMesh namespace
+}
 

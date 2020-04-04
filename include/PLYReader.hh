@@ -20,11 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// CADMesh //
-#include "BuiltInReader.hh"
-#include "STLReader.hh"
-#include "OBJReader.hh"
-#include "PLYReader.hh"
+#pragma once
+
+// CADMesh//
+#include "Reader.hh"
+#include "Lexer.hh"
+#include "LexerMacros.hh"
+
+// GEANT4 //
+#include "globals.hh"
 
 
 namespace CADMesh
@@ -33,57 +37,48 @@ namespace CADMesh
 namespace File
 {
 
-G4bool BuiltInReader::Read(G4String filepath)
+CADMeshLexerToken(Header);
+CADMeshLexerToken(Element);
+CADMeshLexerToken(Property);
+
+class PLYReader : public Reader
 {
-    File::Reader* reader = nullptr;
+  public:
+    PLYReader() : Reader("PLYReader") { };
+  
+    G4bool Read(G4String filepath);
+    G4bool CanRead(Type file_type);
 
-    auto type = TypeFromName(filepath);
+  protected:
+    //Lexer.
+    CADMeshLexerStateDefinition(StartHeader);
+    CADMeshLexerStateDefinition(EndHeader);
 
-    if (type == STL)
-    {
-        reader = new File::STLReader();
-    }
+    CADMeshLexerStateDefinition(Element);
+    CADMeshLexerStateDefinition(Property);
+    CADMeshLexerStateDefinition(Ignore);
+ 
+    CADMeshLexerStateDefinition(Vertex);
+    CADMeshLexerStateDefinition(Facet);
 
-    else if (type == OBJ)
-    {
-        reader = new File::OBJReader();
-    }
+    // Parser. 
+    void ParseHeader(Items items);
 
-    else if (type == PLY)
-    {
-        reader = new File::PLYReader();
-    }
+    std::shared_ptr<Mesh> ParseMesh(Items vertex_items, Items face_items);
+    G4ThreeVector ParseVertex(Items items);
+    G4TriangularFacet* ParseFacet(Items items, Points vertices);
 
-    else
-    {
-        Exceptions::ReaderCantReadError( "BuildInReader::Read"
-                                       , type
-                                       , filepath );
-    }
+    size_t vertex_count_ = 0;
+    size_t facet_count_ = 0;
 
+    size_t x_index_ = 0;
+    size_t y_index_ = 0;
+    size_t z_index_ = 0;
 
-    if(!reader->Read(filepath))
-    {
-        return false;
-    }
+    size_t max_index_ = 0;    
+};
 
-    SetMeshes(reader->GetMeshes());
-    return true;
-}
-
-
-G4bool BuiltInReader::CanRead(Type type)
-{
-    return type == STL || type == OBJ || type == PLY; 
-}
-
-
-std::shared_ptr<BuiltInReader> BuiltIn()
-{
-    return std::make_shared<BuiltInReader>();
-}
-
-} // File namespace 
+} // File namespace
 
 } // CADMesh namespace
 

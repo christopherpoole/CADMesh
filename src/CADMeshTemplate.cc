@@ -1,13 +1,24 @@
-/* ************************************************
- * GEANT4 CAD INTERFACE
- *
- * File:      CADMesh.cc
- *
- * Author:    Christopher M Poole,
- * Email:     mail@christopherpoole.net
- *
- * Date:      7th March, 2011
- **************************************************/
+// The MIT License (MIT)
+//
+// Copyright (c) 2011-2020 Christopher M. Poole <mail@christopherpoole.net>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 // CADMesh //
 #include "CADMeshTemplate.hh"
@@ -32,7 +43,7 @@ CADMeshTemplate<T>::CADMeshTemplate(G4String file_name)
 
 template <typename T>
 CADMeshTemplate<T>::CADMeshTemplate( G4String file_name, File::Type file_type)
-        : CADMeshTemplate<T>(file_name, file_type, CADMESH_DEFAULT_READER)
+        : CADMeshTemplate<T>(file_name, file_type, File::CADMESH_DEFAULT_READER())
 {
 }
 
@@ -67,7 +78,7 @@ CADMeshTemplate<T>::CADMeshTemplate( G4String file_name
     file_name_ = file_name;
     file_type_ = file_type;
 
-    scale_ = mm;
+    scale_ = 1.0;
 
     offset_ = G4ThreeVector();
 
@@ -76,6 +87,21 @@ CADMeshTemplate<T>::CADMeshTemplate( G4String file_name
     reader_ = reader;
 
     reader_->Read(file_name_);
+}
+
+    
+template <typename T>
+std::shared_ptr<T> CADMeshTemplate<T>::From(G4String file_name)
+{
+    return std::make_shared<T>(file_name);
+}
+
+    
+template <typename T>
+std::shared_ptr<T> CADMeshTemplate<T>::From( G4String file_name
+                                           , std::shared_ptr<File::Reader> reader)
+{
+    return std::make_shared<T>(file_name, reader);
 }
 
 
@@ -106,6 +132,21 @@ std::shared_ptr<T> CADMeshTemplate<T>::FromSTL( G4String file_name
                                               , std::shared_ptr<File::Reader> reader)
 {
     return std::make_shared<T>(file_name, File::STL, reader);
+}
+
+
+template <typename T>
+std::shared_ptr<T> CADMeshTemplate<T>::FromOBJ(G4String file_name)
+{
+    return std::make_shared<T>(file_name, File::OBJ);
+}
+
+    
+template <typename T>
+std::shared_ptr<T> CADMeshTemplate<T>::FromOBJ( G4String file_name
+                                              , std::shared_ptr<File::Reader> reader)
+{
+    return std::make_shared<T>(file_name, File::OBJ, reader);
 }
 
 
@@ -161,6 +202,13 @@ template <typename T>
 G4double CADMeshTemplate<T>::GetScale()
 {
     return scale_;
+}
+
+    
+template <typename T>
+void CADMeshTemplate<T>::SetOffset(G4double x, G4double y, G4double z)
+{
+    SetOffset(G4ThreeVector(x, y, z));
 }
 
 

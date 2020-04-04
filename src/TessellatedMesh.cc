@@ -1,13 +1,24 @@
-/* ************************************************
- * GEANT4 CAD INTERFACE
- *
- * File:      TessellatedMesh.cc
- *
- * Author:    Christopher M Poole,
- * Email:     mail@christopherpoole.net
- *
- * Date:      7th March, 2011
- **************************************************/
+// The MIT License (MIT)
+//
+// Copyright (c) 2011-2020 Christopher M. Poole <mail@christopherpoole.net>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 // CADMesh //
 #include "TessellatedMesh.hh"
@@ -96,14 +107,20 @@ G4TessellatedSolid* TessellatedMesh::GetTessellatedSolid(
 
     for(auto triangle : mesh->GetTriangles())
     {
+        auto a = triangle->GetVertex(0) * scale_ + offset_;
+        auto b = triangle->GetVertex(1) * scale_ + offset_;
+        auto c = triangle->GetVertex(2) * scale_ + offset_;
+       
+        auto t = new G4TriangularFacet(a, b, c, ABSOLUTE);
+
         if (reverse_)
         {
-            volume_solid->AddFacet((G4VFacet*) triangle->GetFlippedFacet());
+            volume_solid->AddFacet((G4VFacet*) t->GetFlippedFacet());
         }
        
         else
         {
-            volume_solid->AddFacet((G4VFacet*) triangle);
+            volume_solid->AddFacet((G4VFacet*) t);
         }
     }
 

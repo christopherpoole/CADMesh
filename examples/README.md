@@ -2,6 +2,19 @@
 
 This directory contains a few examples showing different ways of using CADMesh in your Geant4 simulations.
 
+To run a example, change to its directory, and do the following:
+
+```
+cd basic/ 
+mkdir build/
+cd build/
+cmake ..
+make
+./basic # or ./external or ./tetrahedral
+```
+
+Make sure to run the binary in the build directory, as the required mesh files are copied there automatically.
+
 # Basic
 Load PLY, STL, and OBJ files into your detector construction using the CADMesh built in readers. There are no dependencies to install. All you need is `CADMesh.hh`.
 

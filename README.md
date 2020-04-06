@@ -1,6 +1,6 @@
 # CADMesh
 
-Load triangular mesh based CAD files into Geant4 geometry quickly and easily.
+Load triangular mesh based CAD files into Geant4 quickly and easily.
 
 ```cpp
     #include "CADMesh.hh"
@@ -9,18 +9,20 @@ Load triangular mesh based CAD files into Geant4 geometry quickly and easily.
     G4VSolid* solid = mesh->GetSolid();
 ```
 
-CADMesh is distributed as a single header. No need to compile anything. Copy it to your project include directory, and start using it with the built in readers for PLY, STL, and OBJ files.
-
-ASSIMP and TETGEN can be turned on and off using `#defines`, ASSIMP can even be set tot he default reader if you want that.
-Please see the examples directory for inspiration on the different ways you can use CADMesh.
- * [Using the ASSIMP reader](https://github.com/christopherpoole/CADMesh/tree/master/examples/external)
- * [Using tetgen with CADMesh](https://github.com/christopherpoole/CADMesh/tree/master/examples/tetrahedra)
+CADMesh is distributed as a single header. No need to compile anything.
+Copy `CADMesh.hh` to your project `include` directory, and start using it with the built in readers for PLY, STL, and OBJ files.
+See the [basic example](https://github.com/christopherpoole/CADMesh/tree/master/examples/basic) for more details.
 
 ![cadmesh screenshot](https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png)
 
 ---
 
-## Dependencies
+## Installation
+Download the latest release of CADMesh (the CADMesh.hh file) from the [Downloads](https://github.com/christopherpoole/CADMesh/releases) section.
+Copy `CADMesh.hh` to the `includes` directory of your project.
+That's it.
+
+### Optional Dependencies
 If you need to read PLY, STL or OBJ files, there are no dependencies (other than Geant4 obviously).
 
 Optional dependencies:
@@ -32,19 +34,20 @@ If you really want to install them, on a Debian like distribution you can run:
     apt-get install libtet1.5-dev libassimp-dev
 ```
 
-## Installation
-Download the latest release of CADMesh (the CADMesh.hh file) from the [Downloads](https://github.com/christopherpoole/CADMesh/releases) section.
-Copy `CADMesh.hh` to the `includes` directory of your project.
-That's it.
+ASSIMP and TETGEN can be turned on and off using `#defines`, ASSIMP can even be used as the default reader if you want that.
+Please see the examples directory for inspiration on the different ways you can use CADMesh:
+ * [Using the ASSIMP reader](https://github.com/christopherpoole/CADMesh/tree/master/examples/external)
+ * [Using tetgen with CADMesh](https://github.com/christopherpoole/CADMesh/tree/master/examples/tetrahedra)
 
 ## Further Reading
 Importing predefined CAD models into [GEANT4](http://www.geant4.org/geant4/) is not always possible or requires intermediate file format conversion to Geometry Description Markup Language (GDML) using commercial or third party software.
-CADMesh is a direct CAD model import interface for GEANT4 leveraging [ASSIMP](https://github.com/assimp/assimp) for reading the CAD files.
-Currently it supports the import of triangular facet surface meshes defined in formats such as STL and PLY. A G4TessellatedSolid is returned and can be included in a standard user detector constructor.
+CADMesh is a direct CAD model import interface for GEANT4 leveraging built-in readers as well as [ASSIMP](https://github.com/assimp/assimp) for reading the CAD files.
+Currently it supports the import of triangular facet surface meshes defined in formats such as STL, PLY, and OBJ.
+A G4TessellatedSolid is returned and can be included in a standard user detector constructor.
 You can find the project page and a git repository [here](https://github.com/christopherpoole/CADMesh).
 The old [Google Code page for CADMesh](http://code.google.com/p/cadmesh/) redirects to this page.
 
-Additional functionality is included for the fast navigation of tessellated solids by automatically creating equivalent tetrahedral meshes thereby making smart voxelisation available for the solid.
+Additional functionality is included for the fast navigation of tessellated solids by automatically creating equivalent tetrahron filled assemblides thereby making smart voxelisation available for the solid.
 
 ### Citing CADMesh
 CADMesh is described in a technical paper, available [here](https://github.com/christopherpoole/CADMesh/blob/master/Poole%20et%20al.%20-%20A%20CAD%20interface%20for%20GEANT4.pdf), and in this repository.

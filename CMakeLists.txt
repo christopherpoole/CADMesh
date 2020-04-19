@@ -130,9 +130,5 @@ if(${WITH_TESTS} MATCHES "ON")
     target_link_libraries(InvalidTessellatedMeshTests cadmesh)
     add_test(NAME InvalidTessellatedMeshTests COMMAND InvalidTessellatedMeshTests)
 
-    add_test(NAME BasicExample COMMAND examples/basic/cadmesh_example
-                                       ${PROJECT_SOURCE_DIR}/examples/basic/macros/vis.mac
-                                       ${PROJECT_SOURCE_DIR}/examples/basic/cone.ply
-                                       PLY)
 endif()
 

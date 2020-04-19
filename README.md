@@ -16,13 +16,138 @@ See the [basic example](https://github.com/christopherpoole/CADMesh/tree/master/
 ![cadmesh screenshot](https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png)
 
 ---
-
 ## Installation
 Download the latest release of CADMesh (the CADMesh.hh file) from the [Downloads](https://github.com/christopherpoole/CADMesh/releases) section.
 Copy `CADMesh.hh` to the `includes` directory of your project.
 That's it.
 
-### Optional Dependencies
+Read on if you would like the use the optional ASSIMP or TETGEN file readers.
+
+## Usage
+
+To use CADMesh, first include the header `#include "CADMesh.hh"`.
+
+### Loading Meshes
+
+Using the built-in readers, load meshes in the following way.
+The built-in readers can only read ASCII files.
+
+#### PLY 
+```
+auto mesh = CADMesh::TessellatedMesh::FromPLY("mesh.ply");
+```
+
+#### STL
+```
+auto mesh = CADMesh::TessellatedMesh::FromSTL("mesh.stl");
+```
+
+#### OBJ 
+```
+auto mesh = CADMesh::TessellatedMesh::FromOBJ("mesh.obj");
+```
+
+### Scale and Offset
+Scale and offset can be set to the meshes directly, before creating a `G4TesselatedSolid`. This is useful if you need to convert units, or adjust the mesh origin.
+The scale is applied before the offset internally, regardless of which order you specify them in your code.
+
+#### Scale
+By default the mesh scale is one (mm in Geant4).
+```
+mesh->SetScale(100.0);
+```
+
+#### Offset
+Offset can be specified as three numbers or as a three vector.
+```
+double x = 0.0;
+double y = 0.0;
+double z = 0.0;
+
+mesh->SetOffset(x, y, z);
+mesh->SetOffset(G4ThreeVector(x, y, z);
+```
+
+#### Get the Solid
+To get your mesh as a `G4TessellatedSolid`, do this:
+```
+auto solid = mesh->GetSolid();
+```
+Once you have the solid, you can use it like you would any other `G4VSolid` in Geant4. 
+
+### Filling Meshes With Tetrahedra
+As described [here](https://github.com/christopherpoole/CADMesh/blob/master/Poole%20et%20al.%20-%20Fast%20tessellated%20solid%20navigation%20in%20GEANT4.pdf), tessellated solid navigation can be sped up by filling meshes with tetrahedra, and navigating that equivalent geometry instead.
+To do this you need to add `tetgen` as a dependency to your project - read more about this further on in the readme.
+
+#### PLY 
+```
+auto tets = CADMesh::TetrahedralMesh::FromPLY("mesh.ply");
+```
+
+#### STL
+```
+auto tets = CADMesh::TetrahedralMesh::FromSTL("mesh.stl");
+```
+
+#### OBJ 
+```
+auto tets = CADMesh::TetrahedralMesh::FromOBJ("mesh.obj");
+```
+
+Scale and offset can be applied as described above.
+
+#### Tetrahedra Material
+We need to specify the material for all of these tetrahedra that have been generated.
+```
+tets->SetMaterial(g4_material);
+```
+
+#### Get the Assembly
+Rather than a `G4Solid`, in the case of the tessellated meshes, here we place a `G4Assembly`. Don't worry if you haven't used this type before - there is nothing to it - it is just a group of solids all with the same material.
+
+```
+auto assembly = tets->GetAssembly();
+
+auto position = G4ThreeVector();
+auto rotation = new G4RotationMatrix();
+
+assembly->MakeImprint(world_logical, position, rotation);
+``` 
+
+## Developers
+These instructions are for people seeking to modify CADMesh in some way.
+
+### Header Generation
+To generate the header file for distribution (or testing), run the `cmake/generateSingleHeade.py` script while in the `build` directory.
+
+```
+mkdir build
+cd build
+python3 ../cmake/generateSingleHeader.py
+```
+
+Now you have `CADMesh.hh` in the `build` directory.
+
+### Running Tests
+CADMesh is distributed with some tests.
+They are a work in progress, and we use them to make sure CADMesh works as expected in the general sense, as well as to test specific scenarios (for example when certain files can't be loaded for some reason).
+
+To run all the tests:
+
+```
+mkdir build
+cd build
+cmake -D WITH_TESTS=ON ..
+make
+make test
+```
+
+To run a specific test, for example:
+```
+./ValidTessellatedMeshTests
+```
+
+## Optional Dependencies
 If you need to read PLY, STL or OBJ files, there are no dependencies (other than Geant4 obviously).
 
 Optional dependencies:

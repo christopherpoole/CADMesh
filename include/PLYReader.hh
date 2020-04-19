@@ -75,7 +75,7 @@ class PLYReader : public Reader
     size_t y_index_ = 0;
     size_t z_index_ = 0;
 
-    size_t max_index_ = 0;    
+    size_t facet_index_ = 0;    
 };
 
 } // File namespace

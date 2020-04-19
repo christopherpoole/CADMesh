@@ -85,7 +85,9 @@ void Lexer::Backup()
 {
     position_ -= width_;
 
-    if (input_.substr(position_, 1) == "\n")
+    auto next = input_.substr(position_, 1);
+
+    if (next == "\n")
     {
         line_--;
     }
@@ -116,7 +118,7 @@ std::string Lexer::Next()
 
     if (next == "\n")
         line_++;
-        
+ 
     return next;
 }
 
@@ -386,7 +388,7 @@ bool Lexer::Number()
 
 bool Lexer::SkipWhiteSpace()
 {
-    if (!ManyOf(" \t"))
+    if (!ManyOf(" \t\r"))
     {
         Skip();
         return false;
@@ -399,7 +401,7 @@ bool Lexer::SkipWhiteSpace()
 
 bool Lexer::SkipLineBreak()
 {
-    if (!OneOf("\n\r"))
+    if (!OneOf("\n"))
     {
         return false;
     }
@@ -411,7 +413,7 @@ bool Lexer::SkipLineBreak()
 
 bool Lexer::SkipLineBreaks()
 {
-    if (!ManyOf("\n\r"))
+    if (!ManyOf("\n"))
     {
         return false;
     }
@@ -423,7 +425,7 @@ bool Lexer::SkipLineBreaks()
 
 bool Lexer::SkipLine()
 {
-    if (!Until("\n\r"))
+    if (!Until("\n"))
     {
         return false;
     }
@@ -472,7 +474,7 @@ bool Lexer::TestState(State* state)
 {
     // Short circuit if we are already dry running.
     if (dry_run_) return false;
-   
+  
     // Check if an end line has been reached. 
     if (end_line_ > 0 && line_ > end_line_) return false;
 

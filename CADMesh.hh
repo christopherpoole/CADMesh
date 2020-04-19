@@ -37,20 +37,20 @@
 
 #pragma once
 
-class ASSIMPReader;
-class OBJReader;
-class CADMeshTemplate;
-class PLYReader;
-class BuiltInReader;
-class TetrahedralMesh;
-class Exceptions;
-class TessellatedMesh;
-class STLReader;
 class Mesh;
+class TessellatedMesh;
 class Lexer;
-class Reader;
-class LexerMacros;
+class PLYReader;
+class Exceptions;
+class TetrahedralMesh;
 class FileTypes;
+class BuiltInReader;
+class Reader;
+class OBJReader;
+class ASSIMPReader;
+class CADMeshTemplate;
+class STLReader;
+class LexerMacros;
 
 #include "G4String.hh"
 
@@ -710,7 +710,9 @@ Items Lexer::GetItems() { return parent_item_->children; }
 void Lexer::Backup() {
   position_ -= width_;
 
-  if (input_.substr(position_, 1) == "\n") {
+  auto next = input_.substr(position_, 1);
+
+  if (next == "\n") {
     line_--;
   }
 }
@@ -934,7 +936,7 @@ bool Lexer::Number() {
 }
 
 bool Lexer::SkipWhiteSpace() {
-  if (!ManyOf(" \t")) {
+  if (!ManyOf(" \t\r")) {
     Skip();
     return false;
   }
@@ -944,7 +946,7 @@ bool Lexer::SkipWhiteSpace() {
 }
 
 bool Lexer::SkipLineBreak() {
-  if (!OneOf("\n\r")) {
+  if (!OneOf("\n")) {
     return false;
   }
 
@@ -953,7 +955,7 @@ bool Lexer::SkipLineBreak() {
 }
 
 bool Lexer::SkipLineBreaks() {
-  if (!ManyOf("\n\r")) {
+  if (!ManyOf("\n")) {
     return false;
   }
 
@@ -962,7 +964,7 @@ bool Lexer::SkipLineBreaks() {
 }
 
 bool Lexer::SkipLine() {
-  if (!Until("\n\r")) {
+  if (!Until("\n")) {
     return false;
   }
 
@@ -1463,6 +1465,8 @@ G4ThreeVector TetrahedralMesh::GetTetPoint(G4int index_offset) {
 #define SkipLine() lexer->SkipLine()
 #define DidNotSkipLine() !SkipLine()
 
+#define AtEndOfLine() Next() == "\n" || Next() == "\r"
+
 #define Error(message)                                                         \
   {                                                                            \
     lexer->Error(message);                                                     \
@@ -1576,7 +1580,7 @@ protected:
   size_t y_index_ = 0;
   size_t z_index_ = 0;
 
-  size_t max_index_ = 0;
+  size_t facet_index_ = 0;
 };
 }
 }
@@ -1601,6 +1605,8 @@ State *STLReader::CADMeshLexerState(StartSolid) {
 
 State *STLReader::CADMeshLexerState(EndSolid) {
   SkipWhiteSpace();
+  SkipLineBreaks();
+  SkipWhiteSpace();
 
   if (DoesNotMatchExactly("endsolid"))
     Error("STL files end with 'endsolid'.");
@@ -1612,6 +1618,8 @@ State *STLReader::CADMeshLexerState(EndSolid) {
 }
 
 State *STLReader::CADMeshLexerState(StartFacet) {
+  SkipWhiteSpace();
+  SkipLineBreaks();
   SkipWhiteSpace();
 
   if (DoesNotMatchExactly("facet normal"))
@@ -1627,6 +1635,8 @@ State *STLReader::CADMeshLexerState(StartFacet) {
 }
 
 State *STLReader::CADMeshLexerState(EndFacet) {
+  SkipWhiteSpace();
+  SkipLineBreaks();
   SkipWhiteSpace();
 
   if (DoesNotMatchExactly("endfacet"))
@@ -1644,6 +1654,8 @@ State *STLReader::CADMeshLexerState(EndFacet) {
 
 State *STLReader::CADMeshLexerState(StartVertices) {
   SkipWhiteSpace();
+  SkipLineBreaks();
+  SkipWhiteSpace();
 
   if (DoesNotMatchExactly("outer loop"))
     Error("The start of the vertices is indicated by the tag 'outer loop'.");
@@ -1658,6 +1670,8 @@ State *STLReader::CADMeshLexerState(StartVertices) {
 
 State *STLReader::CADMeshLexerState(EndVertices) {
   SkipWhiteSpace();
+  SkipLineBreaks();
+  SkipWhiteSpace();
 
   if (DoesNotMatchExactly("endloop"))
     Error("The end of the vertices is indicated by the tag 'endloop'.");
@@ -1671,6 +1685,8 @@ State *STLReader::CADMeshLexerState(EndVertices) {
 }
 
 State *STLReader::CADMeshLexerState(Vertex) {
+  SkipWhiteSpace();
+  SkipLineBreaks();
   SkipWhiteSpace();
 
   if (DoesNotMatchExactly("vertex"))
@@ -2163,13 +2179,19 @@ State *PLYReader::CADMeshLexerState(Ignore) {
 
 State *PLYReader::CADMeshLexerState(Vertex) {
   SkipLineBreaks();
-
   SkipWhiteSpace();
+  SkipLineBreaks();
+
   StartOfA(Vertex);
 
   size_t i = 0;
 
-  while (i < 3) {
+  while (i < 32) {
+    if (AtEndOfLine())
+      break;
+
+    SkipWhiteSpace();
+
     if (NotANumber())
       Error("Expecting only numbers in the vertex specification.");
 
@@ -2190,29 +2212,27 @@ State *PLYReader::CADMeshLexerState(Vertex) {
 
 State *PLYReader::CADMeshLexerState(Facet) {
   SkipLineBreaks();
-
-  if (DoesNotMatchExactly("3 "))
-    Error("A facet is indicated by the tag '3'.");
-
   SkipWhiteSpace();
+  SkipLineBreaks();
+
   StartOfA(Facet);
 
-  if (NotANumber())
-    Error("First number in three vector not found.");
+  size_t i = 0;
 
-  ThisIsA(Number);
-  SkipWhiteSpace();
+  while (i < 32) {
+    if (AtEndOfLine())
+      break;
 
-  if (NotANumber())
-    Error("Second number in three vector not found.");
+    SkipWhiteSpace();
 
-  ThisIsA(Number);
-  SkipWhiteSpace();
+    if (NotANumber())
+      Error("Expecting only numbers in the facet specification.");
 
-  if (NotANumber())
-    Error("Third number in three vector not found.");
+    ThisIsA(Number);
+    SkipWhiteSpace();
 
-  ThisIsA(Number);
+    i++;
+  }
 
   EndOfA(Facet);
 
@@ -2318,6 +2338,18 @@ void PLYReader::ParseHeader(Items items) {
 
         else if (item.children[0].value == "face") {
           facet_count_ = atoi(item.children[1].value.c_str());
+
+          for (size_t i = 2; i < item.children.size(); i++) {
+            auto property = item.children[i];
+
+            if (property.children.size() > 1) {
+              if (property.children[1].token == WordToken) {
+                if (property.children[1].value == "uchar int vertex_indices") {
+                  facet_index_ = i - 2;
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -2410,9 +2442,9 @@ G4TriangularFacet *PLYReader::ParseFacet(Items items, Points vertices) {
     indices.push_back((int)atoi(item.value.c_str()));
   }
 
-  if (indices.size() != 3) {
+  if (indices.size() < 4) {
     std::stringstream error;
-    error << "Facets in PLY files require exactly 3 indicies";
+    error << "Facets in PLY files require 3 indicies";
 
     if (items.size() != 0) {
       error << "Error around line " << items[0].line << ".";
@@ -2421,8 +2453,9 @@ G4TriangularFacet *PLYReader::ParseFacet(Items items, Points vertices) {
     Exceptions::ParserError("PLYReader::ParseFacet", error.str());
   }
 
-  return new G4TriangularFacet(vertices[indices[0]], vertices[indices[1]],
-                               vertices[indices[2]], ABSOLUTE);
+  return new G4TriangularFacet(vertices[indices[1 + facet_index_]],
+                               vertices[indices[2 + facet_index_]],
+                               vertices[indices[3 + facet_index_]], ABSOLUTE);
 }
 }
 }

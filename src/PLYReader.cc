@@ -137,14 +137,20 @@ State* PLYReader::CADMeshLexerState(Ignore)
 State* PLYReader::CADMeshLexerState(Vertex)
 {
     SkipLineBreaks();
-
     SkipWhiteSpace();
+    SkipLineBreaks();
+    
     StartOfA(Vertex);
 
     size_t i = 0;
 
-    while (i < 3)
+    // Try upto 32 properties per vertex/line.
+    while (i < 32)
     {
+        if (AtEndOfLine()) break;
+
+        SkipWhiteSpace();
+
         if (NotANumber())
             Error("Expecting only numbers in the vertex specification.");
 
@@ -167,29 +173,28 @@ State* PLYReader::CADMeshLexerState(Vertex)
 State* PLYReader::CADMeshLexerState(Facet)
 {
     SkipLineBreaks();
-
-    if (DoesNotMatchExactly("3 "))
-        Error("A facet is indicated by the tag '3'.");
-
     SkipWhiteSpace();
+    SkipLineBreaks();
+    
     StartOfA(Facet);
 
-    if (NotANumber())
-        Error("First number in three vector not found.");
+    size_t i = 0;
 
-    ThisIsA(Number);
-    SkipWhiteSpace();
+    // Try upto 32 properties per facet/line.
+    while (i < 32)
+    {
+        if (AtEndOfLine()) break;
 
-    if (NotANumber())
-        Error("Second number in three vector not found.");
+        SkipWhiteSpace();
+
+        if (NotANumber())
+            Error("Expecting only numbers in the facet specification.");
+
+        ThisIsA(Number);
+        SkipWhiteSpace();
     
-    ThisIsA(Number);
-    SkipWhiteSpace();
-
-    if (NotANumber())
-        Error("Third number in three vector not found.");
-
-    ThisIsA(Number);
+        i++;
+    }
 
     EndOfA(Facet);
     
@@ -322,6 +327,24 @@ void PLYReader::ParseHeader(Items items)
                 else if (item.children[0].value == "face")
                 {
                     facet_count_ = atoi(item.children[1].value.c_str());
+ 
+                    // Find the facet indices.
+                    for (size_t i = 2; i < item.children.size(); i++)
+                    {
+                        auto property = item.children[i];
+
+                        if (property.children.size() > 1)
+                        {
+                            if (property.children[1].token == WordToken)
+                            {
+                                if (property.children[1].value == "uchar int vertex_indices")
+                                {
+                                    facet_index_ = i - 2;
+                                }
+                            }
+                        }
+                    }
+ 
                 } 
             }
         }
@@ -432,10 +455,10 @@ G4TriangularFacet* PLYReader::ParseFacet(Items items, Points vertices)
         indices.push_back((int) atoi(item.value.c_str()));
     }
 
-    if (indices.size() != 3)
+    if (indices.size() < 4) // "3" and 3 numbers
     {
         std::stringstream error;
-        error << "Facets in PLY files require exactly 3 indicies";
+        error << "Facets in PLY files require 3 indicies";
 
         if (items.size() != 0)
         {
@@ -445,9 +468,9 @@ G4TriangularFacet* PLYReader::ParseFacet(Items items, Points vertices)
         Exceptions::ParserError("PLYReader::ParseFacet", error.str());
     }
 
-    return new G4TriangularFacet( vertices[indices[0]]
-                                , vertices[indices[1]]
-                                , vertices[indices[2]]
+    return new G4TriangularFacet( vertices[indices[1 + facet_index_]]
+                                , vertices[indices[2 + facet_index_]]
+                                , vertices[indices[3 + facet_index_]]
                                 , ABSOLUTE);
 }
 

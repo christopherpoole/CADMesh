@@ -53,7 +53,9 @@ State* STLReader::CADMeshLexerState(StartSolid)
 State* STLReader::CADMeshLexerState(EndSolid)
 {
     SkipWhiteSpace();
-    
+    SkipLineBreaks();
+    SkipWhiteSpace();
+   
     if (DoesNotMatchExactly("endsolid"))
         Error("STL files end with 'endsolid'.");
 
@@ -67,7 +69,9 @@ State* STLReader::CADMeshLexerState(EndSolid)
 State* STLReader::CADMeshLexerState(StartFacet)
 {
     SkipWhiteSpace();
-    
+    SkipLineBreaks();
+    SkipWhiteSpace();
+
     if (DoesNotMatchExactly("facet normal"))
         Error("Facets are indicated by the tag 'facet normal'.");
    
@@ -86,7 +90,9 @@ State* STLReader::CADMeshLexerState(StartFacet)
 State* STLReader::CADMeshLexerState(EndFacet)
 {
     SkipWhiteSpace();
-    
+    SkipLineBreaks();
+    SkipWhiteSpace();
+   
     if (DoesNotMatchExactly("endfacet"))
         Error("The end of a facets is indicated by the tag 'endfacet'.");
    
@@ -106,7 +112,9 @@ State* STLReader::CADMeshLexerState(EndFacet)
 State* STLReader::CADMeshLexerState(StartVertices)
 {
     SkipWhiteSpace();
-    
+    SkipLineBreaks();
+    SkipWhiteSpace();
+   
     if (DoesNotMatchExactly("outer loop"))
         Error("The start of the vertices is indicated by the tag 'outer loop'.");
 
@@ -121,6 +129,8 @@ State* STLReader::CADMeshLexerState(StartVertices)
 
 State* STLReader::CADMeshLexerState(EndVertices)
 {
+    SkipWhiteSpace();
+    SkipLineBreaks();
     SkipWhiteSpace();
     
     if (DoesNotMatchExactly("endloop"))
@@ -138,7 +148,9 @@ State* STLReader::CADMeshLexerState(EndVertices)
 State* STLReader::CADMeshLexerState(Vertex)
 {
     SkipWhiteSpace();
-    
+    SkipLineBreaks();
+    SkipWhiteSpace();
+
     if (DoesNotMatchExactly("vertex"))
         Error("A vertex is indicated by the tag 'vertex'.");
 

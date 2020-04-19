@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN 
-#include "catch.hpp"
+#include "catch2/catch.hpp"
 
 // CADMesh //
 #include "CADMesh.hh"
@@ -67,5 +67,30 @@ SCENARIO( "Load a PLY file as a tessellated mesh.") {
             }
         }
     }
+
+    GIVEN( "the box in the file 'box_solidworks.ply'" ) {
+        auto mesh = CADMesh::TessellatedMesh::FromPLY("../meshes/box_solidworks.ply");
+
+        WHEN( "constructing the solid volume" ) {
+            auto solid = (G4TessellatedSolid*) mesh->GetSolid();
+
+            THEN( "CADMesh should report that the volume is navigable" ) {
+                REQUIRE( mesh->IsValidForNavigation() );
+            }
+        }
+    }
+
+    GIVEN( "the box in the file 'box_solidworks.stl'" ) {
+        auto mesh = CADMesh::TessellatedMesh::FromSTL("../meshes/box_solidworks.stl");
+
+        WHEN( "constructing the solid volume" ) {
+            auto solid = (G4TessellatedSolid*) mesh->GetSolid();
+
+            THEN( "CADMesh should report that the volume is navigable" ) {
+                REQUIRE( mesh->IsValidForNavigation() );
+            }
+        }
+    }
+
 }
 

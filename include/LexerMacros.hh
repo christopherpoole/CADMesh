@@ -90,6 +90,8 @@
 #define SkipLine() lexer->SkipLine()
 #define DidNotSkipLine() !SkipLine()
 
+#define AtEndOfLine() Next() == "\n" || Next() == "\r"
+
 #define Error(message) { lexer->Error(message); return nullptr; }
 
 #define NextState(next) return new next##State()

@@ -57,7 +57,7 @@ class OBJReader : public Reader
     // Parser. 
     std::shared_ptr<Mesh> ParseMesh(Items items);
     G4ThreeVector ParseVertex(Items items);
-    G4TriangularFacet* ParseFacet(Items items, Points vertices);
+    G4TriangularFacet* ParseFacet(Items items, Points vertices, G4bool quad);
 };
 
 } // File namespace

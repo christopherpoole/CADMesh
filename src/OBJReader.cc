@@ -116,8 +116,8 @@ State* OBJReader::CADMeshLexerState(Facet)
     SkipWhiteSpace();
     StartOfA(Facet);
 
-    //  Expect three numbers separated by white space, we are ignoring the
-    //  other parameters specified after the /'s.
+    //  Expect three or four numbers separated by white space, we are ignoring
+    //  the other parameters specified after the /'s.
     if (NotANumber())
         Error("First number in three vector not found.");
 
@@ -144,6 +144,16 @@ State* OBJReader::CADMeshLexerState(Facet)
         Error("Third number in three vector not found.");
 
     ThisIsA(Number);
+
+    OneOf("/");
+    Number();
+    OneOf("/");
+    Number();
+    SkipWhiteSpace();
+
+    // Might be a quad rather than a tri.
+    if (Number())
+        ThisIsA(Number);
 
     EndOfA(Facet);
     
@@ -232,7 +242,13 @@ std::shared_ptr<Mesh> OBJReader::ParseMesh(Items items)
 
         if (item.token == FacetToken)
         {
-            facets.push_back(ParseFacet(item.children, vertices));
+            facets.push_back(ParseFacet(item.children, vertices, false));
+
+            // Add the upper triangle of the quad.
+            if (item.children.size() == 4)
+            {
+                facets.push_back(ParseFacet(item.children, vertices, true));
+            }
         }
     }
 
@@ -266,7 +282,7 @@ G4ThreeVector OBJReader::ParseVertex(Items items)
 }
 
 
-G4TriangularFacet* OBJReader::ParseFacet(Items items, Points vertices)
+G4TriangularFacet* OBJReader::ParseFacet(Items items, Points vertices, G4bool quad)
 {
     std::vector<int> indices;
 
@@ -275,10 +291,10 @@ G4TriangularFacet* OBJReader::ParseFacet(Items items, Points vertices)
         indices.push_back((int) atoi(item.value.c_str()));
     }
 
-    if (indices.size() != 3)
+    if (indices.size() < 3)
     {
         std::stringstream error;
-        error << "Facets in OBJ files require exactly 3 indicies";
+        error << "Facets in OBJ files require at least 3 indicies";
 
         if (items.size() != 0)
         {
@@ -288,10 +304,34 @@ G4TriangularFacet* OBJReader::ParseFacet(Items items, Points vertices)
         Exceptions::ParserError("OBJReader::ParseFacet", error.str());
     }
 
-    return new G4TriangularFacet( vertices[indices[0] - 1]
-                                , vertices[indices[1] - 1]
-                                , vertices[indices[2] - 1]
-                                , ABSOLUTE);
+    if (quad && indices.size() != 4)
+    {
+        std::stringstream error;
+        error << "Trying to triangle-ify a facet that isn't a quad";
+
+        if (items.size() != 0)
+        {
+            error << "Error around line " << items[0].line << ".";
+        }
+
+        Exceptions::ParserError("OBJReader::ParseFacet", error.str());
+    }
+
+    if (quad)
+    {
+        return new G4TriangularFacet( vertices[indices[0] - 1]
+                                    , vertices[indices[2] - 1]
+                                    , vertices[indices[3] - 1]
+                                    , ABSOLUTE);
+    }
+
+    else
+    {
+        return new G4TriangularFacet( vertices[indices[0] - 1]
+                                    , vertices[indices[1] - 1]
+                                    , vertices[indices[2] - 1]
+                                    , ABSOLUTE);
+    }
 }
 
 

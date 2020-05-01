@@ -19,7 +19,7 @@ See the [basic example](https://github.com/christopherpoole/CADMesh/tree/master/
 
 # Hire Me
 I'm self employed, and depend on people like you needing to simulate ionising radiation.
-If you don't have time to write your own simulations, or if you want to get better radiation simulation results faster, please get in touch with me here [chris@radan.io](https://radan.io/about.html), or visit my website [radiationanalytics.com](https://radiationanalytics.com).
+If you don't have time to write your own simulations, or if you want to get better radiation simulation results faster, please get in touch with me here [chris@radan.io](https://radan.io/about.html), or visit my website [radiationanalytics.com](http://radiationanalytics.com).
 I'm widely experienced in building radiotherapy dose calculation software, radiation protection simulation technology, and I'm always interested in contributing to your academic papers.
 
 <p align="center">

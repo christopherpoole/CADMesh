@@ -22,7 +22,7 @@ Load PLY, STL, and OBJ files into your detector construction using the CADMesh b
 This example demonstrates loading meshes with the readers/loaders available in the ASSIMP geometry library. You need to add the ASSIMP library as a dependency to your own project.
 
 # Multiple
-Access multiple meshes contained within a single file and place them how you want.
+Access multiple meshes contained within a single file and place them how you want. This is useful if you have assemblies exported from Blender for example.
 
 # TETGEN
 Learn how to load meshes into Geant4, and fill them with tetrahedra. This requires adding `tetgen` to your project as a dependency.

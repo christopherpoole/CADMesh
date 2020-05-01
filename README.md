@@ -13,18 +13,20 @@ CADMesh is distributed as a single header. No need to compile anything.
 Copy `CADMesh.hh` to your project `include` directory, and start using it with the built in readers for PLY, STL, and OBJ files.
 See the [basic example](https://github.com/christopherpoole/CADMesh/tree/master/examples/basic) for more details.
 
-<div style="text-align: center">
+<p align="center">
 <img src="https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png"/>
-</div>
+</p>
 
 # Hire Me
 I'm self employed, and depend on people like you needing to simulate ionising radiation.
 If you don't have time to write your own simulations, or if you want to get better radiation simulation results faster, please get in touch with me here [chris@radan.io](https://radan.io/about.html), or visit my website [radan.io](https://radan.io).
 I'm widely experienced in building radiotherapy dose calculation software, radiation protection simulation technology, and I'm always interested in contributing to your academic papers.
 
-<div style="text-align: center">
+<p align="center">
+<div style="max-width: 400px">
 <a href="https://radan.io"><img style="max-width: 400px" src="https://radan.io/assets/img/logo.png"/></a>
 </div>
+</p>
 
 ---
 

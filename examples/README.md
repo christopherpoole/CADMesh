@@ -10,7 +10,7 @@ mkdir build/
 cd build/
 cmake ..
 make
-./basic # or ./external or ./tetrahedral
+./basic # or ./external or ./multiple or ./tetrahedral
 ```
 
 Make sure to run the binary in the build directory, as the required mesh files are copied there automatically.
@@ -20,6 +20,9 @@ Load PLY, STL, and OBJ files into your detector construction using the CADMesh b
 
 # External 
 This example demonstrates loading meshes with the readers/loaders available in the ASSIMP geometry library. You need to add the ASSIMP library as a dependency to your own project.
+
+# Multiple
+Access multiple meshes contained within a single file and place them how you want.
 
 # TETGEN
 Learn how to load meshes into Geant4, and fill them with tetrahedra. This requires adding `tetgen` to your project as a dependency.

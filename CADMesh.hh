@@ -37,20 +37,20 @@
 
 #pragma once
 
+class Reader;
+class LexerMacros;
+class OBJReader;
+class TetrahedralMesh;
+class BuiltInReader;
+class FileTypes;
+class STLReader;
 class Mesh;
-class TessellatedMesh;
-class Lexer;
 class PLYReader;
 class Exceptions;
-class TetrahedralMesh;
-class FileTypes;
-class BuiltInReader;
-class Reader;
-class OBJReader;
-class ASSIMPReader;
+class TessellatedMesh;
 class CADMeshTemplate;
-class STLReader;
-class LexerMacros;
+class ASSIMPReader;
+class Lexer;
 
 #include "G4String.hh"
 
@@ -147,7 +147,9 @@ public:
 
   std::shared_ptr<Mesh> GetMesh();
   std::shared_ptr<Mesh> GetMesh(size_t index);
-  std::shared_ptr<Mesh> GetMesh(G4String name);
+  std::shared_ptr<Mesh> GetMesh(G4String name, G4bool exact = true);
+
+  size_t GetNumberOfMeshes();
 
   Meshes GetMeshes();
 
@@ -174,6 +176,7 @@ struct Token {
   std::string name;
 
   bool operator==(Token other) { return name == other.name; };
+  bool operator!=(Token other) { return name != other.name; };
 };
 
 static Token ErrorToken{"ErrorToken"};
@@ -190,6 +193,7 @@ static Token LineToken{"Line"};
 static Token NormalToken{"Normal"};
 static Token TextureToken{"Texture"};
 static Token SolidToken{"Solid"};
+static Token ObjectToken{"Object"};
 static Token CommentToken{"Comment"};
 static Token BlankLineToken{"BlankLine"};
 
@@ -397,7 +401,9 @@ public:
 public:
   virtual G4VSolid *GetSolid() = 0;
   virtual G4VSolid *GetSolid(G4int index) = 0;
-  virtual G4VSolid *GetSolid(G4String name) = 0;
+  virtual G4VSolid *GetSolid(G4String name, G4bool exact = true) = 0;
+
+  virtual std::vector<G4VSolid *> GetSolids() = 0;
 
   virtual G4AssemblyVolume *GetAssembly() = 0;
 
@@ -445,6 +451,9 @@ void ParserError(G4String origin, G4String message);
 
 void ReaderCantReadError(G4String origin, File::Type file_type,
                          G4String filepath);
+
+void MeshNotFound(G4String origin, size_t index);
+void MeshNotFound(G4String origin, G4String name);
 }
 }
 
@@ -456,11 +465,13 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh> {
 public:
   G4VSolid *GetSolid();
   G4VSolid *GetSolid(G4int index);
-  G4VSolid *GetSolid(G4String name);
+  G4VSolid *GetSolid(G4String name, G4bool exact = true);
+
+  std::vector<G4VSolid *> GetSolids();
 
   G4TessellatedSolid *GetTessellatedSolid();
   G4TessellatedSolid *GetTessellatedSolid(G4int index);
-  G4TessellatedSolid *GetTessellatedSolid(G4String name);
+  G4TessellatedSolid *GetTessellatedSolid(G4String name, G4bool exact = true);
   G4TessellatedSolid *GetTessellatedSolid(std::shared_ptr<Mesh> mesh);
 
   G4AssemblyVolume *GetAssembly();
@@ -491,7 +502,9 @@ public:
 public:
   G4VSolid *GetSolid();
   G4VSolid *GetSolid(G4int index);
-  G4VSolid *GetSolid(G4String name);
+  G4VSolid *GetSolid(G4String name, G4bool exact = true);
+
+  std::vector<G4VSolid *> GetSolids();
 
   G4AssemblyVolume *GetAssembly();
 
@@ -650,12 +663,32 @@ std::shared_ptr<Mesh> Reader::GetMesh(size_t index) {
     return meshes_[index];
   }
 
+  Exceptions::MeshNotFound("Reader::GetMesh", index);
+
   return nullptr;
 }
 
-std::shared_ptr<Mesh> Reader::GetMesh(G4String /*name*/) { return nullptr; }
+std::shared_ptr<Mesh> Reader::GetMesh(G4String name, G4bool exact) {
+  for (auto mesh : meshes_) {
+    if (exact) {
+      if (mesh->GetName() == name)
+        return mesh;
+    }
+
+    else {
+      if (mesh->GetName().find(name) != std::string::npos)
+        return mesh;
+    }
+  }
+
+  Exceptions::MeshNotFound("Reader::GetMesh", name);
+
+  return nullptr;
+}
 
 Meshes Reader::GetMeshes() { return meshes_; }
+
+size_t Reader::GetNumberOfMeshes() { return meshes_.size(); }
 
 size_t Reader::AddMesh(std::shared_ptr<Mesh> mesh) {
   meshes_.push_back(mesh);
@@ -1213,6 +1246,20 @@ void ReaderCantReadError(G4String origin, File::Type file_type,
        ".'\n\tSpecified the incorrect file type (?) for file:\n\t\t" + filepath)
           .c_str());
 }
+
+void MeshNotFound(G4String origin, size_t index) {
+  std::stringstream message;
+  message << "\nThe mesh with index '" << index << "' could not be found.";
+
+  G4Exception(("CADMesh in " + origin).c_str(), "MeshNotFound", FatalException,
+              message.str().c_str());
+}
+
+void MeshNotFound(G4String origin, G4String name) {
+  G4Exception(
+      ("CADMesh in " + origin).c_str(), "MeshNotFound", FatalException,
+      ("\nThe mesh with name '" + name + "' could not be found.").c_str());
+}
 }
 }
 
@@ -1228,8 +1275,18 @@ G4VSolid *TessellatedMesh::GetSolid(G4int index) {
   return (G4VSolid *)GetTessellatedSolid(index);
 }
 
-G4VSolid *TessellatedMesh::GetSolid(G4String name) {
-  return (G4VSolid *)GetTessellatedSolid(name);
+G4VSolid *TessellatedMesh::GetSolid(G4String name, G4bool exact) {
+  return (G4VSolid *)GetTessellatedSolid(name, exact);
+}
+
+std::vector<G4VSolid *> TessellatedMesh::GetSolids() {
+  std::vector<G4VSolid *> solids;
+
+  for (auto mesh : reader_->GetMeshes()) {
+    solids.push_back(GetTessellatedSolid(mesh));
+  }
+
+  return solids;
 }
 
 G4AssemblyVolume *TessellatedMesh::GetAssembly() {
@@ -1259,14 +1316,12 @@ G4TessellatedSolid *TessellatedMesh::GetTessellatedSolid() {
 }
 
 G4TessellatedSolid *TessellatedMesh::GetTessellatedSolid(G4int index) {
-  auto mesh = reader_->GetMesh(index);
-
-  return GetTessellatedSolid(mesh);
+  return GetTessellatedSolid(reader_->GetMesh(index));
 }
 
-G4TessellatedSolid *TessellatedMesh::GetTessellatedSolid(G4String /*name*/) {
-
-  return nullptr;
+G4TessellatedSolid *TessellatedMesh::GetTessellatedSolid(G4String name,
+                                                         G4bool exact) {
+  return GetTessellatedSolid(reader_->GetMesh(name, exact));
 }
 
 G4TessellatedSolid *
@@ -1312,7 +1367,15 @@ G4VSolid *TetrahedralMesh::GetSolid() { return GetSolid(0); }
 
 G4VSolid *TetrahedralMesh::GetSolid(G4int /*index*/) { return nullptr; }
 
-G4VSolid *TetrahedralMesh::GetSolid(G4String /*name*/) { return nullptr; }
+G4VSolid *TetrahedralMesh::GetSolid(G4String /*name*/, G4bool /*exact*/) {
+
+  return nullptr;
+}
+
+std::vector<G4VSolid *> TetrahedralMesh::GetSolids() {
+
+  return std::vector<G4VSolid *>();
+}
 
 G4AssemblyVolume *TetrahedralMesh::GetAssembly() {
   if (assembly_) {
@@ -1533,10 +1596,14 @@ protected:
   CADMeshLexerStateDefinition(Ignore);
   CADMeshLexerStateDefinition(Vertex);
   CADMeshLexerStateDefinition(Facet);
+  CADMeshLexerStateDefinition(Object);
 
   std::shared_ptr<Mesh> ParseMesh(Items items);
   G4ThreeVector ParseVertex(Items items);
-  G4TriangularFacet *ParseFacet(Items items, Points vertices);
+  G4TriangularFacet *ParseFacet(Items items, G4bool quad);
+
+private:
+  Points vertices_;
 };
 }
 }
@@ -1866,6 +1933,7 @@ namespace File {
 State *OBJReader::CADMeshLexerState(StartSolid) {
   StartOfA(Solid);
 
+  TryState(Object);
   TryState(Vertex);
   TryState(Ignore);
 
@@ -1884,6 +1952,7 @@ State *OBJReader::CADMeshLexerState(Ignore) {
   if (DidNotSkipLine())
     NextState(EndSolid);
 
+  TryState(Object);
   TryState(Vertex);
   TryState(Facet);
   TryState(Ignore);
@@ -1922,6 +1991,7 @@ State *OBJReader::CADMeshLexerState(Vertex) {
   SkipLine();
 
   TryState(Vertex);
+  TryState(Object);
   TryState(Facet);
   TryState(Ignore);
 
@@ -1964,11 +2034,45 @@ State *OBJReader::CADMeshLexerState(Facet) {
 
   ThisIsA(Number);
 
+  OneOf("/");
+  Number();
+  OneOf("/");
+  Number();
+  SkipWhiteSpace();
+
+  if (Number())
+    ThisIsA(Number);
+
   EndOfA(Facet);
 
   SkipLine();
 
   TryState(Facet);
+  TryState(Vertex);
+  TryState(Object);
+  TryState(Ignore);
+
+  NextState(EndSolid);
+}
+
+State *OBJReader::CADMeshLexerState(Object) {
+  SkipLineBreaks();
+
+  if (DoesNotMatchExactly("o "))
+    Error("An object is indicated by the tag 'o'.");
+
+  EndOfA(Solid);
+
+  SkipWhiteSpace();
+  StartOfA(Solid);
+
+  ManyCharacters();
+  ThisIsA(Word);
+  SkipWhiteSpace();
+
+  TryState(Vertex);
+  TryState(Facet);
+  TryState(Object);
   TryState(Ignore);
 
   NextState(EndSolid);
@@ -1984,16 +2088,21 @@ G4bool OBJReader::Read(G4String filepath) {
 
   for (auto item : items) {
     if (item.children.size() == 0) {
-      std::stringstream error;
-      error << "The mesh appears to be empty."
-            << "Error around line " << item.line << ".";
-
-      Exceptions::ParserError("OBJReader::Read", error.str());
+      continue;
     }
 
     auto mesh = ParseMesh(item.children);
 
-    auto name = G4String(item.value);
+    if (mesh->GetTriangles().size() == 0) {
+      continue;
+    }
+
+    G4String name;
+
+    if (item.children[0].token == WordToken) {
+      name = item.children[0].value;
+    }
+
     AddMesh(Mesh::New(mesh, name));
   }
 
@@ -2003,10 +2112,13 @@ G4bool OBJReader::Read(G4String filepath) {
 G4bool OBJReader::CanRead(Type file_type) { return (file_type == OBJ); }
 
 std::shared_ptr<Mesh> OBJReader::ParseMesh(Items items) {
-  Points vertices;
   Triangles facets;
 
   for (auto item : items) {
+    if (item.token != VertexToken) {
+      continue;
+    }
+
     if (item.children.size() == 0) {
       std::stringstream error;
       error << "The vertex appears to be empty."
@@ -2015,12 +2127,14 @@ std::shared_ptr<Mesh> OBJReader::ParseMesh(Items items) {
       Exceptions::ParserError("OBJReader::Mesh", error.str());
     }
 
-    if (item.token == VertexToken) {
-      vertices.push_back(ParseVertex(item.children));
-    }
+    vertices_.push_back(ParseVertex(item.children));
   }
 
   for (auto item : items) {
+    if (item.token != FacetToken) {
+      continue;
+    }
+
     if (item.children.size() == 0) {
       std::stringstream error;
       error << "The facet appears to be empty."
@@ -2029,8 +2143,10 @@ std::shared_ptr<Mesh> OBJReader::ParseMesh(Items items) {
       Exceptions::ParserError("OBJReader::Mesh", error.str());
     }
 
-    if (item.token == FacetToken) {
-      facets.push_back(ParseFacet(item.children, vertices));
+    facets.push_back(ParseFacet(item.children, false));
+
+    if (item.children.size() == 4) {
+      facets.push_back(ParseFacet(item.children, true));
     }
   }
 
@@ -2058,16 +2174,16 @@ G4ThreeVector OBJReader::ParseVertex(Items items) {
   return G4ThreeVector(numbers[0], numbers[1], numbers[2]);
 }
 
-G4TriangularFacet *OBJReader::ParseFacet(Items items, Points vertices) {
+G4TriangularFacet *OBJReader::ParseFacet(Items items, G4bool quad) {
   std::vector<int> indices;
 
   for (auto item : items) {
     indices.push_back((int)atoi(item.value.c_str()));
   }
 
-  if (indices.size() != 3) {
+  if (indices.size() < 3) {
     std::stringstream error;
-    error << "Facets in OBJ files require exactly 3 indicies";
+    error << "Facets in OBJ files require at least 3 indicies";
 
     if (items.size() != 0) {
       error << "Error around line " << items[0].line << ".";
@@ -2076,9 +2192,28 @@ G4TriangularFacet *OBJReader::ParseFacet(Items items, Points vertices) {
     Exceptions::ParserError("OBJReader::ParseFacet", error.str());
   }
 
-  return new G4TriangularFacet(vertices[indices[0] - 1],
-                               vertices[indices[1] - 1],
-                               vertices[indices[2] - 1], ABSOLUTE);
+  if (quad && indices.size() != 4) {
+    std::stringstream error;
+    error << "Trying to triangle-ify a facet that isn't a quad";
+
+    if (items.size() != 0) {
+      error << "Error around line " << items[0].line << ".";
+    }
+
+    Exceptions::ParserError("OBJReader::ParseFacet", error.str());
+  }
+
+  if (quad) {
+    return new G4TriangularFacet(vertices_[indices[0] - 1],
+                                 vertices_[indices[2] - 1],
+                                 vertices_[indices[3] - 1], ABSOLUTE);
+  }
+
+  else {
+    return new G4TriangularFacet(vertices_[indices[0] - 1],
+                                 vertices_[indices[1] - 1],
+                                 vertices_[indices[2] - 1], ABSOLUTE);
+  }
 }
 }
 }

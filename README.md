@@ -13,9 +13,28 @@ CADMesh is distributed as a single header. No need to compile anything.
 Copy `CADMesh.hh` to your project `include` directory, and start using it with the built in readers for PLY, STL, and OBJ files.
 See the [basic example](https://github.com/christopherpoole/CADMesh/tree/master/examples/basic) for more details.
 
-![cadmesh screenshot](https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png)
+<div style="text-align: center">
+<img src="https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png"/>
+</div>
+
+# Hire Me
+I'm self employed, and depend on people like you needing to simulate ionising radiation.
+If you don't have time to write your own simulations, or if you want to get better radiation simulation results faster, please get in touch with me here [chris@radan.io](https://radan.io/about.html), or visit my website [radan.io](https://radan.io).
+I'm widely experienced in building radiotherapy dose calculation software, radiation protection simulation technology, and I'm always interested in contributing to your academic papers.
+
+<div style="text-align: center">
+<a href="https://radan.io"><img style="max-width: 400px" src="https://radan.io/assets/img/logo.png"/></a>
+</div>
 
 ---
+
+## Why?
+Why is CADMesh 2 now header only, and defaults to no dependencies?
+Well, one of the biggest problems reported with the original CADMesh was difficulty in installing it in HPC environments that may not have internet access.
+Also, the dependencies themselves sometimes became troublesome to compile.
+Now, for the basic and most widely reported use case of loading in STL, PLY or OBJ files into Geant4 is really easy.
+`CADMesh.hh` stays with your code, and you don't have to worry about installing it everywhere you want your simulation to run.
+
 ## Installation
 Download the latest release of CADMesh (the CADMesh.hh file) from the [Downloads](https://github.com/christopherpoole/CADMesh/releases) section.
 Copy `CADMesh.hh` to the `includes` directory of your project.
@@ -74,6 +93,17 @@ To get your mesh as a `G4TessellatedSolid`, do this:
 auto solid = mesh->GetSolid();
 ```
 Once you have the solid, you can use it like you would any other `G4VSolid` in Geant4. 
+#### Multiple Meshes
+Some file types, such as OBJ, can contain multiple meshes.
+At the moment we support accessing meshes by name and index in OBJ files using the built-in reader.
+Have a look at the `multiple` example for more information.
+```
+std::vector<G4VSolid*> solids = mesh->GetSolids();
+auto solid = mesh->GetSolid(2);      // Get the third mesh as a solid.
+auto solid = mesh->GetSolid("cube"); // Get the mesh named "cube" as a solid.
+auto solid = mesh->GetSolid("cub", false); // Inexact name matching.
+```
+You can set the scale and offset for each mesh before getting the solid, to add the same mesh multiple times to your geometry, but at difference scales - if you want to do that.
 
 ### Filling Meshes With Tetrahedra
 As described [here](https://github.com/christopherpoole/CADMesh/blob/master/Poole%20et%20al.%20-%20Fast%20tessellated%20solid%20navigation%20in%20GEANT4.pdf), tessellated solid navigation can be sped up by filling meshes with tetrahedra, and navigating that equivalent geometry instead.
@@ -172,7 +202,7 @@ A G4TessellatedSolid is returned and can be included in a standard user detector
 You can find the project page and a git repository [here](https://github.com/christopherpoole/CADMesh).
 The old [Google Code page for CADMesh](http://code.google.com/p/cadmesh/) redirects to this page.
 
-Additional functionality is included for the fast navigation of tessellated solids by automatically creating equivalent tetrahron filled assemblides thereby making smart voxelisation available for the solid.
+Additional functionality is included for the fast navigation of tessellated solids by automatically creating equivalent tetragon filled assemblies thereby making smart voxelisation available for the solid.
 
 ### Citing CADMesh
 CADMesh is described in a technical paper, available [here](https://github.com/christopherpoole/CADMesh/blob/master/Poole%20et%20al.%20-%20A%20CAD%20interface%20for%20GEANT4.pdf), and in this repository.

@@ -53,11 +53,19 @@ G4VSolid* TetrahedralMesh::GetSolid(G4int /*index*/)
 }
 
 
-G4VSolid* TetrahedralMesh::GetSolid(G4String /*name*/)
+G4VSolid* TetrahedralMesh::GetSolid(G4String /*name*/, G4bool /*exact*/)
 {
     // TODO: Get a solid by name.
 
     return nullptr;
+}
+
+
+std::vector<G4VSolid*> TetrahedralMesh::GetSolids()
+{
+    // TODO: Get all the tetrahedra as solids.
+
+    return std::vector<G4VSolid*>();
 }
 
 

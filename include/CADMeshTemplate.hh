@@ -91,7 +91,9 @@ class CADMeshTemplate
   public:
     virtual G4VSolid* GetSolid() = 0;
     virtual G4VSolid* GetSolid(G4int index) = 0;
-    virtual G4VSolid* GetSolid(G4String name) = 0;
+    virtual G4VSolid* GetSolid(G4String name, G4bool exact = true) = 0;
+
+    virtual std::vector<G4VSolid*> GetSolids() = 0;
 
     virtual G4AssemblyVolume* GetAssembly() = 0;
 

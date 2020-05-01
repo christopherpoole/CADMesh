@@ -51,7 +51,9 @@ class Reader
 
     std::shared_ptr<Mesh> GetMesh();
     std::shared_ptr<Mesh> GetMesh(size_t index);
-    std::shared_ptr<Mesh> GetMesh(G4String name);
+    std::shared_ptr<Mesh> GetMesh(G4String name, G4bool exact = true);
+
+    size_t GetNumberOfMeshes();
 
     Meshes GetMeshes();
 

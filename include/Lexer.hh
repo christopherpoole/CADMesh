@@ -41,6 +41,7 @@ struct Token
     std::string name;
 
     bool operator==(Token other) { return name == other.name; };
+    bool operator!=(Token other) { return name != other.name; };
 };
 
 // Error tokens.
@@ -59,6 +60,7 @@ static Token LineToken { "Line" };
 static Token NormalToken { "Normal" };
 static Token TextureToken { "Texture" };
 static Token SolidToken { "Solid" };
+static Token ObjectToken { "Object" };
 static Token CommentToken { "Comment" };
 static Token BlankLineToken { "BlankLine" };
 

@@ -36,6 +36,7 @@ State* OBJReader::CADMeshLexerState(StartSolid)
 {
     StartOfA(Solid);
 
+    TryState(Object);
     TryState(Vertex);
     TryState(Ignore);
  
@@ -58,6 +59,7 @@ State* OBJReader::CADMeshLexerState(Ignore)
     if (DidNotSkipLine())
         NextState(EndSolid);
     
+    TryState(Object);
     TryState(Vertex);
     TryState(Facet);
     TryState(Ignore);
@@ -99,6 +101,7 @@ State* OBJReader::CADMeshLexerState(Vertex)
     SkipLine();   
 
     TryState(Vertex);
+    TryState(Object);
     TryState(Facet);
     TryState(Ignore);
  
@@ -160,6 +163,34 @@ State* OBJReader::CADMeshLexerState(Facet)
     SkipLine();
  
     TryState(Facet);
+    TryState(Vertex);
+    TryState(Object);
+    TryState(Ignore);
+   
+    NextState(EndSolid);
+}
+
+
+State* OBJReader::CADMeshLexerState(Object)
+{
+    SkipLineBreaks();
+
+    if (DoesNotMatchExactly("o "))
+        Error("An object is indicated by the tag 'o'.");
+
+    EndOfA(Solid);
+    
+    SkipWhiteSpace();
+    StartOfA(Solid);
+
+    ManyCharacters();
+    ThisIsA(Word); // The object name.
+
+    SkipWhiteSpace();
+
+    TryState(Vertex);
+    TryState(Facet);
+    TryState(Object);
     TryState(Ignore);
    
     NextState(EndSolid);
@@ -182,17 +213,25 @@ G4bool OBJReader::Read(G4String filepath)
     {
         if (item.children.size() == 0)
         {
-            std::stringstream error;
-            error << "The mesh appears to be empty."
-                    << "Error around line " << item.line << ".";
-
-            Exceptions::ParserError("OBJReader::Read", error.str());
+            continue;
         }
 
         auto mesh = ParseMesh(item.children);
 
-        // Rename and add the mesh.
-        auto name = G4String(item.value);
+        // Only add meshes with faces.
+        if (mesh->GetTriangles().size() == 0)
+        {
+            continue;
+        }
+
+        // We are expecting the first token to be the mesh/object name.
+        G4String name;
+        
+        if (item.children[0].token == WordToken)
+        {
+            name = item.children[0].value;
+        }
+
         AddMesh(Mesh::New(mesh, name));
     }
 
@@ -208,12 +247,16 @@ G4bool OBJReader::CanRead(Type file_type)
 
 std::shared_ptr<Mesh> OBJReader::ParseMesh(Items items)
 {
-    Points vertices;
     Triangles facets;
 
     // Parse vertices first.
     for (auto item : items)
     {
+        if (item.token != VertexToken)
+        {
+            continue;
+        }
+
         if (item.children.size() == 0)
         {
             std::stringstream error;
@@ -223,14 +266,16 @@ std::shared_ptr<Mesh> OBJReader::ParseMesh(Items items)
             Exceptions::ParserError("OBJReader::Mesh", error.str());
         }
 
-        if (item.token == VertexToken)
-        {
-            vertices.push_back(ParseVertex(item.children));
-        }
+        vertices_.push_back(ParseVertex(item.children));
     }
 
     for (auto item : items)
     {
+        if (item.token != FacetToken)
+        {
+            continue;
+        }
+
         if (item.children.size() == 0)
         {
             std::stringstream error;
@@ -240,15 +285,12 @@ std::shared_ptr<Mesh> OBJReader::ParseMesh(Items items)
             Exceptions::ParserError("OBJReader::Mesh", error.str());
         }
 
-        if (item.token == FacetToken)
-        {
-            facets.push_back(ParseFacet(item.children, vertices, false));
+        facets.push_back(ParseFacet(item.children, false));
 
-            // Add the upper triangle of the quad.
-            if (item.children.size() == 4)
-            {
-                facets.push_back(ParseFacet(item.children, vertices, true));
-            }
+        // Add the upper triangle of the quad.
+        if (item.children.size() == 4)
+        {
+            facets.push_back(ParseFacet(item.children, true));
         }
     }
 
@@ -282,7 +324,7 @@ G4ThreeVector OBJReader::ParseVertex(Items items)
 }
 
 
-G4TriangularFacet* OBJReader::ParseFacet(Items items, Points vertices, G4bool quad)
+G4TriangularFacet* OBJReader::ParseFacet(Items items, G4bool quad)
 {
     std::vector<int> indices;
 
@@ -319,17 +361,17 @@ G4TriangularFacet* OBJReader::ParseFacet(Items items, Points vertices, G4bool qu
 
     if (quad)
     {
-        return new G4TriangularFacet( vertices[indices[0] - 1]
-                                    , vertices[indices[2] - 1]
-                                    , vertices[indices[3] - 1]
+        return new G4TriangularFacet( vertices_[indices[0] - 1]
+                                    , vertices_[indices[2] - 1]
+                                    , vertices_[indices[3] - 1]
                                     , ABSOLUTE);
     }
 
     else
     {
-        return new G4TriangularFacet( vertices[indices[0] - 1]
-                                    , vertices[indices[1] - 1]
-                                    , vertices[indices[2] - 1]
+        return new G4TriangularFacet( vertices_[indices[0] - 1]
+                                    , vertices_[indices[1] - 1]
+                                    , vertices_[indices[2] - 1]
                                     , ABSOLUTE);
     }
 }

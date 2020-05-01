@@ -69,6 +69,25 @@ void ReaderCantReadError(G4String origin, File::Type file_type, G4String filepat
 }
 
 
+void MeshNotFound(G4String origin, size_t index)
+{
+    std::stringstream message;
+    message << "\nThe mesh with index '" << index << "' could not be found.";
+
+    G4Exception( ("CADMesh in " + origin).c_str()
+               , "MeshNotFound"
+               , FatalException
+               , message.str().c_str());
+}
+
+
+void MeshNotFound(G4String origin, G4String name)
+{
+    G4Exception( ("CADMesh in " + origin).c_str()
+               , "MeshNotFound"
+               , FatalException
+               , ("\nThe mesh with name '" + name + "' could not be found.").c_str());
+}
 
 } // Exceptions namespace
 

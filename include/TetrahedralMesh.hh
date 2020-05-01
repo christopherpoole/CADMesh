@@ -57,7 +57,9 @@ class TetrahedralMesh : public CADMeshTemplate<TetrahedralMesh>
   public:
     G4VSolid* GetSolid();
     G4VSolid* GetSolid(G4int index);
-    G4VSolid* GetSolid(G4String name);
+    G4VSolid* GetSolid(G4String name, G4bool exact = true);
+
+    std::vector<G4VSolid*> GetSolids();
 
     G4AssemblyVolume* GetAssembly();
 

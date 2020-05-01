@@ -64,13 +64,30 @@ std::shared_ptr<Mesh> Reader::GetMesh(size_t index)
         return meshes_[index];
     }
 
+    Exceptions::MeshNotFound("Reader::GetMesh", index);
+
     return nullptr;
 }
 
 
-std::shared_ptr<Mesh> Reader::GetMesh(G4String /*name*/)
+std::shared_ptr<Mesh> Reader::GetMesh(G4String name, G4bool exact)
 {
-    //TODO: Return mesh based on its name.
+    for (auto mesh : meshes_)
+    {
+        if (exact)
+        {
+            if (mesh->GetName() == name)
+                return mesh;
+        }
+
+        else
+        {
+            if (mesh->GetName().find(name) != std::string::npos)
+                return mesh;
+        }
+    }
+
+    Exceptions::MeshNotFound("Reader::GetMesh", name);
 
     return nullptr;    
 }
@@ -79,6 +96,12 @@ std::shared_ptr<Mesh> Reader::GetMesh(G4String /*name*/)
 Meshes Reader::GetMeshes()
 {
     return meshes_;
+}
+
+
+size_t Reader::GetNumberOfMeshes()
+{
+    return meshes_.size();
 }
 
 

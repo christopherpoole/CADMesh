@@ -48,11 +48,13 @@ class TessellatedMesh : public CADMeshTemplate<TessellatedMesh>
   public:
     G4VSolid* GetSolid();
     G4VSolid* GetSolid(G4int index);
-    G4VSolid* GetSolid(G4String name);
+    G4VSolid* GetSolid(G4String name, G4bool exact = true);
+
+    std::vector<G4VSolid*> GetSolids();
 
     G4TessellatedSolid* GetTessellatedSolid();
     G4TessellatedSolid* GetTessellatedSolid(G4int index);
-    G4TessellatedSolid* GetTessellatedSolid(G4String name);
+    G4TessellatedSolid* GetTessellatedSolid(G4String name, G4bool exact = true);
     G4TessellatedSolid* GetTessellatedSolid(std::shared_ptr<Mesh> mesh);
 
     G4AssemblyVolume* GetAssembly();

@@ -45,19 +45,24 @@ class OBJReader : public Reader
     G4bool Read(G4String filepath);
     G4bool CanRead(Type file_type);
 
+
   protected:
-    //Lexer.
+    // Lexer.
     CADMeshLexerStateDefinition(StartSolid);
     CADMeshLexerStateDefinition(EndSolid);
 
     CADMeshLexerStateDefinition(Ignore);
     CADMeshLexerStateDefinition(Vertex);
     CADMeshLexerStateDefinition(Facet);
+    CADMeshLexerStateDefinition(Object);
 
     // Parser. 
     std::shared_ptr<Mesh> ParseMesh(Items items);
     G4ThreeVector ParseVertex(Items items);
-    G4TriangularFacet* ParseFacet(Items items, Points vertices, G4bool quad);
+    G4TriangularFacet* ParseFacet(Items items, G4bool quad);
+
+  private:
+    Points vertices_;
 };
 
 } // File namespace

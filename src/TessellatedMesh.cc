@@ -43,9 +43,22 @@ G4VSolid* TessellatedMesh::GetSolid(G4int index)
 }
 
 
-G4VSolid* TessellatedMesh::GetSolid(G4String name)
+G4VSolid* TessellatedMesh::GetSolid(G4String name, G4bool exact)
 {
-    return (G4VSolid*) GetTessellatedSolid(name);
+    return (G4VSolid*) GetTessellatedSolid(name, exact);
+}
+
+
+std::vector<G4VSolid*> TessellatedMesh::GetSolids()
+{
+    std::vector<G4VSolid*> solids;
+
+    for (auto mesh : reader_->GetMeshes())
+    {
+        solids.push_back(GetTessellatedSolid(mesh)); 
+    }
+
+    return solids;
 }
 
 
@@ -86,17 +99,13 @@ G4TessellatedSolid* TessellatedMesh::GetTessellatedSolid()
 
 G4TessellatedSolid* TessellatedMesh::GetTessellatedSolid(G4int index)
 {
-    auto mesh = reader_->GetMesh(index);
-
-    return GetTessellatedSolid(mesh);
+    return GetTessellatedSolid(reader_->GetMesh(index));
 }
 
 
-G4TessellatedSolid* TessellatedMesh::GetTessellatedSolid(G4String /*name*/)
+G4TessellatedSolid* TessellatedMesh::GetTessellatedSolid(G4String name, G4bool exact)
 {
-    // TODO: Get the tesselated solid by name.
-
-    return nullptr;
+    return GetTessellatedSolid(reader_->GetMesh(name, exact));
 }
 
 

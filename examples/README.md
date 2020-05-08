@@ -36,6 +36,6 @@ Access multiple meshes contained within a single file and place them how you wan
 Learn how to load meshes into Geant4, and fill them with tetrahedra. This requires adding `tetgen` to your project as a dependency.
 
 <p align="center">
-<img src="https://raw.github.com/christopherpoole/CADMesh/master/examples/tetgen/screenshot.png"/>
+<img src="https://raw.github.com/christopherpoole/CADMesh/master/examples/tetrahedra/screenshot.png"/>
 </p>
 

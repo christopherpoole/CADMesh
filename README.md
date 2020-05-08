@@ -14,7 +14,7 @@ Copy `CADMesh.hh` to your project `include` directory, and start using it with t
 See the [basic example](https://github.com/christopherpoole/CADMesh/tree/master/examples/basic) for more details.
 
 <p align="center">
-<img src="https://raw.github.com/christopherpoole/CADMesh/master/screenshot.png"/>
+<img src="https://raw.github.com/christopherpoole/CADMesh/master/examples/basic/screenshot.png"/>
 </p>
 
 # Hire Me

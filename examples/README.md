@@ -18,12 +18,24 @@ Make sure to run the binary in the build directory, as the required mesh files a
 # Basic
 Load PLY, STL, and OBJ files into your detector construction using the CADMesh built in readers. There are no dependencies to install. All you need is `CADMesh.hh`.
 
+<p align="center">
+<img src="https://raw.github.com/christopherpoole/CADMesh/master/examples/basic/screenshot.png"/>
+</p>
+
 # External 
 This example demonstrates loading meshes with the readers/loaders available in the ASSIMP geometry library. You need to add the ASSIMP library as a dependency to your own project.
 
 # Multiple
 Access multiple meshes contained within a single file and place them how you want. This is useful if you have assemblies exported from Blender for example.
 
+<p align="center">
+<img src="https://raw.github.com/christopherpoole/CADMesh/master/examples/multiple/screenshot.png"/>
+</p>
+
 # TETGEN
 Learn how to load meshes into Geant4, and fill them with tetrahedra. This requires adding `tetgen` to your project as a dependency.
+
+<p align="center">
+<img src="https://raw.github.com/christopherpoole/CADMesh/master/examples/tetgen/screenshot.png"/>
+</p>
 

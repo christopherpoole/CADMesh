@@ -37,20 +37,20 @@
 
 #pragma once
 
-class Reader;
-class LexerMacros;
-class OBJReader;
-class TetrahedralMesh;
 class BuiltInReader;
-class FileTypes;
-class STLReader;
-class Mesh;
-class PLYReader;
 class Exceptions;
-class TessellatedMesh;
+class PLYReader;
+class Reader;
 class CADMeshTemplate;
+class FileTypes;
+class TessellatedMesh;
 class ASSIMPReader;
+class STLReader;
+class TetrahedralMesh;
+class OBJReader;
+class Mesh;
 class Lexer;
+class LexerMacros;
 
 #include "G4String.hh"
 
@@ -1658,11 +1658,12 @@ namespace File {
 
 State *STLReader::CADMeshLexerState(StartSolid) {
   if (DoesNotMatchExactly("solid"))
-    Error("STL files start with 'solid'.");
+    Error("STL files start with 'solid'. Make sure you are using an ASCII STL "
+          "file.");
 
   SkipWhiteSpace();
 
-  ManyLetters();
+  RestOfLine();
 
   StartOfA(Solid);
 

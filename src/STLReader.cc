@@ -36,13 +36,13 @@ namespace File
 State* STLReader::CADMeshLexerState(StartSolid)
 {
     if (DoesNotMatchExactly("solid"))
-        Error("STL files start with 'solid'.");
+        Error("STL files start with 'solid'. Make sure you are using an ASCII STL file.");
 
     SkipWhiteSpace();
     
     // The name of the solid.
-    ManyLetters();
-    
+    RestOfLine();
+
     StartOfA(Solid);
     
     SkipLineBreak();

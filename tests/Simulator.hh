@@ -62,12 +62,12 @@ class DetectorConstruction : public G4VUserDetectorConstruction
                                           , 0, 0, 0
         );
 
-        auto physical = new G4PVPlacement( 0
-                                         , G4ThreeVector()
-                                         , logical
-                                         , "physical"
-                                         , world_logical
-                                         , false, 0
+        new G4PVPlacement( 0
+                         , G4ThreeVector()
+                         , logical
+                         , "physical"
+                         , world_logical
+                         , false, 0
         );
  
         return world_physical;
@@ -128,7 +128,7 @@ class Simulator
     {
         auto run_manager = new G4RunManager();
 
-        auto exception_hanlder = new ExceptionHandler();
+        /*auto exception_hanlder =*/ new ExceptionHandler();
 
         auto detector_construction = new DetectorConstruction(solid);
         run_manager->SetUserInitialization(detector_construction);

@@ -26,6 +26,35 @@ def readFiles(filepaths):
     return dict(zip(names, files))
 
 
+def inlineSourceFunctions(sources):
+
+    # TODO: Tidy with clang first?
+
+    for name in sources.keys():
+        source = sources[name]
+
+        if name == "Exceptions":
+            for i, line in enumerate(source):
+                if line.strip().startswith("void ") and line.strip().endswith(")"):
+                    sources[name][i] = "inline " + line
+
+        if name == "FileTypes":
+            for i, line in enumerate(source):
+                if line.strip().startswith("Type ") and line.strip().endswith(")"):
+                    sources[name][i] = "inline " + line
+       
+        else:
+            for i, line in enumerate(source):
+                if name + "::" in line and not line.startswith(" ") and not line.strip().endswith(";"):
+                    sources[name][i] = "inline " + line
+
+                elif line.startswith("std::shared_ptr<BuiltInReader> BuiltIn()"):
+                    sources[name][i] = "inline " + line
+
+
+    return sources
+
+
 def stripComments(lines):
 
     lines = [l for l in lines if not l.strip().startswith("/")]
@@ -145,6 +174,8 @@ if __name__ == "__main__":
 
     hh = readFiles([os.path.join("../include", i + ".hh") for i in includes + readers])
     cc = readFiles([os.path.join("../src", s + ".cc") for s in sources + readers])
+
+    cc = inlineSourceFunctions(cc)
 
     header = ["class " + h + ";\n" for h in hh]
 

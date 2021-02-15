@@ -97,8 +97,8 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cadmesh-config.cmake.in" "${CM
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cadmesh-config.cmake" DESTINATION "lib/cmake/cadmesh-${CADMESH_MAJOR_VERSION}.${CADMESH_MINOR_VERSION}.${CADMESH_PATCH_VERSION}")
 
 # Install the CADMesh headers and library.
-install(FILES ${PROJECT_SOURCE_DIR}/include/CADMesh.hh DESTINATION include)
-install(FILES ${PROJECT_BINARY_DIR}/include/Configuration.hh DESTINATION include)
+install(FILES ${headers} DESTINATION include/CADMesh)
+install(FILES ${PROJECT_BINARY_DIR}/include/Configuration.hh DESTINATION include/CADMesh)
 install(TARGETS cadmesh DESTINATION lib)
 
 # Set CPack to build an archive.

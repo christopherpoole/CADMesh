@@ -1,4 +1,4 @@
 
-set(CADMESH_INCLUDE_DIRS @CMAKE_INSTALL_PREFIX@/include)
+set(CADMESH_INCLUDE_DIRS @CMAKE_INSTALL_PREFIX@/include/CADMesh)
 set(cadmesh_LIBRARIES -L@CMAKE_INSTALL_PREFIX@/lib cadmesh assimp tet)
 
